@@ -1,0 +1,203 @@
+<?php unset($_SESSION['ar']);?><!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	<script> var date = new Date();	var url = "<?php echo base_url();?>";        date.setTime(date.getTime()+(1*24*60*60*1000));        var expires = "; expires="+date.toGMTString();		document.cookie = "baseURL="+url+expires+"; path=/";</script>
+	<script src="<?php echo base_url();?>assets/js/custom.js"></script>
+	<link href='https://fonts.googleapis.com/css?family=Didact Gothic' rel='stylesheet'>
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>static/css/media.css" media="all" /> 
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>static/css/hover.css" media="all" /> 
+	<title>Menufi</title>
+
+	<style type="text/css">
+
+	::selection { background-color: #E13300; color: white; }
+	::-moz-selection { background-color: #E13300; color: white; }
+
+	body {
+		background-color: #fff;
+		margin:40px;
+		font: 13px/20px normal Helvetica, Arial, sans-serif;
+		color: #4F5155;
+	}
+
+	a {
+		color: #003399;
+		background-color: transparent;
+		font-weight: normal;
+	}
+
+	.header_align_center{
+		text-align: center;
+	}
+
+	code {
+		font-family: Consolas, Monaco, Courier New, Courier, monospace;
+		font-size: 12px;
+		background-color: #f9f9f9;
+		border: 1px solid #D0D0D0;
+		color: #002166;
+		display: block;
+		margin: 14px 0 14px 0;
+		padding: 12px 10px 12px 10px;
+	}
+
+	#body {
+		margin: 0 15px 0 15px;
+	}
+
+	p.footer {
+		text-align: right;
+		font-size: 11px;
+		border-top: 1px solid #D0D0D0;
+		line-height: 32px;
+		padding: 0 10px 0 10px;
+	}
+
+
+	.header_align{
+		float:left;
+	}
+	.modal-body{
+		padding: 0px;
+	}
+	.modal-content{
+			
+	position: relative;
+    background-color: #fff;
+   -webkit-background-clip: unset;
+    border: 0px;
+    border-radius: 0px;
+    outline: 0;
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+}
+	.icon-food{
+		font-size: 22px;
+	}
+	.food_icon{
+		margin-right: 8px;
+		margin-top: 8px;
+		
+	}
+	.select_label{
+		width: 100%;
+		text-align: center;
+		
+		
+	}
+	#sell{
+		text-align: center;
+	}
+	.combo {
+    background: silver;
+    margin: 10px 0;
+    position: relative;
+}
+<?php if(isset($fontName) && isset($fontSrc)){ 
+    
+    echo '@font-face {';
+                echo 'font-family: "'.$fontName.'";';
+                echo 'font-style: normal;
+  font-weight: 400;';
+                echo 'src: '.$fontSrc.' format("woff2"); }';
+                     } ?>
+body {
+    font-family: <?php echo isset($fontName) ? $fontName : 'Didact Gothic'; ?>;
+<?php 
+if(isset($bg)){
+?>
+		background:url(../images/background/<?php echo $bg;?>) no-repeat center;
+<?php }
+else{
+?>
+		background:url(../images/table-image/table_bg.png) no-repeat center;
+<?php } ?>
+                background-size:cover;
+
+	}
+        
+        
+        
+@media (max-width: 667px) {
+        
+        
+
+                body {
+
+                    background:url(../images/background/<?php echo isset($bg)?$bg:'table_bg.png'; ?>) no-repeat;
+                    font-family: <?php echo isset($fontName) ? $fontName : 'Didact Gothic'; ?>;
+                }
+                
+                .modal-content {
+
+                    background:url(../images/background/<?php echo isset($bg)?$bg:'table_bg.png'; ?>) no-repeat center center fixed;
+                    font-family: <?php echo isset($fontName) ? $fontName : 'Didact Gothic'; ?>;
+                }
+           
+        
+                 }
+
+
+
+	</style>
+</head>
+<body>
+
+<div id="container">
+<div class="header">
+	<div class="row">
+		<div class="co-md-12">
+			<img src="<?php echo base_url();?>images/table-image/logo-main.png" style="float:right;"/>
+		</div>
+	</div>
+	
+	<div class="row logo">
+		<div class="co-md-12">
+                    <?php 
+                        if(isset($logo)){
+                        ?>
+			<!--<img src="<?php echo base_url();?>images/table-image/logo-main.png" style="float:right;"/>-->
+                        <img src="<?php echo base_url();?>images/logo/<?php echo $logo;?>"/>
+
+                    <?php }
+                    else{
+                    ?>
+			<img src="<?php echo base_url();?>images/table-image/logo.png" />
+                    <?php } ?>
+		</div>
+	</div>
+		
+</div>
+
+<div id="body">
+<form method="POST" action="<?php echo base_url();?>index.php/Orders/Table_select">
+  <div class="form-group">
+	<div class="input-group">
+	 <span class="input-group-addon"><img src="<?php echo base_url();?>images/table-image/select-icon.png" /></span>
+      <select name="table_id" class="form-control form-control1" id="sel1">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+		<option value="5">5</option>
+        <option value="6">6</option>
+		<option value="7">7</option>
+      </select>
+	 </div>
+	  
+	</div>
+  <div class="form-group form-group-btn-table" style="background:rgba(255, 0, 0, 0.48);">
+  <button type="submit"  class="btn btn-primary btn-lg btn-block btn-bg-none">SELECT TABLE NUMBER</button>
+  </div>
+  
+ </form>
+</div>
+
+</body>
+
+</html>

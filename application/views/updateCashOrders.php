@@ -1,0 +1,327 @@
+<?php 
+    $conn = mysqli_connect("localhost","root", "", "menufi");
+    
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+<!--<meta http-equiv="refresh" content="5; URL=http://demo.creaadesign.com/menufi/index.php/Admin/dashboard">-->
+    <title>Menu Fi</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../../assets/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../assets/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="../../assets/vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Menu Fi</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    
+                </li> -->
+                
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        
+                        <li><a href="<?php echo base_url(); ?>index.php/Admin/changePwd"><i class="fa fa-sign-out fa-fw"></i> Change Password</a>
+                        </li>
+                        <li><a href="<?php echo base_url(); ?>index.php/Admin/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <?php include 'nav_links.php'; ?>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Update Cash Orders</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            
+            <?php
+            
+            ?>
+           
+            <div class="row" id="div_offlineOrders">
+                <?php if(!empty($pendingOrders)){
+                                     foreach ($pendingOrders as $value) {
+//    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
+                                        
+                        $idr = $value['Order_id'];
+                        $sq3 = "SELECT * FROM customer_order WHERE Order_id='$idr'";
+                        $ress = $conn -> query($sq3);
+                        // print_r($ress);
+                        if(mysqli_num_rows($ress) == 0 ){
+                            continue;
+                        }
+                                        ?>  
+                <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12" >
+                                    <input type="hidden" name="id" value="<?php echo $value['id'];?>">
+                                    <span id="printspan<?php echo $value['Order_id']; ?>">
+                                    <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
+                                    <?php while($raw = $ress -> fetch_assoc()){ ?>
+                    <p><strong ><?php 
+                        //print_r($raw);
+                        $q = $raw['Quantity'];
+                        echo $raw['Quantity']." x "; ?>
+                        
+                    </strong>
+                    <?php
+                            $mid = $raw['Menu_Id'];
+                            $sq4 = "SELECT * FROM menu WHERE Menu_Id='$mid'";
+                            $ra = $conn -> query($sq4);
+                            $rs = $ra -> fetch_assoc();    
+                            echo $rs['Name'].": ".($q*$rs['Price']); 
+                            ?>
+                </p>
+                        <?php } ?>
+                        <p><strong>CGST: </strong><?php 
+                    
+                    $sq = "SELECT * FROM sales WHERE Order_id='$idr'";
+                    $r = $conn -> query($sq);
+                    $r2 = $r -> fetch_assoc();
+                    
+                    echo $r2['cgst']; ?></p>
+                    <p><strong>SGST: </strong><?php echo $r2['sgst']; ?></p>
+                                    <h4>Bill Amount :<?php echo $value['net_total'];
+                                        if($r2['coupon_apply']){
+                                            echo "<br><small> (coupon applied)</small>";
+                                        }
+                                    
+                                    ?>
+                                        
+                                        
+                                </h4>
+                                    </span>
+                                    <?php
+                                        if(!$r2['coupon_apply']){
+                                    ?>
+                                    <input id="code" class="form-control" placeholder="Coupon Code" >
+                                    <br>
+                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
+                                    <br>
+                                    <?php 
+                                        }
+                                    ?>
+                                    <div>
+                                        <br>
+                                        <input type="submit" value="Pay" class="btn btn-success form-control" onclick="pay_it('<? echo $idr; ?>');print('<?php echo $idr; ?>');" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            
+                        
+                    </div>
+                </div>
+                <?php
+                }
+                                  }
+                                  
+                                  else{
+                                      echo '<div class="col-lg-12">No Offline Orders.</div>';
+                                  }
+?>
+<!--                <div class="col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Update Orders with Cash Payments
+                        </div>
+                         /.panel-heading 
+                        <div class="panel-body">
+                            <div class="form-group">
+                                Select Order No.: 
+                                <select name="ddlOrderNo" class="form-control">
+                                  <?php // if(!empty($pendingOrders)){
+                                     //foreach ($pendingOrders as $value) {
+    //echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
+                                       // }
+                                 // } ?>  
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" name="btnUpdateCashOrders" class="btn btn-primary" value="Update">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>-->
+            </div>
+            <!-- /.row -->
+           
+            
+            <h1><br>
+            <br><br><br><br><br><br><br><br><br></h1>
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="../../assets/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../../assets/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="../../assets/vendor/raphael/raphael.min.js"></script>
+    <script src="../../assets/vendor/morrisjs/morris.min.js"></script>
+    <script src="../../assets/data/morris-data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js" integrity="sha384-CchuzHs077vGtfhGYl9Qtc7Vx64rXBXdIAZIPbItbNyWIRTdG0oYAqki3Ry13Yzu" crossorigin="anonymous"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../../assets/dist/js/sb-admin-2.js"></script>
+
+</body>
+<script>
+    
+//        getOfflineOrders();
+//        setInterval(function(){getOfflineOrders()},5000);
+function pay_it(id){
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_payOrder',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
+
+        }
+        
+        function getOfflineOrders(){
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajx_cashOrders',
+                
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    $('#div_offlineOrders').html(resp);
+
+            }
+            });
+        }
+
+        function apply_code(id){
+			
+            let code = $('#code').val();
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_applyCode',
+                data:{
+                    'id':id,
+                    'code':code
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp=='success'){
+                        alert('Applied Coupon!');
+                        window.location = '';
+                    }else{
+                        alert(resp);
+                    }
+
+            }
+            });
+
+        }
+
+        function print(id){
+            var divContents = $("#printspan"+id).html();
+            var printWindow = window.open('', '', 'height=300,width=600');
+            printWindow.document.write(`<html><head><style>@page {
+                size: 3in 3.6in;
+   margin: 30%
+}
+</style><title></title>`);
+            printWindow.document.write('</head><body style="height:100px;width:300px;">');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        
+ 
+        
+  
+</script>
+</html>
