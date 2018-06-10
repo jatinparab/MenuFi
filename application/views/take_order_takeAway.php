@@ -1,6 +1,13 @@
 
 <?php
 $conn = mysqli_connect("localhost","root", "", "menufi");
+$s = "SELECT * 
+FROM opening_amount
+ORDER BY opening_amount_id DESC
+LIMIT 1";
+$res = $conn->query($s);
+$row = $res -> fetch_assoc();
+$amt = $row['opening_amount'];
 $ye = 0;
     if(isset($mobno)){
         //echo $address;
@@ -12,6 +19,27 @@ $ye = 0;
         //header("Location: create_orderH?mobno=$mobno&address=$address&table=-1&CreateOrder=Create+Order");
     }
    // echo $orderid;
+
+   $sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card'";
+	$res = $conn -> query($sql3);
+	$card = 0;
+	$online = 0;
+	
+	
+	$sql4 = "SELECT * FROM payment_details WHERE payment_type ='Online'";
+	$re4 = $conn -> query($sql4);
+
+	if(mysqli_num_rows($res)>0){
+		while($rowcard = $res -> fetch_assoc()){
+			$card +=  $rowcard['total_amount'];
+		}
+	}
+	
+	if(isset($re4)){
+		while($rowonline = $re4 -> fetch_assoc()){
+			$online +=  $rowonline['total_amount'];
+		}
+	}
 
 ?>
 
@@ -102,23 +130,70 @@ $ye = 0;
         </nav>
 
        <div id="page-wrapper">
-       <div class="row" style="padding-top:30px;padding-bottom:30px;">
-            <div class="col-sm-3">
+        
+       <div class="row">
+	 		<div class="col-lg-12" style="margin-top:10px">
+		 		<div class="col-md-2 ">
+		 			<input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
+		 		</div>
+		 		<div class="col-md-2">
+		 			<input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
+		 		</div>
+		 		<div class="col-md-6 col-sm-offset-2">
+		 			<p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
+		 		</div>
+		 	</div>
+		 	<div class="col-lg-12">
+		 		
+		 		<div class="col-md-3 col-sm-offset-6">
+					 <p style="color:white;font-size:16px;">Total Sales Amount : <?php 
+					 $net_total = 0;
+					 foreach($totalSaleOfDay as $sale)
+					 {
+						 $net_total +=(int) $sale->net_total;
+					 }
+					 
+					 echo $net_total; ?> </p>
+		 		</div>
+				 <div class="col-md-3 ">
+					 <p style="color:white;font-size:16px;">Total Card Sales : <?php 
+					 
+					 
+					 echo $card; ?> </p>
+		 		</div>
+		 	</div>
+		 	<div class="col-lg-12">
+		 		
+		 		<div class="col-md-3 col-sm-offset-6">
+		 			<p style="color:white;font-size:16px;">Total Amount : <?php echo $amt + $net_total; ?></p>
+		 		</div>
+				 <div class="col-md-3">
+		 			<p style="color:white;font-size:16px;">Total Online Payments : <?php echo $online; ?></p>
+		 		</div>
+		 	</div>
+	 	</div>
+        
+     
+            <div class="row">
+            <div class="col-sm-3 pull-right" style="padding-top:30px;padding-bottom:30px;">
+			<br>
+            <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Dine In</a>
+            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Dine In</a>
             </div>
-            
-            <div class="col-sm-3">
+            <br>
+            <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Take Away</a>
+            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Take Away</a>
             </div>
-            <div class="col-sm-3">
+			<br>
 
-            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Home Delivery</a>
+            <div class="col-sm-12">
+
+            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Home Delivery</a>
             </div>
                                         </div>
-            <div class="row">
-                <div class="col-md-12" style="padding-top:20px;">
+                <div class="col-sm-9" style="padding-top:20px;">
                     <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Manual Order</h1>
@@ -130,6 +205,7 @@ $ye = 0;
                                 <div class="form-group">Mobile No.
                                     <input pattern="[7-9]{1}[0-9]{9}" id="nu" type="text" name="mobno" class="form-control" required>
                                 </div>
+                                
                                 <br> 
                                 <div class="form-group">
                                     <input class="form-control" id="some" type="submit" name="CreateOrder" class="form-control" value="Create Order"><br>
@@ -264,6 +340,24 @@ $ye = 0;
             } ?>'); 
             $('#some').click();
         }   
+        function addOpeningAmt(){
+            amt = $('#opening_amount').val();
+            console.log(amt);
+            $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajax_addopening',
+                data: {
+                    'amt' : amt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+            }
+            });
+        }
     
     </script>
 

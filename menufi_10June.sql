@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 26, 2018 at 02:59 PM
+-- Generation Time: Jun 10, 2018 at 04:02 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -28,9 +28,19 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `addresses` (
   `id` int(11) NOT NULL,
-  `mobile` varchar(2555) NOT NULL,
-  `address` text NOT NULL
+  `mobile` varchar(15) NOT NULL,
+  `address` text NOT NULL,
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `addresses`
+--
+
+INSERT INTO `addresses` (`id`, `mobile`, `address`, `name`) VALUES
+(1, '9820181342', 'Test address', ''),
+(2, '9820181347', 'Test', 'jatin'),
+(4, '9820181343', '1', 'Uhu');
 
 -- --------------------------------------------------------
 
@@ -72,6 +82,26 @@ INSERT INTO `background_image` (`id`, `img_name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `batter`
+--
+
+CREATE TABLE `batter` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `batter`
+--
+
+INSERT INTO `batter` (`id`, `name`) VALUES
+(1, 'Batter 1'),
+(2, 'Batter 2'),
+(4, 'New batter test');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `categories`
 --
 
@@ -91,7 +121,31 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (9, 'Tandoori Specials'),
 (10, 'Vegetable Dishes'),
 (12, 'Side Orders - Bread'),
-(13, 'Side Order - Sundries');
+(13, 'Side Orders - Sundries');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coupons`
+--
+
+CREATE TABLE `coupons` (
+  `id` int(11) NOT NULL,
+  `c_type` varchar(255) NOT NULL,
+  `c_code` varchar(255) NOT NULL,
+  `c_minvalue` varchar(255) NOT NULL,
+  `c_status` varchar(255) NOT NULL,
+  `c_value` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `coupons`
+--
+
+INSERT INTO `coupons` (`id`, `c_type`, `c_code`, `c_minvalue`, `c_status`, `c_value`) VALUES
+(2, 'flat', 'PRA02', '2000', 'ON', '20'),
+(3, 'percent', 'MDH02', '1000', 'ON', '10'),
+(4, 'flat', 'PRA03', '300', 'ON', '100');
 
 -- --------------------------------------------------------
 
@@ -109,6 +163,18 @@ CREATE TABLE `customers` (
   `Last_Visited` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `customers`
+--
+
+INSERT INTO `customers` (`customer_id`, `mobile`, `email`, `otp`, `views`, `revenue`, `Last_Visited`) VALUES
+(1, '9820181347', '', '1', 24, 0, '2018-06-10 07:31:00'),
+(2, '9820181342', '', '0', 2, 0, '2018-04-29 11:24:28'),
+(3, '9820118134', '', '1', 2, 0, '2018-04-29 16:37:27'),
+(4, '9821181341', '', '1', 1, 0, '2018-04-29 16:19:50'),
+(5, '9820181344', '', '1', 2, 0, '2018-04-29 16:27:28'),
+(6, '9820181343', '', '0', 2, 0, '2018-06-10 07:30:02');
+
 -- --------------------------------------------------------
 
 --
@@ -121,12 +187,66 @@ CREATE TABLE `customer_order` (
   `Menu_Id` int(11) NOT NULL,
   `Quantity` int(11) NOT NULL,
   `Addons` varchar(25555) DEFAULT NULL,
+  `Batter` int(11) NOT NULL,
   `Optional_ingredients` text,
   `comments` text,
   `item_status` int(2) NOT NULL DEFAULT '1',
   `spice_level` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `customer_order`
+--
+
+INSERT INTO `customer_order` (`id`, `Order_id`, `Menu_Id`, `Quantity`, `Addons`, `Batter`, `Optional_ingredients`, `comments`, `item_status`, `spice_level`, `customer_id`) VALUES
+(1, 1, 3, 1, NULL, 0, NULL, 'comments', 2, NULL, NULL),
+(2, 3, 21, 2, '', 1, NULL, 'comments', 2, NULL, 2),
+(3, 6, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
+(4, 7, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
+(5, 8, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(6, 10, 3, 3, '', 1, NULL, 'comments', 2, NULL, 1),
+(7, 14, 3, 3, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(8, 15, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
+(9, 16, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
+(10, 17, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(11, 12, 3, 13, '', 1, NULL, 'comments', 2, NULL, 1),
+(12, 18, 3, 2, '', 1, NULL, 'comments', 2, NULL, 1),
+(13, 19, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
+(14, 20, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(15, 21, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
+(16, 22, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(17, 24, 3, 1, '', 1, NULL, 'comments', 2, NULL, 6),
+(18, 25, 4, 3, '', 1, NULL, 'comments', 2, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expenses`
+--
+
+CREATE TABLE `expenses` (
+  `id` int(20) NOT NULL,
+  `nameOfPerson` varchar(255) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `type` text NOT NULL,
+  `reason` varchar(2555) NOT NULL,
+  `date` varchar(2555) NOT NULL,
+  `time` varchar(2555) NOT NULL,
+  `name` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `expenses`
+--
+
+INSERT INTO `expenses` (`id`, `nameOfPerson`, `amount`, `type`, `reason`, `date`, `time`, `name`) VALUES
+(1, 'general', 0, 'dcdf', '', '', '', ''),
+(2, 'general', 0, 'dcdf', '', '', '', ''),
+(3, 'grossary', 0, '200', '', '', '', ''),
+(4, 'grossary', 0, 'DJNFJKD', '', '', '', ''),
+(5, '', 0, '', '', '', '', ''),
+(6, 'Jatin', 3, 'general', '3', '2018-06-07', '11:11', '32');
 
 -- --------------------------------------------------------
 
@@ -139,7 +259,8 @@ CREATE TABLE `fake_order` (
   `Menu_id` varchar(255) NOT NULL,
   `Customer_id` varchar(255) NOT NULL,
   `Quantity` varchar(255) NOT NULL,
-  `addon` varchar(25555) NOT NULL
+  `addon` varchar(25555) NOT NULL,
+  `batter` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -209,6 +330,26 @@ INSERT INTO `fonts` (`id`, `name`, `font-family`, `font-style`, `font-weight`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `hotel_name_addr`
+--
+
+CREATE TABLE `hotel_name_addr` (
+  `id` int(20) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `address` varchar(100) NOT NULL,
+  `contact` varchar(55) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `hotel_name_addr`
+--
+
+INSERT INTO `hotel_name_addr` (`id`, `name`, `address`, `contact`) VALUES
+(1, 'Paaji Balaji', 'Shop no 32, Vedant complex, Next to ICICI bank', '8433840004');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `ingredients`
 --
 
@@ -226,17 +367,16 @@ CREATE TABLE `ingredients` (
 --
 
 INSERT INTO `ingredients` (`Ingredients_id`, `Name`, `quantity`, `min_quantity`, `addons`, `cost`) VALUES
-(1, 'gram flour', 1500, 2000, 0, 10),
-(2, 'self-raising flour', -7000, 2000, 2, 15),
-(3, 'chilli powder', 4846, 190, 1, 13),
-(4, 'garam masala', 1792, 190, 1, 14),
+(2, 'self-raising flour', 68, 20, 2, 15),
+(3, 'chilli powder', 48, 40, 1, 13),
+(4, 'garam masala', 1790, 190, 1, 14),
 (5, 'tandoori masala powder', 200, 190, 0, 15),
-(6, 'potatoes', -440, 0, 0, NULL),
-(7, 'onions', 280, 0, 0, NULL),
-(8, 'spring onions', -1300, 0, 0, NULL),
-(9, 'spinach leaves', 100, 0, 0, NULL),
-(10, 'green chilli', -80, 0, 0, NULL),
-(11, 'salt', 320, 0, 0, NULL),
+(6, 'potatoes', 40, 0, 0, 2),
+(7, 'onions', 280, 0, 0, 10),
+(8, 'spring onions', 130, 0, 0, 22),
+(9, 'spinach leaves', 100, 0, 0, 12),
+(10, 'green chilli', 80, 0, 0, 11),
+(11, 'salt', 320, 0, 0, 22),
 (13, 'Tomato', 100, 10, 0, 12),
 (14, 'burger buns', 100, 20, 0, 12);
 
@@ -293,10 +433,10 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`Menu_Id`, `Name`, `Price`, `Description`, `Type`, `Category`, `Image`, `time`, `spice_level`) VALUES
-(3, 'Tuborg', 180, 'Light beer', 'Liquor', 'Beer', 'tuborg.jpg', '2', 0),
+(3, 'Tuborg', 180, 'Light beer', 'Liquor', 'Beer', 'tuborg.jpg', '2', 1),
 (4, 'Kingfisher Mild', 150, 'Light beer', 'Liquor', 'Beer', 'Kingfisher_Mild.jpg', '3', NULL),
 (5, 'Double Black', 600, 'Scotch', 'Liquor', 'Scotch', 'double_black.jpg', '4', NULL),
-(11, 'Tandoori King Prawn', 6.95, '', 'Non-Veg', 'SeaFood', '', '2', 2),
+(11, 'Tandoori King Prawn', 6.95, 'test', 'Non-Veg', 'Beer', 'dj3.png', '2', 2),
 (12, 'King Prawn Rosun', 5.95, '', 'Non-Veg', 'SeaFood', '', '1', 1),
 (13, 'King Prawn on Puree', 5.95, '', 'Non-Veg', 'SeaFood', '', '3', NULL),
 (14, 'Prawn Bhuna on Puree', 3.95, '', 'Non-Veg', 'SeaFood', '', '4', NULL),
@@ -329,8 +469,19 @@ CREATE TABLE `menu_ingridient_rel` (
   `Menu_id` int(10) NOT NULL,
   `Ingredients_id` int(10) NOT NULL,
   `quantity_rel` float NOT NULL,
-  `addons` int(11) DEFAULT '0' COMMENT '0-mandatory 2-optional 1-addon '
+  `addons` int(11) DEFAULT '0' COMMENT '0-mandatory 2-optional 1-addon ',
+  `addon_price` text NOT NULL,
+  `batters` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `menu_ingridient_rel`
+--
+
+INSERT INTO `menu_ingridient_rel` (`id`, `Menu_id`, `Ingredients_id`, `quantity_rel`, `addons`, `addon_price`, `batters`) VALUES
+(1, 29, 3, 10, 1, '20', ''),
+(2, 3, 2, 10, 1, '20', ''),
+(3, 3, 3, 12, 1, '80', '');
 
 -- --------------------------------------------------------
 
@@ -347,14 +498,27 @@ CREATE TABLE `nutrition` (
   `Menu_id` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `nutrition`
+-- Table structure for table `opening_amount`
 --
 
-INSERT INTO `nutrition` (`Id`, `Calories`, `Protein`, `Carbs`, `Fats`, `Menu_id`) VALUES
-(4, 320, 0, 0, 0, 3),
-(5, 350, 0, 0, 0, 4),
-(6, 250, 0, 0, 0, 5);
+CREATE TABLE `opening_amount` (
+  `opening_amount_id` int(11) NOT NULL,
+  `opening_amount` varchar(155) DEFAULT NULL,
+  `added_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `opening_amount`
+--
+
+INSERT INTO `opening_amount` (`opening_amount_id`, `opening_amount`, `added_date`) VALUES
+(1, '300', '2018-06-09 23:00:34'),
+(2, '400', '2018-06-10 00:00:40'),
+(14, '3', '2018-06-10 12:40:20'),
+(15, '343', '2018-06-10 12:44:51');
 
 -- --------------------------------------------------------
 
@@ -365,8 +529,40 @@ INSERT INTO `nutrition` (`Id`, `Calories`, `Protein`, `Carbs`, `Fats`, `Menu_id`
 CREATE TABLE `orders` (
   `Order_id` int(10) NOT NULL,
   `Table_id` int(10) NOT NULL,
-  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `order_type` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`Order_id`, `Table_id`, `Timestamp`, `order_type`) VALUES
+(1, 3, '2018-04-29 05:48:49', ''),
+(2, -1, '2018-04-29 05:54:27', ''),
+(3, 0, '2018-04-29 05:54:28', ''),
+(4, 7, '2018-04-29 11:06:11', ''),
+(5, 4, '2018-04-29 11:07:31', ''),
+(6, 3, '2018-06-09 20:49:01', 'test'),
+(7, 2, '2018-06-09 20:55:31', ''),
+(8, 3, '2018-06-09 21:25:13', ''),
+(9, 1, '2018-06-09 21:25:49', ''),
+(10, 0, '2018-06-09 21:27:09', ''),
+(11, 99, '2018-06-09 21:52:02', ''),
+(12, 3, '2018-06-09 21:58:12', ''),
+(13, 99, '2018-06-09 22:20:53', ''),
+(14, 4, '2018-06-09 22:51:37', ''),
+(15, 5, '2018-06-09 23:43:28', 'Dine In'),
+(16, 3, '2018-06-09 23:47:04', 'Dine In'),
+(17, 3, '2018-06-09 23:52:38', 'Dine In'),
+(18, 4, '2018-06-09 23:57:02', 'Dine In'),
+(19, 5, '2018-06-09 23:58:13', 'Dine In'),
+(20, 2, '2018-06-10 01:01:22', 'Dine In'),
+(21, 0, '2018-06-10 01:05:36', 'Home Delivery'),
+(22, 2, '2018-06-10 01:43:29', 'Dine In'),
+(23, -1, '2018-06-10 01:59:00', 'Home Delivery'),
+(24, 0, '2018-06-10 02:00:02', 'Home Delivery'),
+(25, 2, '2018-06-10 02:01:00', 'Dine In');
 
 -- --------------------------------------------------------
 
@@ -378,8 +574,65 @@ CREATE TABLE `order_status` (
   `id` int(11) NOT NULL,
   `Order_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
-  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `seen` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `order_status`
+--
+
+INSERT INTO `order_status` (`id`, `Order_id`, `status`, `Timestamp`, `seen`) VALUES
+(1, 1, 4, '2018-04-29 05:48:49', 0),
+(2, 3, 3, '2018-04-29 05:54:28', 0),
+(3, 4, 0, '2018-04-29 11:06:11', 0),
+(4, 5, 0, '2018-04-29 11:07:31', 0),
+(5, 6, 4, '2018-06-09 20:49:01', 0),
+(6, 7, 4, '2018-06-09 20:55:31', 0),
+(7, 8, 4, '2018-06-09 21:25:13', 0),
+(8, 9, 1, '2018-06-09 21:25:49', 0),
+(9, 10, 4, '2018-06-09 21:27:09', 0),
+(10, 11, 1, '2018-06-09 21:52:02', 0),
+(11, 12, 4, '2018-06-09 21:58:12', 0),
+(12, 13, 1, '2018-06-09 22:20:53', 0),
+(13, 14, 4, '2018-06-09 22:51:37', 0),
+(14, 15, 4, '2018-06-09 23:43:28', 0),
+(15, 16, 4, '2018-06-09 23:47:04', 0),
+(16, 17, 4, '2018-06-09 23:52:38', 0),
+(17, 18, 4, '2018-06-09 23:57:02', 0),
+(18, 19, 4, '2018-06-09 23:58:13', 0),
+(19, 20, 4, '2018-06-10 01:01:22', 0),
+(20, 21, 4, '2018-06-10 01:05:36', 0),
+(21, 22, 4, '2018-06-10 01:43:29', 0),
+(22, 24, 4, '2018-06-10 02:00:02', 0),
+(23, 25, 4, '2018-06-10 02:01:00', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_details`
+--
+
+CREATE TABLE `payment_details` (
+  `payment_details_id` int(11) NOT NULL,
+  `Order_id` int(11) DEFAULT NULL,
+  `payment_type` varchar(55) DEFAULT NULL,
+  `total_amount` varchar(255) DEFAULT NULL,
+  `given_amount` varchar(255) DEFAULT NULL,
+  `return_amount` varchar(255) DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
+  `added_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `payment_details`
+--
+
+INSERT INTO `payment_details` (`payment_details_id`, `Order_id`, `payment_type`, `total_amount`, `given_amount`, `return_amount`, `added_by`, `added_date`) VALUES
+(1, 22, 'Card', '360', '360', '0', NULL, NULL),
+(2, 24, 'Cash', '180', '400', '200', NULL, NULL),
+(3, 25, 'Online', '450', '450', '0', NULL, NULL),
+(4, 24, 'Card', '180', '180', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -393,10 +646,37 @@ CREATE TABLE `sales` (
   `cgst` float NOT NULL,
   `sgst` float NOT NULL,
   `net_total` float NOT NULL,
+  `coupon_apply` int(11) DEFAULT NULL,
+  `coupon_code` varchar(255) NOT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `customer_id` int(11) DEFAULT NULL,
-  `login_type` varchar(20) DEFAULT NULL
+  `login_type` varchar(20) DEFAULT NULL,
+  `refund` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sales`
+--
+
+INSERT INTO `sales` (`sales_id`, `Order_id`, `cgst`, `sgst`, `net_total`, `coupon_apply`, `coupon_code`, `Timestamp`, `customer_id`, `login_type`, `refund`) VALUES
+(1, 1, 4.5, 4.5, 189, NULL, '', '2018-04-29 05:50:05', 1, 'mobile', 0),
+(2, 3, 0.325, 0.325, 13.65, NULL, '', '2018-04-29 05:54:50', 2, 'Manual', 0),
+(3, 6, 9, 9, 378, NULL, '', '2018-06-09 20:49:21', 1, 'Manual', 0),
+(4, 7, 9, 9, 378, NULL, '', '2018-06-09 20:55:48', 1, 'Manual', 0),
+(5, 8, 9, 9, 378, NULL, '', '2018-06-09 21:25:25', 1, 'Manual', 0),
+(6, 10, 13.5, 13.5, 567, NULL, '', '2018-06-09 21:27:18', 1, 'Manual', 0),
+(7, 14, 0, 0, 540, NULL, '', '2018-06-09 22:51:46', 1, 'Manual', 0),
+(8, 15, 0, 0, 360, NULL, '', '2018-06-09 23:43:40', 1, 'Manual', 0),
+(9, 16, 0, 0, 180, NULL, '', '2018-06-09 23:47:14', 1, 'Manual', 0),
+(10, 17, 0, 0, 360, NULL, '', '2018-06-09 23:52:49', 1, 'Manual', 0),
+(11, 12, 0, 0, 2340, NULL, '', '2018-06-09 23:54:32', 1, 'Manual', 0),
+(12, 18, 0, 0, 360, NULL, '', '2018-06-09 23:57:10', 1, 'Manual', 0),
+(13, 19, 0, 0, 180, NULL, '', '2018-06-09 23:58:19', 1, 'Manual', 0),
+(14, 20, 0, 0, 180, NULL, '', '2018-06-10 01:01:33', 1, 'Manual', 0),
+(15, 21, 0, 0, 180, NULL, '', '2018-06-10 01:05:41', 1, 'Manual', 1),
+(16, 22, 0, 0, 360, NULL, '', '2018-06-10 01:43:40', 1, 'Manual', 0),
+(17, 24, 0, 0, 180, NULL, '', '2018-06-10 02:00:11', 6, 'Manual', 0),
+(18, 25, 0, 0, 450, NULL, '', '2018-06-10 02:01:08', 1, 'Manual', 0);
 
 -- --------------------------------------------------------
 
@@ -429,7 +709,8 @@ INSERT INTO `staff_management` (`id`, `name`, `salary`, `shifts`, `chores`, `tab
 -- Indexes for table `addresses`
 --
 ALTER TABLE `addresses`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `mobile` (`mobile`);
 
 --
 -- Indexes for table `admin`
@@ -444,9 +725,21 @@ ALTER TABLE `background_image`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `batter`
+--
+ALTER TABLE `batter`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `coupons`
+--
+ALTER TABLE `coupons`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -466,6 +759,12 @@ ALTER TABLE `customer_order`
   ADD KEY `Order_constraint` (`Order_id`);
 
 --
+-- Indexes for table `expenses`
+--
+ALTER TABLE `expenses`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `fake_order`
 --
 ALTER TABLE `fake_order`
@@ -481,6 +780,12 @@ ALTER TABLE `feedback`
 -- Indexes for table `fonts`
 --
 ALTER TABLE `fonts`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `hotel_name_addr`
+--
+ALTER TABLE `hotel_name_addr`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -524,6 +829,12 @@ ALTER TABLE `nutrition`
   ADD KEY `nutrition_ibfk_1` (`Menu_id`);
 
 --
+-- Indexes for table `opening_amount`
+--
+ALTER TABLE `opening_amount`
+  ADD PRIMARY KEY (`opening_amount_id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -535,6 +846,12 @@ ALTER TABLE `orders`
 ALTER TABLE `order_status`
   ADD PRIMARY KEY (`id`),
   ADD KEY `order_status` (`Order_id`);
+
+--
+-- Indexes for table `payment_details`
+--
+ALTER TABLE `payment_details`
+  ADD PRIMARY KEY (`payment_details_id`);
 
 --
 -- Indexes for table `sales`
@@ -557,7 +874,7 @@ ALTER TABLE `staff_management`
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `admin`
 --
@@ -569,25 +886,40 @@ ALTER TABLE `admin`
 ALTER TABLE `background_image`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
+-- AUTO_INCREMENT for table `batter`
+--
+ALTER TABLE `batter`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+--
+-- AUTO_INCREMENT for table `coupons`
+--
+ALTER TABLE `coupons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+--
+-- AUTO_INCREMENT for table `expenses`
+--
+ALTER TABLE `expenses`
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `fake_order`
 --
 ALTER TABLE `fake_order`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `feedback`
 --
@@ -598,6 +930,11 @@ ALTER TABLE `feedback`
 --
 ALTER TABLE `fonts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+--
+-- AUTO_INCREMENT for table `hotel_name_addr`
+--
+ALTER TABLE `hotel_name_addr`
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `ingredients`
 --
@@ -617,32 +954,42 @@ ALTER TABLE `logo`
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `menu_ingridient_rel`
 --
 ALTER TABLE `menu_ingridient_rel`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `nutrition`
 --
 ALTER TABLE `nutrition`
-  MODIFY `Id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id` int(20) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `opening_amount`
+--
+ALTER TABLE `opening_amount`
+  MODIFY `opening_amount_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `order_status`
 --
 ALTER TABLE `order_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+--
+-- AUTO_INCREMENT for table `payment_details`
+--
+ALTER TABLE `payment_details`
+  MODIFY `payment_details_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
+  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 --
 -- Constraints for dumped tables
 --
@@ -652,13 +999,6 @@ ALTER TABLE `sales`
 --
 ALTER TABLE `customer_order`
   ADD CONSTRAINT `Order_constraint` FOREIGN KEY (`Order_id`) REFERENCES `orders` (`Order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `menu_ingridient_rel`
---
-ALTER TABLE `menu_ingridient_rel`
-  ADD CONSTRAINT `ingredient_id_constraint` FOREIGN KEY (`Ingredients_id`) REFERENCES `ingredients` (`Ingredients_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `menu_id_constraint` FOREIGN KEY (`Menu_id`) REFERENCES `menu` (`Menu_Id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `nutrition`

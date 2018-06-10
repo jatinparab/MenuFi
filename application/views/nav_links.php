@@ -32,6 +32,9 @@ and open the template in the editor.
                         <li>
                             <a href="<?php echo base_url(); ?>index.php/Admin/kitchen_dashboard"><i class="fa fa-dashboard fa-fw"></i> Kitchen Dashboard</a>
                         </li>
+                        <li>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/addExpenses"><i class="fa fa-money fa-fw"></i> Add Expenses</a>
+                        </li>
 						<?php if($_SESSION['user_type'] != 'chef'){ ?>
                         <li>
                             <a href="<?php echo base_url(); ?>index.php/Admin/manageDeliveries"><i class="fa fa-truck fa-fw"></i> Manage Deliveries</a>
@@ -102,6 +105,9 @@ and open the template in the editor.
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_execReport"><i class="fa fa-edit fa-fw"></i> Sales Execution Report</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_daily_reports"><i class="fa fa-edit fa-fw"></i> Daily Sales Report</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_labourReports"><i class="fa fa-edit fa-fw"></i> Labour Reports</a>

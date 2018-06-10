@@ -900,6 +900,47 @@ if(!isset($_SESSION['admin_id']))
         }
     }
 
+    public function addExpenses(){
+    
+        $expenses = $this->db->query("SELECT * FROM expenses where 1")->result_array();
+        $data['expensesList'] = $expenses;
+        $totalAmount=0;
+        foreach($expenses as $expense){
+          $totalAmount+=$expense['amount'];
+        }
+        $data['totalAmount']=$totalAmount;
+    
+        $this->load->view("addExpenses", $data);
+        $this->load->view('footer');
+        }
+    
+        public function viewExpense(){
+        
+        $data['type'] = $_POST['type'];
+        $data['name'] =  $_POST['name'];
+        $data['amt'] =  $_POST['amt'];
+        $data['nameOfPerson'] = $_POST['nameOfPerson'];
+        $data['reason'] = $_POST['reason'];
+        $data['date'] = $_POST['date'];
+        $data['time'] = $_POST['time'];
+        $this->load->model('Admin_model');
+        $success = $this->Admin_model->addExpenses($data);
+        //$rsultary = array();
+        if($success == 1){
+          $rsultary = '1';
+          
+        }else{
+          
+          $rsultary = '0';
+        }
+        
+        $this->load->view("addExpenses");
+        $this->load->view('footer');
+        
+        echo(json_encode($rsultary));die;
+        
+      }
+
     public function cashOrder(){
         
         $q = $this->db->query("SELECT order_status.Order_id as Order_id ,order_status.id as id , sales.net_total as net_total from order_status , sales where day(order_status.TIMESTAMP)= day(curdate()) and order_status.status=3 and sales.Order_id = order_status.Order_id")->result_array();
@@ -1105,6 +1146,282 @@ if(!isset($_SESSION['admin_id']))
 
     }
 
+    public function ajax_payitaway(){
+        $data['id'] = $_GET['id'];
+        $data['type'] = $_GET['type'];
+        $data['given_amt'] = $_GET['given_amt'];
+        $data['return_amt'] = $_GET['return_amt'];
+        $this->load->view('ajax_payItAway',$data);
+        
+    }
+
+    public function printafterOrder(){
+        $Order_id = $_GET['Order_id'];
+        //$Order_id='520';
+        $this->load->model('Admin_model');
+        $printData = $this->Admin_model->get_print_details($Order_id);
+        //echo "<pre>";print_r($printData);echo "</pre>";
+        
+        $sq3 = $this->db->query("select * from hotel_name_addr")->result_array();
+        
+        $abc['hoteladdr'] = $sq3;
+        $result123 = $abc['hoteladdr'];
+    
+        $address = str_split($result123['0']['address'],24);
+        $address1 = $address[0];
+        $address2 = $address[1];
+    
+        $username = $this->session->userdata('User');
+    
+        $table= "<table class='' style='font-size: 16px;'><tr><td colspan='4' align='center' style='font-weight:bold;font-size: 24px;'>".$result123['0']['name']."</td></tr>
+          <tr><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>".$address1."</td></tr>
+          <tr><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>".$address2."</td></tr>
+          <tr ><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>( ".$result123['0']['contact']." )</td></tr>
+          <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            <tr>  
+              <td>Order No : ".$Order_id."</td><td>Name :</td><td>".$username."</td>
+            </tr>
+            <tr>
+              <td>Time : ".Date('h:i:s')."</td><td>Date :</td><td>".Date('d-m-Y')."</td>
+            </tr>
+            <tr>
+              <td>Type : ".$printData[0]['order_type']."</td>
+            </tr>
+            <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            <tr>
+              <td style='padding-top:10px;'> Bill Details </td><td>Quantity</td><td>Amount</td>
+            </tr>";
+    
+            $total=0;
+          foreach($printData as $data ){
+            if($data['Addons']!='' && $data['Addons']!='0'){
+              $Addons = explode(',',$data['Addons']);
+              $Menu_Id = $data['Menu_Id'];
+    
+              $totalAddonCost = 0;
+              foreach($Addons as $addn){
+                $addoncost= $this->db->query("SELECT * FROM menu_ingridient_rel WHERE Ingredients_id='$addn' AND Menu_id='$Menu_Id' ORDER BY id DESC");
+                $res = $addoncost ->row_array();
+                $totalAddonCost += $res['addon_price'];
+              }
+    
+              $addonCost = $totalAddonCost;
+            } else {
+              $addonCost = 0;
+            }
+    
+            $amount = $data['Quantity'] * $data['Price'];
+            $amount = $amount + $data['Quantity'] * $addonCost;
+            $table .= "<tr>
+              <td width='30px'>".$data['Name']."</td><td>".$data['Quantity']."</td><td>".$amount."</td>
+            </tr>";
+            $total += $amount;
+          }
+          
+    
+          $table .="
+            <tr>
+              <td></td><td>Total</td><td>".$total."</td>
+            </tr>";
+          
+          if($printData['0']['coupon_apply']=='1'){
+            $table .="
+              <tr>
+               <td style='padding-top:10px;'> Discount </td><td>".$printData['0']['c_value']."</td>
+              </tr>
+              <tr>
+                <td> Coupon Code </td><td>".$printData['0']['c_code']."</td>
+              </tr>";
+          }
+         
+    
+          $table .="
+            <tr><td colspan='4' style='font-weight:bold;font-size: 14px;padding-top:10px;' align='center'>
+              Thank you visit again!
+            </td>
+            </tr>
+        </table>";
+        
+        echo $table;
+        
+      }
+
+      public function sales_daily_reports()
+      {
+        $hour_arr = array(
+                '1'=>array('start'=>'09','end'=>'10','hour'=>'09-10 AM'),
+                '2'=>array('start'=>'10','end'=>'11','hour'=>'10-11 AM'),
+                '3'=>array('start'=>'11','end'=>'12','hour'=>'11-12 PM'),
+                '4'=>array('start'=>'12','end'=>'13','hour'=>'12-01 PM'),
+                '5'=>array('start'=>'13','end'=>'14','hour'=>'01-02 PM'),
+                '6'=>array('start'=>'14','end'=>'15','hour'=>'02-03 PM'),
+                '7'=>array('start'=>'15','end'=>'16','hour'=>'03-04 PM'),
+                '8'=>array('start'=>'16','end'=>'17','hour'=>'04-05 PM'),
+                '9'=>array('start'=>'17','end'=>'18','hour'=>'05-06 PM'),
+                '10'=>array('start'=>'18','end'=>'19','hour'=>'06-07 PM'),
+                '11'=>array('start'=>'19','end'=>'20','hour'=>'07-08 PM'),
+                '12'=>array('start'=>'20','end'=>'21','hour'=>'08-09 PM'),
+                '13'=>array('start'=>'21','end'=>'22','hour'=>'09-10 PM'),
+                '14'=>array('start'=>'22','end'=>'23','hour'=>'10-11 PM'),
+                '15'=>array('start'=>'23','end'=>'00','hour'=>'11-12 PM'),
+                '16'=>array('start'=>'00','end'=>'01','hour'=>'12-01 PM'),
+        );
+  
+        $data_arr = array();
+        if(isset($_POST['date_dt']) && $_POST['date_dt']!=''){
+          $today_date = date('Y-m-d', strtotime($_POST['date_dt']));
+        }else{
+          $today_date = date('Y-m-d');
+        }
+        
+        $last_total = '0';
+        $final_avg_sales_total = 0;
+        $final_total = 0;
+        foreach($hour_arr as $key=> $hr ){
+          $start = $hr['start'];
+          $end   = $hr['end'];
+          if($key=='15'){
+            $start_date=$today_date;
+            $end_date=date('Y-m-d', strtotime("+1 day", strtotime($today_date)));
+          }else if($key=='16'){
+            $start_date=date('Y-m-d', strtotime("+1 day", strtotime($today_date)));
+            $end_date=date('Y-m-d', strtotime("+1 day", strtotime($today_date)));
+          }else{
+            $start_date=$today_date;
+            $end_date=$today_date;
+          }
+          
+          $q = "SELECT count(s.sales_id) AS count,SUM(s.net_total) AS total_sales FROM sales s LEFT JOIN order_status os ON os.Order_id=s.Order_id WHERE os.status ='1' AND s.Timestamp>=str_to_date(concat('".$start_date."',' ".$start."'),'%Y-%m-%d %H') AND s.Timestamp<=str_to_date(concat('".$end_date."',' ".$end."'),'%Y-%m-%d %H')";
+  
+          $query = $this->db->query($q);
+          $result = $query->row_array();
+        
+          $data_arr[$key]['hour'] = $hr['hour'];
+          $data_arr[$key]['total_customer'] = $result['count'];
+          $data_arr[$key]['sales_hour'] = round($result['total_sales'],2);
+  
+          if($result['count']>0){
+            $avg_sales_hour = round($result['total_sales'], 2) / $result['count'];
+            $data_arr[$key]['avg_sales_hour'] = round($avg_sales_hour,2);
+          } else{
+            $avg_sales_hour = 0;
+            $data_arr[$key]['avg_sales_hour'] = '0';
+          }
+          
+          $data_arr[$key]['total_sales'] = round($result['total_sales'], 2) + $last_total;
+          $last_total = round($result['total_sales'], 2) + $last_total;
+  
+          $final_avg_sales_total += $avg_sales_hour;
+          $final_total += round($result['total_sales'],2);
+        }
+        
+        $data['date'] = date('d-m-Y', strtotime($today_date));
+        $data['report_data'] = $data_arr;
+        $data['final_avg_sales_total'] = round($final_avg_sales_total,2);
+        $data['final_total'] = $final_total;
+  
+        $response = $this->load->view("sales_daily_reports",$data);
+      }
+
+      public function printafterOrderD(){
+        $Order_id = $_GET['Order_id'];
+        $addess = $_GET['address'];
+        $name = $_GET['name'];
+        //$Order_id='520';
+        $this->load->model('Admin_model');
+        $printData = $this->Admin_model->get_print_details($Order_id);
+        //echo "<pre>";print_r($printData);echo "</pre>";
+        
+        $sq3 = $this->db->query("select * from hotel_name_addr")->result_array();
+        
+        $abc['hoteladdr'] = $sq3;
+        $result123 = $abc['hoteladdr'];
+    
+        $address = str_split($result123['0']['address'],24);
+        $address1 = $address[0];
+        $address2 = $address[1];
+    
+        $username = $this->session->userdata('User');
+    
+        $table= "<table class='' style='font-size: 16px;'><tr><td colspan='4' align='center' style='font-weight:bold;font-size: 24px;'>".$result123['0']['name']."</td></tr>
+          <tr><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>".$address1."</td></tr>
+          <tr><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>".$address2."</td></tr>
+          <tr ><td colspan='4' style='font-weight:bold;font-size: 14px;' align='center'>( ".$result123['0']['contact']." )</td></tr>
+          <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            <tr>  
+              <td>Order No : ".$Order_id."</td><td>Name :</td><td>".$username."</td>
+            </tr>
+            <tr>
+              <td>Time : ".Date('h:i:s')."</td><td>Date :</td><td>".Date('d-m-Y')."</td>
+            </tr>
+            <tr>
+              <td>Type : ".$printData[0]['order_type']."</td>
+            </tr>
+            <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            <tr>
+              <td style='padding-top:10px;'> Bill Details </td><td>Quantity</td><td>Amount</td>
+            </tr>";
+    
+            $total=0;
+          foreach($printData as $data ){
+            if($data['Addons']!='' && $data['Addons']!='0'){
+              $Addons = explode(',',$data['Addons']);
+              $Menu_Id = $data['Menu_Id'];
+    
+              $totalAddonCost = 0;
+              foreach($Addons as $addn){
+                $addoncost= $this->db->query("SELECT * FROM menu_ingridient_rel WHERE Ingredients_id='$addn' AND Menu_id='$Menu_Id' ORDER BY id DESC");
+                $res = $addoncost ->row_array();
+                $totalAddonCost += $res['addon_price'];
+              }
+    
+              $addonCost = $totalAddonCost;
+            } else {
+              $addonCost = 0;
+            }
+    
+            $amount = $data['Quantity'] * $data['Price'];
+            $amount = $amount + $data['Quantity'] * $addonCost;
+            $table .= "<tr>
+              <td width='30px'>".$data['Name']."</td><td>".$data['Quantity']."</td><td>".$amount."</td>
+            </tr>";
+            $total += $amount;
+          }
+          
+    
+          $table .="
+            <tr>
+              <td></td><td>Total</td><td>".$total."</td>
+            </tr>";
+          
+          if($printData['0']['coupon_apply']=='1'){
+            $table .="
+              <tr>
+               <td style='padding-top:10px;'> Discount </td><td>".$printData['0']['c_value']."</td>
+              </tr>
+              <tr>
+                <td> Coupon Code </td><td>".$printData['0']['c_code']."</td>
+              </tr>
+              ";
+              
+          }
+         
+    
+          $table .="
+          <tr><td>Name: </td><td>".$name."</td></tr>
+          <tr><td>Address: </td><td>".$addess."</td></tr>
+            <tr><td colspan='4' style='font-weight:bold;font-size: 14px;padding-top:10px;' align='center'>
+              Thank you visit again!
+            </td>
+            </tr>
+        </table>";
+        
+        echo $table;
+        
+      }
+
+
+
     public function tableStatus(){
         $this->load->model('Admin_model');
 
@@ -1266,6 +1583,7 @@ if(!isset($_SESSION['admin_id']))
         $this->load->model('Admin_model');
         $data['orderid'] =$this->Admin_model->get_orderid();
         $data['address'] = $_POST['address'];
+        $data['nameee'] = $_POST['nameee'];
         $data['mobno'] = $_POST['mobno'];
         $data['todaysOrders'] = $this->Admin_model->total_orders();
     
@@ -1683,6 +2001,11 @@ public function addmenu(){
      $data['name'] = $_GET['name'];
      $this->load->view('ajax_addcategory',$data);
  }
+
+ public function ajax_addopening(){
+    $data['amt'] = $_GET['amt'];
+    $this->load->view('ajax_addOpen',$data);
+}
 
  public function ajax_deleteCategory(){
     $data['id'] = $_GET['id'];

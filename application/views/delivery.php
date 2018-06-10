@@ -132,6 +132,7 @@
                             $rg = $conn -> query($sq6);
                             $rk = $rg -> fetch_assoc();
                             $add = $rk['address'];
+                            $name = $rk['name'];
                         ?>
                 
                 </p>
@@ -150,13 +151,17 @@
                     echo $r2['net_total'];
                     
                     ?></h4>
-                    <p>
+                    <p><strong>Name:</strong> <?php if(isset($name)){echo $name;} ?><br><br>
                         <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
+                        
                     </p>
                     </span>
                     <br>
                     <div>
-                        <input type="submit" value="Send Delivery"  class="btn btn-success form-control" onclick="sendDelivery('<?php echo $idr ?>');print('<?php echo $idr; ?>')">
+                        
+                        <input type="submit" value="Send Delivery"  class="btn btn-success form-control" onclick="print('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>')"><br><br>
+                        <input type="submit" value="Payment Recieved"  class="btn btn-success form-control" onclick="showModal('<?php echo $idr; ?>');">
+
                     </div>
                 </div>
             </div>
@@ -175,6 +180,45 @@
         <!-- /#page-wrapper -->
 
     </div>
+
+     	<div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="mySmallModalLabel">Payment</h4>
+                        <input class="hidden" id="modal_oid">
+				</div>
+				<form action="">
+					<div class="modal-body">
+						<div class="form-group">
+						  	<label for="email">Payment Type:</label>
+						 	<select class="form-control" name="payment_type" id="payment_type">
+						 		<option value="">Select Payment Type</option>
+								<option value="Cash">Cash</option>
+								<option value="Card">Card</option>
+								<option value="Online">Online</option>
+							</select>
+						</div>
+						<div id="cash_div" style="display: none;">
+							<div class="form-group">
+							  <label for="pwd">Given Amount:</label>
+							  <input type="text" class="form-control" id="given_amount" placeholder="Enter Given Amount" name="given_amount" onblur="getReturnAmount()">
+							</div>
+							<div class="form-group">
+							  <label for="pwd">Return Amount:</label>
+							  <input type="text" class="form-control" id="return_amount" placeholder="Enter Return Amount" name="return_amount">
+							</div>
+						</div>			
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="call()" >Submit</button>
+					</div>
+				</form>	
+			</div>
+		</div>
+	</div>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
@@ -211,20 +255,92 @@ function sendDelivery(id){
             }
         });
 }
+$(function() {
+		    $('#payment_type').change(function(){
+		        if($('#payment_type').val() == 'Cash') {
+		            $('#cash_div').show(); 
+		        } else {
+		            $('#cash_div').hide(); 
+		        } 
+		    });
+		});
 
-function print(id){
-            var divContents = $("#printspan"+id).html();
-            var printWindow = window.open('', '', 'height=800,width=600');
-            printWindow.document.write(`<html><head><style>@page {
-                size: 3in 3.6in;
-   margin: 30%
-}
-</style><title></title>`);
-            printWindow.document.write('</head><body style="height:100px;width:300px;">');
-            printWindow.document.write(divContents);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
+function print(id,address,name){
+           // var divContents = $("#printspan"+id).html();
+               var printWindow = window.open('', '', 'height=300,width=600');
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrderD',
+                data : {
+                    'Order_id':id,
+                    'name': name,
+                    'address': address
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
         }
+
+        function showModal(id){
+    $('#modal_oid').val(id);
+    $('#addPaymentModal').modal('show');
+    $('#given_amount').val('');
+    $('#return_amount').val('');
+    console.log(id);
+}
+
+function call(){
+    let gamt = 0;
+    let ramt = 0;
+    id = $('#modal_oid').val();
+    if($('#given_amount').val()!=''){
+        gamt = $('#given_amount').val();    
+    }
+    if($('#return_amount').val()!=''){
+        ramt = $('#return_amount').val();    
+    }
+
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_payitaway',
+                data:{
+                    'id':id,
+                    'type': $('#payment_type').val(),
+                    'given_amt':gamt,
+                    'return_amt': ramt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    //console.log(resp);
+                    if(resp == 'success'){
+                       sendDelivery(id);
+                       //print(id);
+                     //  window.location = '';
+
+                    }
+
+            }
+        });
+    
+    
+}
+
+
 </script>
 </html>

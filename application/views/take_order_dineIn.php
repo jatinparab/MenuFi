@@ -1,5 +1,12 @@
 <?php
-    $conn = mysqli_connect("localhost","root", "", "menufi");
+	$conn = mysqli_connect("localhost","root", "", "menufi");
+	$s1 = "SELECT * 
+FROM opening_amount
+ORDER BY opening_amount_id DESC
+LIMIT 1";
+$res = $conn->query($s1);
+$row = $res -> fetch_assoc();
+$amt = $row['opening_amount'];
     $s = "SELECT * FROM menu";
     $r = $conn -> query($s);
     $categories = array();
@@ -9,6 +16,8 @@
     $categories = array_unique($categories);
 	//echo $latest;
 	$ye = 0;
+
+
     if(isset($mobno) && isset($tableno)){
         //echo $address;
          //echo $mobno;
@@ -20,7 +29,29 @@
     }
 	// Pending Cash Order
 	$q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and order_status.status=3 and sales.Order_id = order_status.Order_id")->result_array();
-    $pendingOrders = $q;
+	$pendingOrders = $q;
+	
+	$sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card'";
+	$res = $conn -> query($sql3);
+	$card = 0;
+	$online = 0;
+	
+	
+	$sql4 = "SELECT * FROM payment_details WHERE payment_type ='Online'";
+	$re4 = $conn -> query($sql4);
+
+	if(mysqli_num_rows($res)>0){
+		while($rowcard = $res -> fetch_assoc()){
+			$card +=  $rowcard['total_amount'];
+		}
+	}
+	
+	if(isset($re4)){
+		while($rowonline = $re4 -> fetch_assoc()){
+			$online +=  $rowonline['total_amount'];
+		}
+	}
+
 	?>
 	
 
@@ -116,25 +147,81 @@
 				<!-- /.navbar-static-side -->
 			</nav>
 
-			<div id="page-wrapper">
-			<div class="row" style="padding-top:30px;padding-bottom:30px;">
-            <div class="col-sm-3">
+			<div  id="page-wrapper">
 
-            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Dine In</a>
+			<div class="row">
+	 		<div class="col-lg-12" style="margin-top:10px">
+		 		<div class="col-md-2 ">
+		 			<input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
+		 		</div>
+		 		<div class="col-md-2">
+		 			<input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
+		 		</div>
+		 		<div class="col-md-6 col-sm-offset-2">
+		 			<p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
+		 		</div>
+		 	</div>
+		 	<div class="col-lg-12">
+		 		
+		 		<div class="col-md-3 col-sm-offset-6">
+					 <p style="color:white;font-size:16px;">Total Sales Amount : <?php 
+					 $net_total = 0;
+					 foreach($totalSaleOfDay as $sale)
+					 {
+						 $net_total +=(int) $sale->net_total;
+					 }
+					 
+					 echo $net_total; ?> </p>
+		 		</div>
+				 <div class="col-md-3 ">
+					 <p style="color:white;font-size:16px;">Total Card Sales : <?php 
+					 
+					 
+					 echo $card; ?> </p>
+		 		</div>
+		 	</div>
+		 	<div class="col-lg-12">
+		 		
+		 		<div class="col-md-3 col-sm-offset-6">
+		 			<p style="color:white;font-size:16px;">Total Amount : <?php echo $amt + $net_total; ?></p>
+		 		</div>
+				 <div class="col-md-3">
+		 			<p style="color:white;font-size:16px;">Total Online Payments : <?php echo $online; ?></p>
+		 		</div>
+		 	</div>
+	 	</div>
+			
+            <div class="row">
+			<?php if(!(isset($_SESSION['order_id']))){ ?>
+			
+			<div class="col-sm-3 pull-right" style="padding-top:30px;padding-bottom:30px;">
+			<br>
+            <div class="col-sm-12">
+
+            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Dine In</a>
             </div>
-            
-            <div class="col-sm-3">
+            <br>
+            <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Take Away</a>
+            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Take Away</a>
             </div>
-            <div class="col-sm-3">
+			<br>
 
-            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:40px;" class="btn btn-info btn-lg">Home Delivery</a>
+            <div class="col-sm-12">
+
+            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Home Delivery</a>
             </div>
                                         </div>
-            <div class="row">
-				
-								<div class="col-lg-12">
+			<?php } ?>
+								<div class="col-sm-
+								 <?php if(!(isset($_SESSION['order_id']))){
+									 echo 9;
+								 }
+									 else{
+										 echo 12;
+									 } ?> 
+								
+								">
 									<h1 class="page-header">Manual Order</h1>
 									<div class="form-body">
 										<!-- JAVASCRIPT ADD ITEM TO ORDER CONTENT WILL BE HERE -->
@@ -158,6 +245,116 @@
 										<?php }
                         else{ ?>
 										<div class="col-md-12">
+										<div  class="col-lg-12">
+								<div style="max-height: 300px; overflow:auto;" class="panel panel-info">
+									<div class="panel-heading">
+										Menu
+									</div>
+									<!-- /.panel-heading -->
+									<div class="panel-body">
+
+										<div class="table-responsive">
+
+											<table class="table table-bordered">
+												<tr>
+													<th>Menu Id</th>
+													<th>Name</th>
+													<th>Category</th>
+													<th>Quantity</th>
+													<th>Addon</th>
+													<th>Addons Added</th>
+													<th>Batter</th>
+													<th>Add Item</th>
+												</tr>
+												<?php 
+                                                if(isset($query2) && !empty($query2)){
+                                                    foreach ($query2 as $value) {
+                                                ?>
+												<tr id="<?php echo $value['Menu_Id']; ?>" class="menu-item <?php echo str_replace(' ','',$value['Category']); ?>">
+													<form action="addfakeD" method="post">
+														<td>
+															<input type="text" name="Menu_id" class="form-control" value='<?php echo $value['Menu_Id'];?>'>
+														</td>
+														<td>
+															<?php echo $value['Name']; ?>
+														</td>
+														<td>
+															<?php echo $value['Category'];?>
+														</td>
+														<td>
+															<input type="number" name="quantity" class="form-control">
+														</td>
+														<td>
+															<?php
+                                                    $m = $value['Menu_Id'];
+                                                    echo "<select onchange='addon(".$m.")' id="."'ad".$m."'>";
+                                                    echo "<option value='-1'> No addons</option>";
+                                                     $sql = "SELECT * FROM menu_ingridient_rel WHERE addons = '1' AND Menu_id = '$m'";
+                                                     $result = $conn->query($sql);
+                                                     if($result->num_rows >0){
+                                                        while($row = $result -> fetch_assoc()){
+                                                            $ix = $row['Ingredients_id'];
+                                                            $sql = "SELECT * FROM ingredients WHERE Ingredients_id = '$ix'";
+                                                            $res = $conn -> query($sql);
+                                                            $ro = $res -> fetch_assoc();
+                                                            echo "<option value=".$ro['Ingredients_id'].">" .$ro['Name']."</option>";
+                                                        }
+                                                     }else{
+                                                            
+                                                     }
+                                                     
+                                                     
+                                                    
+                                                    ?></select>
+																<input class="hidden" name='addon_list' id="addonv<?php echo $value['Menu_Id'] ?>">
+														</td>
+														<td id="addon<?php echo $value['Menu_Id'] ?>">
+
+														</td>
+														<td>
+															<select name="batter">
+																<?php 
+																	$sql = "SELECT * FROM batter";
+																	$res = $conn -> query($sql);
+																	while($row = $res -> fetch_assoc()){
+																		?> 
+																		<option value="<?php echo $row['id']; ?>">
+																		<?php
+																		echo $row['name'];
+																		?>
+																	</option>
+																		
+																		<?php
+																	}
+																
+																?>
+															</select>
+															
+
+														</td>
+														<td>
+															<input type="submit" name='add' value="Add Item" class="btn btn-primary">
+														</td>
+													</form>
+												</tr>
+
+												<?php }
+                                                
+                                                }
+                                                else{                
+                                                        echo 'Data not available at this moment.';
+                                                }
+                                                ?>
+											</table>
+										</div>
+									</div>
+                                </div>
+                               
+                                
+
+
+                            </div>
+                                           
 											<div class="col-lg-6">
 												<div>
 													<h4 style="color:white;">
@@ -184,6 +381,7 @@
 
 											</div>
 											<div class="col-md-6">
+											
 												<div align="center">
 													<div class="panel panel-info" style="color:black;">
 														<div class="panel panel-primary panel-heading">ORDER(Set Quantity Zero to Remove)</div>
@@ -350,7 +548,7 @@
                                     ?>
                                     <div>
                                         <br>
-                                        <input type="submit" value="Pay" class="btn btn-success form-control" onclick="pay_it('<? echo $idr; ?>');print('<?php echo $idr; ?>');" >
+                                        <input type="submit" value="Pay" class="btn btn-success form-control" onclick="showModal('<?php echo $idr; ?>');" >
                                     </div>
                                 </div>
                             </div>
@@ -371,116 +569,7 @@
 
 					</div>
 						<br/><br/>
-							<div class="col-lg-12">
-								<div class="panel panel-info">
-									<div class="panel-heading">
-										Menu
-									</div>
-									<!-- /.panel-heading -->
-									<div class="panel-body">
-
-										<div class="table-responsive">
-
-											<table class="table table-bordered">
-												<tr>
-													<th>Menu Id</th>
-													<th>Name</th>
-													<th>Category</th>
-													<th>Quantity</th>
-													<th>Addon</th>
-													<th>Addons Added</th>
-													<th>Batter</th>
-													<th>Add Item</th>
-												</tr>
-												<?php 
-                                                if(isset($query2) && !empty($query2)){
-                                                    foreach ($query2 as $value) {
-                                                ?>
-												<tr id="<?php echo $value['Menu_Id']; ?>" class="menu-item <?php echo str_replace(' ','',$value['Category']); ?>">
-													<form action="addfakeD" method="post">
-														<td>
-															<input type="text" name="Menu_id" class="form-control" value='<?php echo $value['Menu_Id'];?>'>
-														</td>
-														<td>
-															<?php echo $value['Name']; ?>
-														</td>
-														<td>
-															<?php echo $value['Category'];?>
-														</td>
-														<td>
-															<input type="number" name="quantity" class="form-control">
-														</td>
-														<td>
-															<?php
-                                                    $m = $value['Menu_Id'];
-                                                    echo "<select onchange='addon(".$m.")' id="."'ad".$m."'>";
-                                                    echo "<option value='-1'> No addons</option>";
-                                                     $sql = "SELECT * FROM menu_ingridient_rel WHERE addons = '1' AND Menu_id = '$m'";
-                                                     $result = $conn->query($sql);
-                                                     if($result->num_rows >0){
-                                                        while($row = $result -> fetch_assoc()){
-                                                            $ix = $row['Ingredients_id'];
-                                                            $sql = "SELECT * FROM ingredients WHERE Ingredients_id = '$ix'";
-                                                            $res = $conn -> query($sql);
-                                                            $ro = $res -> fetch_assoc();
-                                                            echo "<option value=".$ro['Ingredients_id'].">" .$ro['Name']."</option>";
-                                                        }
-                                                     }else{
-                                                            
-                                                     }
-                                                     
-                                                     
-                                                    
-                                                    ?></select>
-																<input class="hidden" name='addon_list' id="addonv<?php echo $value['Menu_Id'] ?>">
-														</td>
-														<td id="addon<?php echo $value['Menu_Id'] ?>">
-
-														</td>
-														<td>
-															<select name="batter">
-																<?php 
-																	$sql = "SELECT * FROM batter";
-																	$res = $conn -> query($sql);
-																	while($row = $res -> fetch_assoc()){
-																		?> 
-																		<option value="<?php echo $row['id']; ?>">
-																		<?php
-																		echo $row['name'];
-																		?>
-																	</option>
-																		
-																		<?php
-																	}
-																
-																?>
-															</select>
-															
-
-														</td>
-														<td>
-															<input type="submit" name='add' value="Add Item" class="btn btn-primary">
-														</td>
-													</form>
-												</tr>
-
-												<?php }
-                                                
-                                                }
-                                                else{                
-                                                        echo 'Data not available at this moment.';
-                                                }
-                                                ?>
-											</table>
-										</div>
-									</div>
-                                </div>
-                               
-                                
-
-
-                            </div>
-                                           
+		
                             <?php }?>
 				<div class="row">
 					<div class="col-md-12" style="padding-top:20px;">
@@ -507,6 +596,45 @@
 					<!-- /#wrapper -->
 
 					<!-- jQuery -->
+
+						<div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="mySmallModalLabel">Payment</h4>
+                        <input class="hidden" id="modal_oid">
+				</div>
+				<form action="">
+					<div class="modal-body">
+						<div class="form-group">
+						  	<label for="email">Payment Type:</label>
+						 	<select class="form-control" name="payment_type" id="payment_type">
+						 		<option value="">Select Payment Type</option>
+								<option value="Cash">Cash</option>
+								<option value="Card">Card</option>
+								<option value="Online">Online</option>
+							</select>
+						</div>
+						<div id="cash_div" style="display: none;">
+							<div class="form-group">
+							  <label for="pwd">Given Amount:</label>
+							  <input type="text" class="form-control" id="given_amount" placeholder="Enter Given Amount" name="given_amount" onblur="getReturnAmount()">
+							</div>
+							<div class="form-group">
+							  <label for="pwd">Return Amount:</label>
+							  <input type="text" class="form-control" id="return_amount" placeholder="Enter Return Amount" name="return_amount">
+							</div>
+						</div>			
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="call()" >Submit</button>
+					</div>
+				</form>	
+			</div>
+		</div>
+	</div>
 					<script src="../../assets/vendor/jquery/jquery.min.js"></script>
 
 					<!-- Bootstrap Core JavaScript -->
@@ -566,11 +694,94 @@
 						
 
 </script>
+
 <script>
-<script>
+
+
+function getOfflineOrders(){
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajx_cashOrders',
+                
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    $('#div_offlineOrders').html(resp);
+
+            }
+            });
+        }
+
+        function apply_code(id){
+			
+            let code = $('#code').val();
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_applyCode',
+                data:{
+                    'id':id,
+                    'code':code
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp=='success'){
+                        alert('Applied Coupon!');
+                        window.location = '';
+                    }else{
+                        alert(resp);
+                    }
+
+            }
+            });
+
+        }
+
+        function showModal(id){
+    $('#modal_oid').val(id);
+    $('#addPaymentModal').modal('show');
+    $('#given_amount').val('');
+    $('#return_amount').val('');
+    console.log(id);
+}
+
+function call(){
+    let gamt = 0;
+    let ramt = 0;
+    id = $('#modal_oid').val();
+    if($('#given_amount').val()!=''){
+        gamt = $('#given_amount').val();    
+    }
+    if($('#return_amount').val()!=''){
+        ramt = $('#return_amount').val();    
+    }
+
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_payitaway',
+                data:{
+                    'id':id,
+                    'type': $('#payment_type').val(),
+                    'given_amt':gamt,
+                    'return_amt': ramt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    //console.log(resp);
+                    if(resp == 'success'){
+                       pay_it(id);
+                       print(id);
+                       window.location = '';
+
+                    }
+
+            }
+        });
     
-//        getOfflineOrders();
-//        setInterval(function(){getOfflineOrders()},5000);
+    
+}
+
 function pay_it(id){
             $.ajax({
                 type: 'GET',
@@ -583,13 +794,24 @@ function pay_it(id){
                 success: function(resp){
                     console.log(resp);
                     if(resp == 'success'){
-                        window.location = '';
+                       // window.location = '';
                     }
 
             }
             });
 
         }
+
+        $(function() {
+		    $('#payment_type').change(function(){
+		        if($('#payment_type').val() == 'Cash') {
+		            $('#cash_div').show(); 
+		        } else {
+		            $('#cash_div').hide(); 
+		        } 
+		    });
+		});
+
         
         function getOfflineOrders(){
             $.ajax({
@@ -631,19 +853,34 @@ function pay_it(id){
         }
 
         function print(id){
-            var divContents = $("#printspan"+id).html();
-            var printWindow = window.open('', '', 'height=300,width=600');
-            printWindow.document.write(`<html><head><style>@page {
-                size: 3in 3.6in;
-   margin: 30%
-}
-</style><title></title>`);
-            printWindow.document.write('</head><body style="height:100px;width:300px;">');
-            printWindow.document.write(divContents);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
+           // var divContents = $("#printspan"+id).html();
+               var printWindow = window.open('', '', 'height=300,width=600');
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrder',
+                data : {
+                    'Order_id':id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
         }
+        
         
         
  

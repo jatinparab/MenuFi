@@ -50,6 +50,29 @@ public function addInventoryToDb($d){
     }
 }
 
+public function addExpenses($d)
+{  
+		$type = $d['type'];  
+		$name = $d['name'];
+		$amt = $d['amt'];
+		$nameOfPerson = $d['nameOfPerson'];
+		$reason = $d['reason'];
+		$date = $d['date'];
+		$time = $d['time'];
+		
+		$var = "INSERT into expenses(`name`,`amount`,`type`,`nameOfPerson`,`reason`,`date`,`time`) values('$name','$amt','$type','$nameOfPerson','$reason','$date','$time')";
+		$success = $this->db->query($var);	
+		
+		
+	if($success)
+	{   
+			return 1;
+	}else{
+
+return 0;			
+}		
+}
+
 public function updateInventoryToDb($d){
     $data['Name']=$d['Name'];
     $data['quantity']=$d['Quantity'];
@@ -334,10 +357,10 @@ public function updateMenuToDB($d){
 						}
 						$cgst = ($total/200)*5;
 						$sgst = ($total/200)*5;
-						$net_total = $total + $cgst + $sgst;
+						$net_total = $total;
 						$data = array(
-								'cgst' => $cgst ,
-								'sgst' => $sgst,
+								'cgst' => 0,
+								'sgst' => 0,
 								'net_total' => $net_total,	
 								'customer_id'=>$cid,
 								'login_type'=>$login_type
@@ -352,8 +375,8 @@ public function updateMenuToDB($d){
 						foreach($row as $item){
 							$total += (float)$item->Price*(int)$item->Quantity;
 						}
-						$cgst = ($total/200)*5;
-						$sgst = ($total/200)*5;
+						//$cgst = ($total/200)*5;
+						//$sgst = ($total/200)*5;
 						$net_total = $total + $cgst + $sgst;
 						$data = array(
 								'Order_id' => $id ,
@@ -413,7 +436,18 @@ public function updateMenuToDB($d){
 
 				if(!empty($cid)){
 					//get order id
-					$order_array = array('Table_id'=> $table);
+					if($table ==  -1){
+						$type = "Home Delivery";
+					}else if($table == 99){
+						$type = "Take Away";
+					}
+					else{
+						$type = "Dine In";
+					}
+					$order_array = array(
+						'Table_id'=> $table,
+						'order_type' => $type
+					);
 					$success = $this->db->insert('orders',$order_array);
 					
 					if($success)
@@ -449,7 +483,19 @@ public function updateMenuToDB($d){
 				if($success){
 					$cid = $this->db->insert_id();
 					//get order id
-                    $order_array = array('Table_id'=> $table);
+					if($table ==  -1){
+						$type = "Home Delivery";
+					}else if($table == 99){
+						$type = "Take Away";
+					}
+					else{
+						$type = "Dine In";
+					}
+					$order_array = array(
+						'Table_id'=> $table,
+						'order_type' => $type
+					);
+                    $order_array = array('Table_id'=> $table,'order_type'=>$type);
 					$succ = $this->db->insert('orders',$order_array);
 					if($succ)
 					{
@@ -634,6 +680,23 @@ halfYear")->result();
 
 			
 
+		}
+
+		public function get_print_details($Order_id){
+			
+			$this->db->select('co.Quantity,co.Addons,co.Menu_Id,m.Name,m.Price,s.cgst,s.sgst,s.net_total,s.coupon_apply,c.c_code,c.c_value,o.order_type');
+			$this->db->from('customer_order co');
+			$this->db->join('menu m', 'co.Menu_id = m.Menu_id');
+			$this->db->join('sales s', 'co.Order_id = s.Order_id');
+			$this->db->join('coupons c', 's.coupon_code = c.c_code','left');
+			$this->db->join('orders o', 'co.Order_id = o.Order_id','left');
+			$this->db->where('co.Order_id', $Order_id);
+	
+			$query = $this->db->get();
+			$res = $query->result_array();
+			//$res1 = 0;
+			return $res;
+	
 		}
 
 		public function sales_reports_daily()
