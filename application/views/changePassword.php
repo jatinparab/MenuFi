@@ -1,3 +1,6 @@
+<?php
+$userName = $_SESSION['User'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,6 +101,12 @@
                         <div class="panel-body">
                             <div class="table-responsive">
                                 <form method="post" action="<?php echo base_url(); ?>index.php/Admin/changePassword" id='changePwdForm'>
+								
+									<div class="form-group">
+                                        <label for="name">User Name:</label>
+                                        <input type="UserName" class="form-control" id="username" name="username" value="<?php echo $userName; ?>"required>
+                                    </div>
+									
                                     <div class="form-group">
                                         <label for="name">Existing Password:</label>
                                         <input type="password" class="form-control" id="curPwd" name="curPwd" required>
@@ -123,7 +132,48 @@
                 </div>
                 <!-- /.col-lg-6 -->
                 
-                <!-- /.col-lg-6 -->
+                <div class="col-lg-6">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            Add New User
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <form method="post" action="<?php echo base_url(); ?>index.php/Admin/addNewUser" id='addNewUser'>
+								
+									<div class="form-group">
+                                        <label for="name">User Name:</label>
+                                        <input type="text" class="form-control" id="Newusername" name="Newusername" >
+                                    </div>
+									
+                                    <div class="form-group">
+                                        <label for="pwd">Password:</label>
+                                        <input type="text" class="form-control" id="Newpassword" name="Newpassword" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Confirm Password:</label>
+                                        <input type="text" class="form-control" id="confirmPassword" name="confirmPassword" >
+									</div>
+									
+									<div class="form-group">
+                                    <label for="pwd">User Type:</label>
+                                    <select class="form-control" id="user_type" name="user_type" style="width:315px;">
+									<option value="" selected>Select</option>
+									<option value="manager">Manager</option>
+									<option value="owner">Owner</option>
+									<option value="chef">Chef</option>
+									</select>
+									</div>
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </form>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
             </div>
             
             

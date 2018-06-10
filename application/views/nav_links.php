@@ -151,6 +151,9 @@ and open the template in the editor.
                             <a href="<?php echo base_url(); ?>index.php/Admin/viewDetailFeedback"><i class="fa fa-edit fa-fw"></i> View Detail Feedback</a>
                         </li>
                         <li>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/orderHistory"><i class="fa fa-fw fa-mobile-phone"></i>Order History</a>
+                        </li>
+                        <li>
                             <a href="<?php echo base_url(); ?>index.php/Admin/viewCustomers"><i class="fa fa-edit fa-fw"></i> Customers</a>
                         </li>
                         <!-- lol-->

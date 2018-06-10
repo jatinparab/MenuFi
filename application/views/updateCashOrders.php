@@ -243,7 +243,7 @@
 						<div id="cash_div" style="display: none;">
 							<div class="form-group">
 							  <label for="pwd">Given Amount:</label>
-							  <input type="text" class="form-control" id="given_amount" placeholder="Enter Given Amount" name="given_amount" onblur="getReturnAmount()">
+							  <input type="text" oninput="getReturnAmount()" class="form-control" id="given_amount" placeholder="Enter Given Amount" name="given_amount" onblur="getReturnAmount()">
 							</div>
 							<div class="form-group">
 							  <label for="pwd">Return Amount:</label>
@@ -359,6 +359,26 @@ function pay_it(id){
 		    });
 		});
 
+        function getReturnAmount(){
+	given = $('#given_amount').val();
+	id = $('#modal_oid').val();
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_getreturn',
+                data:{
+                    'id':id,
+                    'given':given
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				   $('#return_amount').val(parseInt(resp));
+					
+            }
+        });
+
+}
         
         function getOfflineOrders(){
             $.ajax({

@@ -224,16 +224,19 @@ where mir.addons=1")->result_array();
     }
     
     public function addMenuAddonMapping(){
+		
         if(isset($_POST['ddlMenu']) && isset($_POST['ddlAddons'])){
+			
             $flag=0;
             $ddlMenu = $_POST['ddlMenu'];
            $ddlAddons = $_POST['ddlAddons'];
+		   $addonPrice = $_POST['addonPrice'];
            $qty = $_POST['QtyRequired'];
            
                $check_addons_mapping = $this->db->query("select * from menu_ingridient_rel where Menu_id=$ddlMenu and Ingredients_id=$ddlAddons and addons=1");
                if($check_addons_mapping->num_rows()>0){
                    //mapping found; update mapping;
-                    $update_mapping = $this->db->query("update menu_ingridient_rel set quantity_rel=$qty where Menu_id=$ddlMenu and Ingredients_id=$ddlAddons and addons=1");
+                    $update_mapping = $this->db->query("update menu_ingridient_rel set quantity_rel=$qty where Menu_id=$ddlMenu and Ingredients_id=$ddlAddons and addons=1 and addon_price=$addonPrice");
                     if($update_mapping)
                     {
                         echo '<script>alert("Addons updated!"); window.location.href="' . base_url() . 'index.php/Admin/v_menu_ing";</script>';
@@ -244,7 +247,9 @@ where mir.addons=1")->result_array();
                }
                else{
                    //add mapping
-                   $add_mapping = $this->db->query("insert into menu_ingridient_rel(Menu_id,Ingredients_id,quantity_rel,addons) values($ddlMenu,$ddlAddons,$qty,1)");
+				   /* $gsdfvgh = "insert into menu_ingridient_rel(Menu_id,Ingredients_id,quantity_rel,addons, addon_price) values($ddlMenu,$ddlAddons,$qty,1,$addonPrice)"; */
+				   
+                   $add_mapping = $this->db->query("insert into menu_ingridient_rel(Menu_id,Ingredients_id,quantity_rel,addons, addon_price) values($ddlMenu,$ddlAddons,$qty,1,$addonPrice)");
                     if($add_mapping)
                     {
                         echo '<script>alert("Addons added!"); window.location.href="' . base_url() . 'index.php/Admin/v_menu_ing";</script>';
@@ -258,6 +263,7 @@ where mir.addons=1")->result_array();
            
         }
     }
+	
 	
 	public function addMenubatterMapping(){
         if(isset($_POST['ddlMenu']) && isset($_POST['ddlBatters'])){
@@ -757,6 +763,58 @@ public function changePwd(){
     $this->load->view("changePassword");
 }
 
+
+public function addNewUser(){
+	
+	$Newusername = $_POST['Newusername'];
+    $Newpassword = $_POST['Newpassword'];
+    $confirmPassword = $_POST['confirmPassword'];
+	$user_type = $_POST['user_type'];
+	if(empty($Newusername)){
+		echo '<script>alert("Please Enter User Name!");</script>'; 
+		$this->load->view("changePassword");
+		return false;
+	}elseif(empty($Newpassword)){
+		echo '<script>alert("Please Enter New Password!");</script>'; 
+		$this->load->view("changePassword");
+		return false;
+		
+	}elseif(empty($confirmPassword)){
+		echo '<script>alert("Please Enter Confirm Password!");</script>';
+		$this->load->view("changePassword");
+		return false;
+		
+	}elseif($Newpassword != $confirmPassword ){
+		echo '<script>alert("Both password must be same!");</script>';
+		$this->load->view("changePassword");
+		return false;
+		
+	}elseif(empty($user_type)){
+		echo '<script>alert("Please select User Type!");</script>';
+		$this->load->view("changePassword");
+		return false;
+	}else{
+	
+        
+		$this->load->model('Admin_model');
+        //$data['status']=$this->Admin_model->checkPassword($curPwd);
+        //if($data['status']){
+            $data['msg']=$this->Admin_model->addNewUser($Newusername,$Newpassword,$confirmPassword,$user_type);
+            if($data['msg']){
+               echo '<script>alert("User added Successfully!"); window.location.href="' . base_url() . 'index.php/Admin/dashboard";</script>'; 
+            }
+            else{
+                echo '<script>alert("Failed to add User!"); window.location.href="' . base_url() . 'index.php/Admin/changePwd";</script>';
+            }
+        /* }
+        else{
+            echo '<script>alert("Invalid Existing Password!"); window.location.href="' . base_url() . 'index.php/Admin/changePwd";</script>';
+        } */
+	}
+	
+}
+
+
 public function changePassword(){
     $curPwd = $_POST['curPwd'];
         $newPwd = $_POST['newPwd'];
@@ -825,6 +883,12 @@ if(!isset($_SESSION['admin_id']))
     public function ajax_Seen(){
         $data['id'] = $_GET['id'];
         $this->load->view('ajax_seen',$data);
+    }
+
+    public function ajax_getreturn(){
+        $data['id'] = $_GET['id'];
+        $data['given'] = $_GET['given'];
+        $this->load->view('ajax_getR',$data);
     }
 	
 	public function check_live_order(){
@@ -1577,6 +1641,105 @@ if(!isset($_SESSION['admin_id']))
          $this->load->view('take_order_homeDelivery',$data);
          $this->load->view('footer');
     }
+
+    public function orderHistory(){
+        
+        //$history = $this->db->query("SELECT cus.mobile, order_status.Order_id as Order_id,order_status.status,sales.cgst,sales.sgst,sales.net_total as net_total from order_status ,sales, customers cus where order_status.status=1 and sales.Order_id = order_status.Order_id and cus.customer_id = sales.customer_id")->result_array();
+        
+        if(isset($_POST['start_date']) && $_POST['start_date']!=''){
+          $start_date = date('Y-m-d', strtotime($_POST['start_date']));
+        }else{
+          $start_date = date('Y-m-01');
+        }
+
+        if(isset($_POST['end_date']) && $_POST['end_date']!=''){
+          $end_date = date('Y-m-d', strtotime($_POST['end_date']));
+        }else{
+          $end_date = date('Y-m-d');
+        }
+
+        $history = $this->db->query("SELECT o.*,s.*,os.status,p.payment_type,c.mobile
+          FROM orders o 
+          LEFT JOIN order_status os ON os.Order_id=o.Order_id 
+          LEFT JOIN sales s ON s.Order_id=o.Order_id 
+          LEFT JOIN payment_details p ON p.Order_id=o.Order_id 
+          LEFT JOIN customers c ON c.customer_id=s.customer_id
+          WHERE os.status=4 ORDER BY o.Timestamp DESC")->result_array();
+          
+		      $data['pendingOrdershistory'] = $history;
+
+          $data['start_date'] = date('d-m-Y', strtotime($start_date));
+          $data['end_date'] = date('d-m-Y', strtotime($end_date));
+          $this->load->view('orderHistory',$data);
+		      $this->load->view('footer');
+  }
+
+
+  
+
+  public function showOrderDetails( $order_id = "" ) {
+    $pendingFakeOrders = $this->db->query("select M.Menu_id as Menu_id, M.Name as name,M.price,c.quantity as quantity,c.Addons,c.Batter from menu M,customer_order c where c.Menu_id = M.Menu_id and c.Order_id='$order_id'")->result_array();
+      
+    $data_arr = array();
+    foreach ($pendingFakeOrders as $key => $value) {
+      $data_arr[$key]['menu_id'] =$value['Menu_id'];
+      $data_arr[$key]['menu_name'] =$value['name'];
+      $data_arr[$key]['quantity'] =$value['quantity'];
+
+      $menu_id =$value['Menu_id'];
+      $addon = explode(',',$value['Addons']);
+      if($value['Addons']!=''){
+        $totalAddonCost = 0;
+        foreach($addon as $addn){
+          $addoncost= $this->db->query("SELECT * FROM menu_ingridient_rel WHERE Ingredients_id='$addn' AND Menu_id='$menu_id' ORDER BY id DESC");
+          $res = $addoncost ->row_array();
+          $totalAddonCost += $res['addon_price'];
+        }
+        
+        $addoncost = $totalAddonCost; 
+      }else{
+        $addoncost = 0;
+      }
+
+      $data_arr[$key]['amount'] = ($value['price'] * $value['quantity']) + $value['quantity']*($addoncost);
+
+      if(count($addon)>0){
+          $ressAddonsArr = array();
+          $ressNameArr = array();
+          foreach($addon as $val){
+            $sq= $this->db->query("SELECT * FROM ingredients WHERE Ingredients_id = '$val'");
+            foreach($sq ->result_array() as $ress){
+              $ressAddonsArr[] =$ress['Ingredients_id']; 
+              $ressNameArr[] =$ress['Name'];
+            }
+          }
+          if(count($ressAddonsArr)>0){
+            $data_arr[$key]['addons_name']  = implode(',',$ressNameArr);
+          } else{
+            $data_arr[$key]['addons_name']   = "";
+          }
+        }
+
+        $batter_id = $value['Batter'];
+        $sql = "SELECT * FROM batter WHERE id='$batter_id'";
+        $sqs= $this->db->query("SELECT * FROM batter WHERE id='$batter_id'");
+        $batter_name ="";
+        foreach($sqs ->result_array() as $btters){
+          $batter_name = $btters['name'];
+        }
+
+        if($batter_name!=''){
+          $data_arr[$key]['batter_name'] =$batter_name;
+        } else{
+          $data_arr[$key]['batter_name'] ='';
+        }
+      
+    }
+    
+    $data['order_id'] = $order_id;
+    $data['order_details'] = $data_arr;
+    $this->load->view( 'showOrderDetails',$data);    
+  }
 
     public function create_orderH()
     {

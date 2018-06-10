@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 10, 2018 at 04:02 AM
+-- Generation Time: Jun 11, 2018 at 01:42 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -51,15 +51,19 @@ INSERT INTO `addresses` (`id`, `mobile`, `address`, `name`) VALUES
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL,
   `username` varchar(20) DEFAULT NULL,
-  `password` varchar(20) DEFAULT NULL
+  `password` varchar(20) DEFAULT NULL,
+  `user_type` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`id`, `username`, `password`) VALUES
-(1, 'admin', 'admin');
+INSERT INTO `admin` (`id`, `username`, `password`, `user_type`) VALUES
+(1, 'admin', 'admin', 'chef'),
+(2, 'admin1', 'admin1', 'Manager'),
+(3, 'admin2', 'admin2', 'Owner'),
+(4, 'adminf', '2222', 'manager');
 
 -- --------------------------------------------------------
 
@@ -168,12 +172,9 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `mobile`, `email`, `otp`, `views`, `revenue`, `Last_Visited`) VALUES
-(1, '9820181347', '', '1', 24, 0, '2018-06-10 07:31:00'),
-(2, '9820181342', '', '0', 2, 0, '2018-04-29 11:24:28'),
-(3, '9820118134', '', '1', 2, 0, '2018-04-29 16:37:27'),
-(4, '9821181341', '', '1', 1, 0, '2018-04-29 16:19:50'),
-(5, '9820181344', '', '1', 2, 0, '2018-04-29 16:27:28'),
-(6, '9820181343', '', '0', 2, 0, '2018-06-10 07:30:02');
+(1, '9820181347', '', '1', 12, 0, '2018-06-11 05:10:59'),
+(2, '9820181343', '', '0', 4, 0, '2018-06-11 04:44:36'),
+(3, '9820181341', '', '0', 3, 0, '2018-06-11 04:52:50');
 
 -- --------------------------------------------------------
 
@@ -200,24 +201,30 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`id`, `Order_id`, `Menu_Id`, `Quantity`, `Addons`, `Batter`, `Optional_ingredients`, `comments`, `item_status`, `spice_level`, `customer_id`) VALUES
-(1, 1, 3, 1, NULL, 0, NULL, 'comments', 2, NULL, NULL),
-(2, 3, 21, 2, '', 1, NULL, 'comments', 2, NULL, 2),
-(3, 6, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
-(4, 7, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
-(5, 8, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(6, 10, 3, 3, '', 1, NULL, 'comments', 2, NULL, 1),
-(7, 14, 3, 3, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(8, 15, 3, 2, '2,', 2, NULL, 'comments', 2, NULL, 1),
-(9, 16, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
-(10, 17, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(11, 12, 3, 13, '', 1, NULL, 'comments', 2, NULL, 1),
-(12, 18, 3, 2, '', 1, NULL, 'comments', 2, NULL, 1),
-(13, 19, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
-(14, 20, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(15, 21, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
-(16, 22, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(17, 24, 3, 1, '', 1, NULL, 'comments', 2, NULL, 6),
-(18, 25, 4, 3, '', 1, NULL, 'comments', 2, NULL, 1);
+(1, 2, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(2, 3, 3, 3, '', 1, NULL, 'comments', 2, NULL, 1),
+(3, 4, 3, 3, '', 1, NULL, 'comments', 2, NULL, 1),
+(4, 5, 3, 1, NULL, 0, NULL, 'comments', 2, NULL, NULL),
+(5, 7, 5, 2, '', 1, NULL, 'comments', 2, NULL, 2),
+(6, 8, 3, 2, '', 1, NULL, 'comments', 2, NULL, 1),
+(7, 9, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
+(8, 9, 3, 2, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(9, 10, 3, 2, '3,', 1, NULL, 'comments', 2, NULL, 2),
+(10, 14, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 2),
+(11, 14, 4, 2, '4,', 1, NULL, 'comments', 2, NULL, 2),
+(12, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(13, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
+(14, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(15, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
+(16, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(17, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
+(18, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(19, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
+(20, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
+(21, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
+(22, 17, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 3),
+(23, 18, 3, 5, '2,', 4, NULL, 'comments', 2, NULL, 3),
+(24, 19, 3, 4, '2,', 4, NULL, 'comments', 2, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -367,8 +374,8 @@ CREATE TABLE `ingredients` (
 --
 
 INSERT INTO `ingredients` (`Ingredients_id`, `Name`, `quantity`, `min_quantity`, `addons`, `cost`) VALUES
-(2, 'self-raising flour', 68, 20, 2, 15),
-(3, 'chilli powder', 48, 40, 1, 13),
+(2, 'self-raising flour', 58, 20, 2, 15),
+(3, 'chilli powder', 36, 40, 1, 13),
 (4, 'garam masala', 1790, 190, 1, 14),
 (5, 'tandoori masala powder', 200, 190, 0, 15),
 (6, 'potatoes', 40, 0, 0, 2),
@@ -481,7 +488,10 @@ CREATE TABLE `menu_ingridient_rel` (
 INSERT INTO `menu_ingridient_rel` (`id`, `Menu_id`, `Ingredients_id`, `quantity_rel`, `addons`, `addon_price`, `batters`) VALUES
 (1, 29, 3, 10, 1, '20', ''),
 (2, 3, 2, 10, 1, '20', ''),
-(3, 3, 3, 12, 1, '80', '');
+(3, 3, 3, 12, 1, '80', ''),
+(4, 15, 11, 2, 1, '', ''),
+(5, 20, 10, 12, 1, '', ''),
+(7, 4, 4, 213123, 1, '23333', '');
 
 -- --------------------------------------------------------
 
@@ -538,31 +548,23 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`Order_id`, `Table_id`, `Timestamp`, `order_type`) VALUES
-(1, 3, '2018-04-29 05:48:49', ''),
-(2, -1, '2018-04-29 05:54:27', ''),
-(3, 0, '2018-04-29 05:54:28', ''),
-(4, 7, '2018-04-29 11:06:11', ''),
-(5, 4, '2018-04-29 11:07:31', ''),
-(6, 3, '2018-06-09 20:49:01', 'test'),
-(7, 2, '2018-06-09 20:55:31', ''),
-(8, 3, '2018-06-09 21:25:13', ''),
-(9, 1, '2018-06-09 21:25:49', ''),
-(10, 0, '2018-06-09 21:27:09', ''),
-(11, 99, '2018-06-09 21:52:02', ''),
-(12, 3, '2018-06-09 21:58:12', ''),
-(13, 99, '2018-06-09 22:20:53', ''),
-(14, 4, '2018-06-09 22:51:37', ''),
-(15, 5, '2018-06-09 23:43:28', 'Dine In'),
-(16, 3, '2018-06-09 23:47:04', 'Dine In'),
-(17, 3, '2018-06-09 23:52:38', 'Dine In'),
-(18, 4, '2018-06-09 23:57:02', 'Dine In'),
-(19, 5, '2018-06-09 23:58:13', 'Dine In'),
-(20, 2, '2018-06-10 01:01:22', 'Dine In'),
-(21, 0, '2018-06-10 01:05:36', 'Home Delivery'),
-(22, 2, '2018-06-10 01:43:29', 'Dine In'),
-(23, -1, '2018-06-10 01:59:00', 'Home Delivery'),
-(24, 0, '2018-06-10 02:00:02', 'Home Delivery'),
-(25, 2, '2018-06-10 02:01:00', 'Dine In');
+(1, 2, '2018-06-10 21:15:11', 'Dine In'),
+(2, 2, '2018-06-10 21:15:12', 'Dine In'),
+(3, 99, '2018-06-10 21:19:53', 'Take Away'),
+(4, 5, '2018-06-10 21:20:52', 'Dine In'),
+(5, 1, '2018-06-10 21:21:35', ''),
+(6, 2, '2018-06-10 21:25:07', 'Dine In'),
+(7, 2, '2018-06-10 21:25:08', 'Dine In'),
+(8, 3, '2018-06-10 21:54:51', 'Dine In'),
+(9, 6, '2018-06-10 22:02:56', 'Dine In'),
+(10, 5, '2018-06-10 22:27:41', 'Dine In'),
+(13, 2, '2018-06-10 22:45:21', 'Dine In'),
+(14, 4, '2018-06-10 23:14:36', 'Dine In'),
+(15, 7, '2018-06-10 23:16:07', 'Dine In'),
+(16, 4, '2018-06-10 23:21:23', 'Dine In'),
+(17, 4, '2018-06-10 23:21:24', 'Dine In'),
+(18, 99, '2018-06-10 23:22:50', 'Take Away'),
+(19, 1, '2018-06-10 23:40:59', 'Dine In');
 
 -- --------------------------------------------------------
 
@@ -583,29 +585,20 @@ CREATE TABLE `order_status` (
 --
 
 INSERT INTO `order_status` (`id`, `Order_id`, `status`, `Timestamp`, `seen`) VALUES
-(1, 1, 4, '2018-04-29 05:48:49', 0),
-(2, 3, 3, '2018-04-29 05:54:28', 0),
-(3, 4, 0, '2018-04-29 11:06:11', 0),
-(4, 5, 0, '2018-04-29 11:07:31', 0),
-(5, 6, 4, '2018-06-09 20:49:01', 0),
-(6, 7, 4, '2018-06-09 20:55:31', 0),
-(7, 8, 4, '2018-06-09 21:25:13', 0),
-(8, 9, 1, '2018-06-09 21:25:49', 0),
-(9, 10, 4, '2018-06-09 21:27:09', 0),
-(10, 11, 1, '2018-06-09 21:52:02', 0),
-(11, 12, 4, '2018-06-09 21:58:12', 0),
-(12, 13, 1, '2018-06-09 22:20:53', 0),
-(13, 14, 4, '2018-06-09 22:51:37', 0),
-(14, 15, 4, '2018-06-09 23:43:28', 0),
-(15, 16, 4, '2018-06-09 23:47:04', 0),
-(16, 17, 4, '2018-06-09 23:52:38', 0),
-(17, 18, 4, '2018-06-09 23:57:02', 0),
-(18, 19, 4, '2018-06-09 23:58:13', 0),
-(19, 20, 4, '2018-06-10 01:01:22', 0),
-(20, 21, 4, '2018-06-10 01:05:36', 0),
-(21, 22, 4, '2018-06-10 01:43:29', 0),
-(22, 24, 4, '2018-06-10 02:00:02', 0),
-(23, 25, 4, '2018-06-10 02:01:00', 0);
+(1, 2, 4, '2018-06-10 21:15:12', 0),
+(2, 3, 3, '2018-06-10 21:19:53', 0),
+(3, 4, 4, '2018-06-10 21:20:52', 0),
+(4, 5, 4, '2018-06-10 21:21:35', 0),
+(5, 7, 4, '2018-06-10 21:25:08', 0),
+(6, 8, 4, '2018-06-10 21:54:51', 0),
+(7, 9, 4, '2018-06-10 22:02:56', 0),
+(8, 10, 4, '2018-06-10 22:27:41', 0),
+(11, 13, 1, '2018-06-10 22:45:21', 0),
+(12, 14, 4, '2018-06-10 23:14:36', 0),
+(13, 15, 4, '2018-06-10 23:16:07', 0),
+(14, 17, 4, '2018-06-10 23:21:24', 0),
+(15, 18, 4, '2018-06-10 23:22:50', 0),
+(16, 19, 4, '2018-06-10 23:40:59', 0);
 
 -- --------------------------------------------------------
 
@@ -629,10 +622,16 @@ CREATE TABLE `payment_details` (
 --
 
 INSERT INTO `payment_details` (`payment_details_id`, `Order_id`, `payment_type`, `total_amount`, `given_amount`, `return_amount`, `added_by`, `added_date`) VALUES
-(1, 22, 'Card', '360', '360', '0', NULL, NULL),
-(2, 24, 'Cash', '180', '400', '200', NULL, NULL),
-(3, 25, 'Online', '450', '450', '0', NULL, NULL),
-(4, 24, 'Card', '180', '180', '0', NULL, NULL);
+(1, 5, 'Online', '189', '189', '0', NULL, NULL),
+(2, 7, 'Online', '1200', '1200', '0', NULL, NULL),
+(3, 8, 'Card', '360', '360', '0', NULL, NULL),
+(4, 9, 'Online', '540', '540', '0', NULL, NULL),
+(5, 10, 'Cash', '360', '400', '40', NULL, NULL),
+(6, 14, 'Cash', '480', '500', '20', NULL, NULL),
+(7, 15, 'Online', '118415', '118415', '0', NULL, NULL),
+(8, 17, 'Online', '23483', '23483', '0', NULL, NULL),
+(9, 18, 'Cash', '1000', '1000', '0', NULL, NULL),
+(10, 19, 'Cash', '800', '2000', '1200', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -659,24 +658,16 @@ CREATE TABLE `sales` (
 --
 
 INSERT INTO `sales` (`sales_id`, `Order_id`, `cgst`, `sgst`, `net_total`, `coupon_apply`, `coupon_code`, `Timestamp`, `customer_id`, `login_type`, `refund`) VALUES
-(1, 1, 4.5, 4.5, 189, NULL, '', '2018-04-29 05:50:05', 1, 'mobile', 0),
-(2, 3, 0.325, 0.325, 13.65, NULL, '', '2018-04-29 05:54:50', 2, 'Manual', 0),
-(3, 6, 9, 9, 378, NULL, '', '2018-06-09 20:49:21', 1, 'Manual', 0),
-(4, 7, 9, 9, 378, NULL, '', '2018-06-09 20:55:48', 1, 'Manual', 0),
-(5, 8, 9, 9, 378, NULL, '', '2018-06-09 21:25:25', 1, 'Manual', 0),
-(6, 10, 13.5, 13.5, 567, NULL, '', '2018-06-09 21:27:18', 1, 'Manual', 0),
-(7, 14, 0, 0, 540, NULL, '', '2018-06-09 22:51:46', 1, 'Manual', 0),
-(8, 15, 0, 0, 360, NULL, '', '2018-06-09 23:43:40', 1, 'Manual', 0),
-(9, 16, 0, 0, 180, NULL, '', '2018-06-09 23:47:14', 1, 'Manual', 0),
-(10, 17, 0, 0, 360, NULL, '', '2018-06-09 23:52:49', 1, 'Manual', 0),
-(11, 12, 0, 0, 2340, NULL, '', '2018-06-09 23:54:32', 1, 'Manual', 0),
-(12, 18, 0, 0, 360, NULL, '', '2018-06-09 23:57:10', 1, 'Manual', 0),
-(13, 19, 0, 0, 180, NULL, '', '2018-06-09 23:58:19', 1, 'Manual', 0),
-(14, 20, 0, 0, 180, NULL, '', '2018-06-10 01:01:33', 1, 'Manual', 0),
-(15, 21, 0, 0, 180, NULL, '', '2018-06-10 01:05:41', 1, 'Manual', 1),
-(16, 22, 0, 0, 360, NULL, '', '2018-06-10 01:43:40', 1, 'Manual', 0),
-(17, 24, 0, 0, 180, NULL, '', '2018-06-10 02:00:11', 6, 'Manual', 0),
-(18, 25, 0, 0, 450, NULL, '', '2018-06-10 02:01:08', 1, 'Manual', 0);
+(1, 5, 4.5, 4.5, 189, NULL, '', '2018-06-10 21:21:56', 1, 'mobile', 0),
+(2, 7, 0, 0, 1200, NULL, '', '2018-06-10 21:25:18', 2, 'Manual', 0),
+(3, 8, 0, 0, 360, NULL, '', '2018-06-10 21:55:00', 1, 'Manual', 0),
+(4, 9, 0, 0, 540, NULL, '', '2018-06-10 22:03:31', 1, 'Manual', 0),
+(5, 10, 0, 0, 360, NULL, '', '2018-06-10 22:27:52', 2, 'Manual', 0),
+(6, 14, 0, 0, 480, NULL, '', '2018-06-10 23:14:47', 2, 'Manual', 0),
+(7, 15, 0, 0, 118415, NULL, '', '2018-06-10 23:20:21', 1, 'Manual', 0),
+(8, 17, 0, 0, 23483, NULL, '', '2018-06-10 23:21:32', 3, 'Manual', 0),
+(9, 18, 0, 0, 1000, NULL, '', '2018-06-10 23:23:11', 3, 'Manual', 0),
+(10, 19, 0, 0, 800, NULL, '', '2018-06-10 23:41:09', 1, 'Manual', 0);
 
 -- --------------------------------------------------------
 
@@ -879,7 +870,7 @@ ALTER TABLE `addresses`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `background_image`
 --
@@ -904,12 +895,12 @@ ALTER TABLE `coupons`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `customer_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `expenses`
 --
@@ -919,7 +910,7 @@ ALTER TABLE `expenses`
 -- AUTO_INCREMENT for table `fake_order`
 --
 ALTER TABLE `fake_order`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 --
 -- AUTO_INCREMENT for table `feedback`
 --
@@ -959,7 +950,7 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `menu_ingridient_rel`
 --
 ALTER TABLE `menu_ingridient_rel`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `nutrition`
 --
@@ -974,22 +965,22 @@ ALTER TABLE `opening_amount`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `order_status`
 --
 ALTER TABLE `order_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `payment_details`
 --
 ALTER TABLE `payment_details`
-  MODIFY `payment_details_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `payment_details_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- Constraints for dumped tables
 --

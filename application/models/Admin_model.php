@@ -353,6 +353,16 @@ public function updateMenuToDB($d){
 					}
 					if(isset($sid)){
 						foreach($row as $item){
+							$addons = $item->Addons;
+							$addons = explode(",",$addons);
+							$b = $item->Menu_Id; 
+							foreach($addons as $a){
+								$sql3 = $this->db->query("SELECT * from menu_ingridient_rel WHERE Ingredients_id=$a AND Menu_id=$b");
+								$rw = $sql3->result_array();
+								$prce = $rw[0]['addon_price']; 
+								$total += (int)$item->Quantity*(int)$prce;
+							}
+							
 							$total += (float)$item->Price*(int)$item->Quantity;
 						}
 						$cgst = ($total/200)*5;
@@ -373,6 +383,18 @@ public function updateMenuToDB($d){
 						$cgst = 0;
 						$sgst = 0;
 						foreach($row as $item){
+							$addons = $item->Addons;
+							$addons = explode(",",$addons);
+							$addons = array_filter($addons);
+							$b = $item->Menu_Id; 
+							
+							foreach($addons as $a){
+								
+								$sql3 = $this->db->query("SELECT * from menu_ingridient_rel WHERE Ingredients_id=$a AND Menu_id=$b");
+								$rw = $sql3->result_array();
+								$prce = $rw[0]['addon_price']; 
+								$total += (int)$item->Quantity*(int)$prce;
+							}
 							$total += (float)$item->Price*(int)$item->Quantity;
 						}
 						//$cgst = ($total/200)*5;
@@ -580,6 +602,15 @@ public function updateMenuToDB($d){
 
 			return $row;
 
+		}
+
+		public function addNewUser($username,$Newpassword,$confirmPassword,$user_type)
+		{  
+				$var = "INSERT INTO `admin`(`username`, `password`, `user_type`) VALUES ('$username','$Newpassword','$user_type')";
+				return $success = $this->db->query($var);	
+				
+				
+					
 		}
 
 

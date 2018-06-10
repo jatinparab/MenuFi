@@ -196,6 +196,10 @@ span.multiselect-native-select select {
                                             
                                         </select>
                                     </div>
+									<div class="form-group">
+                                        <label for="pwd">Addon Price:</label>
+                                        <input type="text" class="form-control" id="addonPrice" name="addonPrice" required>
+                                    </div>
                                     <div class="form-group">
                                         <label for="pwd">Quantity Required:</label>
                                         <input type="text" class="form-control" id="QtyRequired" name="QtyRequired" required>
@@ -255,6 +259,12 @@ span.multiselect-native-select select {
                                             
                                         </select>
                                     </div>
+									
+									<div class="form-group">
+                                        <label for="pwd">Addon Price:</label>
+                                        <input type="text" class="form-control" id="addonPrice" name="addonPrice" required>
+                                    </div>
+									
                                     <div class="form-group">
                                         <label for="pwd">Quantity Required:</label>
                                         <input type="text" class="form-control" id="QtyRequired" name="QtyRequired" required>
