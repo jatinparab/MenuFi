@@ -136,6 +136,8 @@
                             $rs = $ra -> fetch_assoc();    
                             echo $rs['Name'].": ".($q*$rs['Price']); 
                             ?>
+                            								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id']; ?>)" aria-hidden="true"></i>
+
                 </p>
                         <?php } ?>
                         <p><strong>CGST: </strong><?php 
@@ -471,7 +473,25 @@ function deleteOrderPayment(id){
           
         }
         
-        
+        function deleteOrderItem(id){
+	//console.log(id);
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_deleteorderitem',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
+}
  
         
   
