@@ -964,9 +964,19 @@ if(!isset($_SESSION['admin_id']))
         }
     }
 
+     
     public function addExpenses(){
-    
-        $expenses = $this->db->query("SELECT * FROM expenses where 1")->result_array();
+        if(isset($_POST['start_date'])){
+            $start_date = $_POST['start_date'];
+            $end_date = $_POST['end_date'];
+            $expenses = $this->db->query("SELECT * FROM expenses where date between '$start_date' and '$end_date'")->result_array();
+
+        }else{
+            $expenses = $this->db->query("SELECT * FROM expenses")->result_array();
+
+        }
+        //echo $start_date;
+        //echo $end_date;
         $data['expensesList'] = $expenses;
         $totalAmount=0;
         foreach($expenses as $expense){
@@ -1217,6 +1227,27 @@ if(!isset($_SESSION['admin_id']))
         $data['return_amt'] = $_GET['return_amt'];
         $this->load->view('ajax_payItAway',$data);
         
+    }
+
+    public function ajax_deletepayment(){
+        $id = $_GET['id'];
+        $s = $this->db->query("DELETE FROM customer_order WHERE Order_id='$id'");
+        //print_r($id);
+        if(isset($s)){
+            echo 'success';
+        }else{
+            echo 'error';
+        }
+    }
+    public function ajax_deleteorderitem(){
+        $id = $_GET['id'];
+        $s = $this->db->query("DELETE FROM customer_order WHERE id='$id'");
+        //print_r($id);
+        if(isset($s)){
+            echo 'success';
+        }else{
+            echo 'error';
+        }
     }
 
     public function printafterOrder(){

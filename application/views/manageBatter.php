@@ -155,21 +155,21 @@ $res = $conn -> query($sql);
                                         </select>
                                         
                                     </div>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label for="pwd">Select Addons:</label>
                                         <select name="ddlAddons" id="dates-field2" required class="form-control">
                                             
                                             <?php 
-                                            if(isset($ing)){
-                                                foreach ($ing as $value) {
-                                                    echo '<option value="'.$value['Ingredients_id'].'">'.$value['Name'].'</option>';
-                                                }
-                                            }
-                                            ?>
+                                      //      if(isset($ing)){
+                                          //      foreach ($ing as $value) {
+                                           //         echo '<option value="'.$value['Ingredients_id'].'">'.$value['Name'].'</option>';
+                                             //   }
+                                        //    }
+                                         //  ?>
                                             
                                             
                                         </select>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group">
                                         <label for="pwd">Quantity Required:</label>
                                         <input type="text" class="form-control" id="QtyRequired" name="QtyRequired" required>

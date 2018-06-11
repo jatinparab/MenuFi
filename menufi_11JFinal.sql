@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 11, 2018 at 01:42 AM
+-- Generation Time: Jun 11, 2018 at 03:53 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -99,9 +99,12 @@ CREATE TABLE `batter` (
 --
 
 INSERT INTO `batter` (`id`, `name`) VALUES
-(1, 'Batter 1'),
-(2, 'Batter 2'),
-(4, 'New batter test');
+(5, 'Ricce'),
+(6, 'Neer'),
+(7, 'Millet'),
+(8, 'Rava'),
+(9, 'Rava'),
+(10, 'Rice');
 
 -- --------------------------------------------------------
 
@@ -172,9 +175,9 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `mobile`, `email`, `otp`, `views`, `revenue`, `Last_Visited`) VALUES
-(1, '9820181347', '', '1', 12, 0, '2018-06-11 05:10:59'),
-(2, '9820181343', '', '0', 4, 0, '2018-06-11 04:44:36'),
-(3, '9820181341', '', '0', 3, 0, '2018-06-11 04:52:50');
+(1, '9820181347', '', '1', 18, 0, '2018-06-11 19:21:51'),
+(2, '9820181343', '', '0', 7, 0, '2018-06-11 18:23:41'),
+(3, '9820181341', '', '0', 6, 0, '2018-06-11 19:15:08');
 
 -- --------------------------------------------------------
 
@@ -220,11 +223,13 @@ INSERT INTO `customer_order` (`id`, `Order_id`, `Menu_Id`, `Quantity`, `Addons`,
 (17, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
 (18, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
 (19, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
-(20, 15, 3, 1, '2,', 1, NULL, 'comments', 2, NULL, 1),
-(21, 15, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 1),
 (22, 17, 4, 1, '4,', 1, NULL, 'comments', 2, NULL, 3),
 (23, 18, 3, 5, '2,', 4, NULL, 'comments', 2, NULL, 3),
-(24, 19, 3, 4, '2,', 4, NULL, 'comments', 2, NULL, 1);
+(24, 19, 3, 4, '2,', 4, NULL, 'comments', 2, NULL, 1),
+(31, 28, 5, 1, '', 1, NULL, 'comments', 2, NULL, 2),
+(33, 29, 3, 1, '', 1, NULL, 'comments', 2, NULL, 1),
+(34, 30, 1, 1, '7,', 6, NULL, 'comments', 2, NULL, 3),
+(35, 31, 1, 7, '11,', 5, NULL, 'comments', 2, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -238,7 +243,7 @@ CREATE TABLE `expenses` (
   `amount` int(11) NOT NULL,
   `type` text NOT NULL,
   `reason` varchar(2555) NOT NULL,
-  `date` varchar(2555) NOT NULL,
+  `date` date NOT NULL,
   `time` varchar(2555) NOT NULL,
   `name` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -248,12 +253,8 @@ CREATE TABLE `expenses` (
 --
 
 INSERT INTO `expenses` (`id`, `nameOfPerson`, `amount`, `type`, `reason`, `date`, `time`, `name`) VALUES
-(1, 'general', 0, 'dcdf', '', '', '', ''),
-(2, 'general', 0, 'dcdf', '', '', '', ''),
-(3, 'grossary', 0, '200', '', '', '', ''),
-(4, 'grossary', 0, 'DJNFJKD', '', '', '', ''),
-(5, '', 0, '', '', '', '', ''),
-(6, 'Jatin', 3, 'general', '3', '2018-06-07', '11:11', '32');
+(6, 'Jatin', 3, 'general', '3', '2018-06-07', '11:11', '32'),
+(7, 'Parab', 333, 'grossary', '123', '2018-06-11', '18:30', '12');
 
 -- --------------------------------------------------------
 
@@ -440,30 +441,129 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`Menu_Id`, `Name`, `Price`, `Description`, `Type`, `Category`, `Image`, `time`, `spice_level`) VALUES
-(3, 'Tuborg', 180, 'Light beer', 'Liquor', 'Beer', 'tuborg.jpg', '2', 1),
-(4, 'Kingfisher Mild', 150, 'Light beer', 'Liquor', 'Beer', 'Kingfisher_Mild.jpg', '3', NULL),
-(5, 'Double Black', 600, 'Scotch', 'Liquor', 'Scotch', 'double_black.jpg', '4', NULL),
-(11, 'Tandoori King Prawn', 6.95, 'test', 'Non-Veg', 'Beer', 'dj3.png', '2', 2),
-(12, 'King Prawn Rosun', 5.95, '', 'Non-Veg', 'SeaFood', '', '1', 1),
-(13, 'King Prawn on Puree', 5.95, '', 'Non-Veg', 'SeaFood', '', '3', NULL),
-(14, 'Prawn Bhuna on Puree', 3.95, '', 'Non-Veg', 'SeaFood', '', '4', NULL),
-(15, 'Prawn Cocktail', 3.95, '', 'Non-Veg', 'SeaFood', '', '1', NULL),
-(16, 'Chi/Lam Sashlik Chi', 9.95, '', 'Non-Veg', 'Tandoori Specials', '', '12', NULL),
-(17, 'Tandoori Deluxe', 12.95, '', 'Non-Veg', 'Tandoori Specials', '', '2', NULL),
-(18, 'Tandoori Chicken Main', 9.95, '', 'Non-Veg', 'Tandoori Specials', '', '3', NULL),
-(19, 'Chicken Tikka', 7.95, '', 'Non-Veg', 'Tandoori Specials', '', NULL, NULL),
-(20, 'Lamb Tikka', 9.95, '', 'Non-Veg', 'Tandoori Specials', '', NULL, NULL),
-(21, 'Bombay Aloo ', 6.5, '', 'Veg', 'Vegetable Dishes', '', NULL, NULL),
-(22, 'Mushroom Bhaji ', 6.5, '', 'Veg', 'Vegetable Dishes', '', NULL, NULL),
-(23, 'Saag Dall', 6.5, '', 'Veg', 'Vegetable Dishes', '', NULL, NULL),
-(24, 'Mattor Paneer', 6.5, '', 'Veg', 'Vegetable Dishes', '', NULL, NULL),
-(25, 'Vegetable Roshun', 6.5, '', 'Veg', 'Vegetable Dishes', '', NULL, NULL),
-(29, 'Garlic Naan', 3, '', 'Veg', 'Side Orders - Bread', '', NULL, NULL),
-(30, 'Stuffed Naan', 3.5, '', 'Veg', 'Side Orders - Bread', '', NULL, NULL),
-(31, 'Chapati', 1, '', 'Veg', 'Side Orders - Bread', '', NULL, NULL),
-(32, 'Green Salad', 2, '', 'Veg', 'Side Orders - Sundries', '', NULL, NULL),
-(33, 'Spice Popadum', 0.8, '', 'Veg', 'Side Orders - Sundries', '', NULL, NULL),
-(34, 'Chutney', 0.7, '', 'Veg', 'Side Orders - Sundries', '', NULL, NULL);
+(1, 'Butter Dosa', 70, 'Butter dosa', 'Veg', 'Dosa', 'butter uthappa.jpg', '10', 1),
+(3, 'Coconut Neer dosa', 75, 'c', 'Veg', 'Dosa', '', '10', 1),
+(4, 'Rava Butter Dosa', 75, 'rbd', 'Veg', 'Dosa', '', '10', 1),
+(5, 'Masala Dosa', 75, 'md', 'Veg', 'Dosa', '', '10', 1),
+(6, 'Mysore Dosa', 80, 'md', 'Veg', 'Dosa', '', '10', 1),
+(7, 'Mysore Masala Dosa', 85, 'mmd', 'Veg', 'Dosa', '', '10', 1),
+(8, 'Ghee Gunpowder Dosa', 110, 'ggd', 'Veg', 'Dosa', '', '10', 2),
+(9, 'Table Top Dosa', 150, 'ttd', 'Veg', 'Dosa', '', '10', 2),
+(10, 'Butter Uthappa', 70, 'bu', 'Veg', 'Uthappa', '', '10', 1),
+(11, 'Onion Uthappa', 80, 'OU', 'Veg', 'Uthappa', '', '10', 1),
+(12, 'Tomato Uthappa', 70, 'TU', 'Veg', 'Uthappa', '', '10', 2),
+(13, 'Masala Uthappa', 80, 'mu', 'Veg', 'Uthappa', '', '10', 2),
+(14, 'Mix Veg Uthappa', 80, 'mvu', 'Veg', 'Uthappa', '', '10', 2),
+(15, 'Burnt Garlic Cheese Uthappa', 85, 'bgcu', 'Veg', 'Uthappa', '', '10', 2),
+(16, 'Coconut Uthappa', 75, 'cu', 'Veg', 'Uthappa', '', '10', 1),
+(17, 'Corn and cheese Uthappa', 90, 'ccu', 'Veg', 'Uthappa', '', '10', 1),
+(18, 'Dum Aloo', 140, 'da', 'Veg', 'Fusion', '', '10', 2),
+(19, 'Tawa Methi Mushroom', 170, 'tmm', 'Veg', 'Fusion', 'butter uthappa.jpg', '10', 2),
+(21, 'Paneer Makhni', 170, 'pm', 'Veg', 'Fusion', '', '10', 2),
+(22, 'Palak Paneer', 170, 'pp', 'Veg', 'Fusion', '', '10', 1),
+(23, 'Bhuna Paneer', 170, 'b', 'Veg', 'Fusion', '', '10', 2),
+(24, 'Sarson ka saag', 180, 'sks', 'Veg', 'Fusion', '', '10', 2),
+(25, 'Kadi Pakoda', 160, 'kp', 'Veg', 'Fusion', '', '10', 2),
+(26, 'Dal Makhni', 160, 'dm', 'Veg', 'Fusion', '', '10', 1),
+(27, 'Pindi Chole', 170, 'pc', 'Veg', 'Fusion', '', '10', 2),
+(28, 'Baida Curry', 170, 'bc', 'Non-Veg', 'Fusion', '', '10', 2),
+(29, 'Bhuna Murgh', 190, 'bm', 'Non-Veg', 'Fusion', '', '10', 2),
+(30, 'Butter Chicken', 210, 'bc', 'Non-Veg', 'Fusion', '', '10', 1),
+(31, 'Tawa Methi Chicken', 210, 'tmc', 'Non-Veg', 'Fusion', '', '10', 2),
+(32, 'Gosht ka kheema', 220, 'gkk', 'Non-Veg', 'Fusion', '', '10', 2),
+(33, 'Mutton Rogan Josh', 220, 'gmrj', 'Non-Veg', 'Dosa', 'butter uthappa.jpg', '10', 2),
+(34, 'Ghee Mutton Rogan Josh', 220, 'gmrj', 'Non-Veg', 'Fusion', '', '10', 2),
+(35, 'Gosht Seekh Kadhi', 220, 'gsk', 'Non-Veg', 'Fusion', '', '10', 2),
+(36, 'Masala Scrambled Paneer Wrap', 140, 'mspw', 'Non-Veg', 'Wraps', 'dosa wrap.jpg', '10', 2),
+(37, 'Masala Scrambled Paneer Wrap', 140, 'mspw', 'Non-Veg', 'Wraps', '', '10', 2),
+(38, 'Dilli Wali Tikki Wrap', 140, 'dwtw', 'Veg', 'Wraps', '', '10', 1),
+(39, 'Mushroom Chilli Wrap', 150, 'mcw', 'Veg', 'Wraps', '', '10', 2),
+(40, 'Dhuadhar Paneer Wrap', 160, 'dpw', 'Veg', 'Wraps', '', '10', 2),
+(41, 'Cheese Burst Wrap', 190, 'cbw', 'Veg', 'Wraps', '', '10', 2),
+(42, 'Baida Wrap', 140, 'bw', 'Non-Veg', 'Wraps', '', '10', 2),
+(43, 'Murgh Patiala Wrap', 170, 'mpw', 'Non-Veg', 'Wraps', 'dosa wrap.jpg', '10', 2),
+(44, 'Murgh Patiala Wrap', 170, 'mpw', 'Non-Veg', 'Wraps', '', '10', 2),
+(45, 'Dhuadhar Murgh wrap', 170, 'dmw', 'Non-Veg', 'Wraps', '', '10', 2),
+(46, 'Chicken Chilli Wrap', 170, 'ccw', 'Non-Veg', 'Wraps', '', '10', 2),
+(47, 'Chicken Kheema Wrap', 180, 'ckw', 'Non-Veg', 'Wraps', '', '10', 2),
+(48, 'Mutton Kheema Wrap', 190, 'mkw', 'Non-Veg', 'Wraps', '', '10', 2),
+(49, 'Chicken Cheese Burst', 210, 'ccb', 'Non-Veg', 'Wraps', '', '10', 2),
+(50, 'Dosa Tacos', 180, 'dt', 'Veg', 'Pardesi', '', '10', 1),
+(51, 'Cheese Fries Crisp Salad', 180, 'cfcs', 'Veg', 'Pardesi', '', '10', 2),
+(52, 'Pizza', 220, 'P', 'Veg', 'Pardesi', '', '10', 2),
+(53, 'Murgh Dosa Tacos', 190, 'mdt', 'Non-Veg', 'Fusion', '', '10', 2),
+(54, 'Creamy Chicken Crisp Salad', 190, 'cccs', 'Non-Veg', 'Pardesi', '', '190', 1),
+(55, 'Chicken Pizza', 230, 'cp', 'Non-Veg', 'Pardesi', '', '10', 2),
+(56, 'Veg Thali', 260, 'vt', 'Veg', 'ThalI', '', '10', 2),
+(57, 'Murgh Thali', 290, 'mt', 'Non-Veg', 'ThalI', '', '10', 2),
+(58, 'Gosht Thali', 330, 'gt', 'Non-Veg', 'ThalI', '', '10', 2),
+(59, 'Uthappam Superstar', 180, 'us', 'Veg', 'ThalI', '', '10', 2),
+(60, 'Rang De Basanti Dosa', 190, 'rd', 'Veg', 'ThalI', '', '10', 2),
+(61, 'Banana pancakes', 150, 'bp', 'Veg', 'Desserts', '', '10', 1),
+(62, 'Honey Jaggery pancakes', 160, 'hjp', 'Veg', 'Desserts', '', '10', 1),
+(63, 'Chocolate Wrap', 150, 'cw', 'Veg', 'Desserts', '', '10', 1),
+(64, 'Sweet Coconut wrap', 90, 'scw', 'Veg', 'Desserts', 'ice cream dosa.png', '90', 1),
+(65, 'Sweet Coconut wrap', 90, 'scw', 'Veg', 'Desserts', '', '90', 1),
+(66, 'Chocolate Banana Wrap', 120, 'cbw', 'Veg', 'Desserts', '', '10', 1),
+(67, 'Fried Ice cream', 180, 'fic', 'Veg', 'Desserts', '', '10', 2),
+(68, 'cheese', 30, 'cheese', 'Veg', 'Sides', '', '2', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `menu_batter_rel`
+--
+
+CREATE TABLE `menu_batter_rel` (
+  `id` int(20) NOT NULL,
+  `menu_id` int(20) NOT NULL,
+  `batter_id` int(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `menu_batter_rel`
+--
+
+INSERT INTO `menu_batter_rel` (`id`, `menu_id`, `batter_id`) VALUES
+(2, 1, 10),
+(3, 1, 6),
+(4, 1, 8),
+(5, 1, 7),
+(6, 18, 10),
+(7, 18, 6),
+(8, 18, 8),
+(9, 18, 7),
+(10, 19, 10),
+(11, 19, 6),
+(12, 19, 7),
+(13, 21, 10),
+(14, 21, 9),
+(15, 19, 8),
+(16, 21, 6),
+(17, 22, 10),
+(18, 22, 9),
+(19, 22, 7),
+(20, 22, 6),
+(21, 23, 10),
+(22, 23, 9),
+(23, 23, 7),
+(24, 23, 6),
+(25, 24, 10),
+(26, 24, 9),
+(27, 24, 7),
+(28, 24, 6),
+(29, 25, 10),
+(30, 25, 8),
+(31, 25, 7),
+(32, 25, 6),
+(33, 26, 10),
+(34, 26, 9),
+(35, 26, 7),
+(36, 26, 6),
+(37, 27, 10),
+(38, 27, 9),
+(39, 27, 7),
+(40, 27, 6);
 
 -- --------------------------------------------------------
 
@@ -477,7 +577,7 @@ CREATE TABLE `menu_ingridient_rel` (
   `Ingredients_id` int(10) NOT NULL,
   `quantity_rel` float NOT NULL,
   `addons` int(11) DEFAULT '0' COMMENT '0-mandatory 2-optional 1-addon ',
-  `addon_price` text NOT NULL,
+  `addon_price` int(11) NOT NULL,
   `batters` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -486,27 +586,77 @@ CREATE TABLE `menu_ingridient_rel` (
 --
 
 INSERT INTO `menu_ingridient_rel` (`id`, `Menu_id`, `Ingredients_id`, `quantity_rel`, `addons`, `addon_price`, `batters`) VALUES
-(1, 29, 3, 10, 1, '20', ''),
-(2, 3, 2, 10, 1, '20', ''),
-(3, 3, 3, 12, 1, '80', ''),
-(4, 15, 11, 2, 1, '', ''),
-(5, 20, 10, 12, 1, '', ''),
-(7, 4, 4, 213123, 1, '23333', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `nutrition`
---
-
-CREATE TABLE `nutrition` (
-  `Id` int(20) NOT NULL,
-  `Calories` int(10) DEFAULT NULL,
-  `Protein` float DEFAULT NULL,
-  `Carbs` float DEFAULT NULL,
-  `Fats` float DEFAULT NULL,
-  `Menu_id` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+(2, 1, 7, 0.01, 1, 0, ''),
+(3, 3, 7, 0.01, 1, 0, ''),
+(4, 4, 7, 0.01, 1, 0, ''),
+(5, 5, 7, 1, 1, 0, ''),
+(6, 6, 7, 1, 1, 0, ''),
+(7, 7, 7, 1, 1, 0, ''),
+(8, 8, 7, 1, 1, 0, ''),
+(9, 9, 7, 1, 1, 0, ''),
+(10, 10, 7, 1, 1, 0, ''),
+(11, 11, 7, 1, 1, 0, ''),
+(12, 12, 7, 1, 1, 0, ''),
+(13, 13, 7, 1, 1, 0, ''),
+(14, 14, 7, 1, 1, 0, ''),
+(15, 15, 7, 1, 1, 0, ''),
+(16, 16, 7, 1, 1, 0, ''),
+(17, 17, 7, 1, 1, 0, ''),
+(18, 18, 7, 1, 1, 0, ''),
+(19, 19, 7, 1, 1, 0, ''),
+(20, 21, 7, 1, 1, 0, ''),
+(21, 22, 7, 1, 1, 0, ''),
+(22, 23, 7, 1, 1, 0, ''),
+(23, 24, 7, 1, 1, 0, ''),
+(24, 25, 7, 1, 1, 0, ''),
+(25, 26, 7, 1, 1, 0, ''),
+(26, 27, 7, 1, 1, 0, ''),
+(27, 28, 7, 1, 1, 0, ''),
+(28, 29, 7, 1, 1, 0, ''),
+(29, 30, 7, 1, 1, 0, ''),
+(30, 31, 7, 2, 1, 0, ''),
+(31, 32, 7, 1, 1, 0, ''),
+(32, 33, 7, 1, 1, 0, ''),
+(33, 34, 7, 1, 1, 0, ''),
+(34, 35, 7, 1, 1, 0, ''),
+(35, 36, 7, 1, 1, 0, ''),
+(36, 38, 7, 1, 1, 0, ''),
+(37, 39, 7, 1, 1, 0, ''),
+(38, 40, 7, 1, 1, 0, ''),
+(39, 41, 7, 1, 1, 0, ''),
+(40, 42, 7, 1, 1, 0, ''),
+(41, 45, 7, 1, 1, 0, ''),
+(42, 46, 7, 1, 1, 0, ''),
+(43, 47, 7, 1, 1, 0, ''),
+(44, 48, 7, 1, 1, 0, ''),
+(45, 49, 7, 1, 1, 0, ''),
+(46, 50, 7, 1, 1, 0, ''),
+(47, 51, 7, 1, 1, 0, ''),
+(48, 52, 7, 1, 1, 0, ''),
+(49, 53, 7, 1, 1, 0, ''),
+(50, 54, 7, 1, 1, 0, ''),
+(51, 55, 7, 1, 1, 0, ''),
+(52, 56, 7, 1, 1, 0, ''),
+(53, 57, 7, 1, 1, 0, ''),
+(54, 58, 7, 1, 1, 0, ''),
+(55, 59, 7, 1, 1, 0, ''),
+(56, 60, 7, 1, 1, 0, ''),
+(57, 61, 7, 1, 1, 0, ''),
+(58, 62, 7, 1, 1, 0, ''),
+(59, 64, 7, 1, 1, 0, ''),
+(60, 66, 7, 1, 1, 0, ''),
+(61, 67, 7, 1, 1, 0, ''),
+(62, 1, 6, 11, 1, 0, ''),
+(63, 3, 6, 11, 1, 0, ''),
+(64, 4, 6, 11, 1, 0, ''),
+(65, 5, 6, 11, 1, 0, ''),
+(66, 6, 6, 11, 1, 0, ''),
+(67, 7, 6, 11, 1, 0, ''),
+(68, 10, 6, 11, 1, 0, ''),
+(69, 11, 6, 11, 1, 0, ''),
+(70, 13, 6, 11, 1, 0, ''),
+(71, 18, 6, 11, 1, 0, ''),
+(72, 1, 11, 2, 1, 90, '');
 
 -- --------------------------------------------------------
 
@@ -564,7 +714,19 @@ INSERT INTO `orders` (`Order_id`, `Table_id`, `Timestamp`, `order_type`) VALUES
 (16, 4, '2018-06-10 23:21:23', 'Dine In'),
 (17, 4, '2018-06-10 23:21:24', 'Dine In'),
 (18, 99, '2018-06-10 23:22:50', 'Take Away'),
-(19, 1, '2018-06-10 23:40:59', 'Dine In');
+(19, 1, '2018-06-10 23:40:59', 'Dine In'),
+(20, 4, '2018-06-11 07:35:54', 'Dine In'),
+(21, 4, '2018-06-11 07:58:49', 'Dine In'),
+(22, 1, '2018-06-11 09:26:09', 'Dine In'),
+(23, 2, '2018-06-11 09:31:15', 'Dine In'),
+(24, 1, '2018-06-11 09:31:58', 'Dine In'),
+(25, 3, '2018-06-11 09:44:13', 'Dine In'),
+(26, 4, '2018-06-11 12:41:59', 'Dine In'),
+(27, 4, '2018-06-11 12:42:16', 'Dine In'),
+(28, 3, '2018-06-11 12:53:41', 'Dine In'),
+(29, 4, '2018-06-11 12:54:29', 'Dine In'),
+(30, 4, '2018-06-11 13:45:08', 'Dine In'),
+(31, 8, '2018-06-11 13:51:51', 'Dine In');
 
 -- --------------------------------------------------------
 
@@ -598,7 +760,19 @@ INSERT INTO `order_status` (`id`, `Order_id`, `status`, `Timestamp`, `seen`) VAL
 (13, 15, 4, '2018-06-10 23:16:07', 0),
 (14, 17, 4, '2018-06-10 23:21:24', 0),
 (15, 18, 4, '2018-06-10 23:22:50', 0),
-(16, 19, 4, '2018-06-10 23:40:59', 0);
+(16, 19, 4, '2018-06-10 23:40:59', 0),
+(17, 20, 1, '2018-06-11 07:35:54', 0),
+(18, 21, 1, '2018-06-11 07:58:49', 0),
+(19, 22, 3, '2018-06-11 09:26:09', 0),
+(20, 23, 3, '2018-06-11 09:31:15', 0),
+(21, 24, 3, '2018-06-11 09:31:58', 0),
+(22, 25, 3, '2018-06-11 09:44:13', 0),
+(23, 26, 1, '2018-06-11 12:41:59', 0),
+(24, 27, 3, '2018-06-11 12:42:16', 0),
+(25, 28, 4, '2018-06-11 12:53:41', 0),
+(26, 29, 4, '2018-06-11 12:54:29', 0),
+(27, 30, 4, '2018-06-11 13:45:08', 0),
+(28, 31, 4, '2018-06-11 13:51:51', 0);
 
 -- --------------------------------------------------------
 
@@ -631,7 +805,12 @@ INSERT INTO `payment_details` (`payment_details_id`, `Order_id`, `payment_type`,
 (7, 15, 'Online', '118415', '118415', '0', NULL, NULL),
 (8, 17, 'Online', '23483', '23483', '0', NULL, NULL),
 (9, 18, 'Cash', '1000', '1000', '0', NULL, NULL),
-(10, 19, 'Cash', '800', '2000', '1200', NULL, NULL);
+(10, 19, 'Cash', '800', '2000', '1200', NULL, NULL),
+(11, 28, 'Cash', '600', '600', '0', NULL, NULL),
+(12, 29, 'Online', '330', '330', '0', NULL, NULL),
+(13, 30, 'Online', '70', '70', '0', NULL, NULL),
+(14, 30, 'Online', '70', '70', '0', NULL, NULL),
+(15, 31, 'Online', '1120', '1120', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -667,7 +846,16 @@ INSERT INTO `sales` (`sales_id`, `Order_id`, `cgst`, `sgst`, `net_total`, `coupo
 (7, 15, 0, 0, 118415, NULL, '', '2018-06-10 23:20:21', 1, 'Manual', 0),
 (8, 17, 0, 0, 23483, NULL, '', '2018-06-10 23:21:32', 3, 'Manual', 0),
 (9, 18, 0, 0, 1000, NULL, '', '2018-06-10 23:23:11', 3, 'Manual', 0),
-(10, 19, 0, 0, 800, NULL, '', '2018-06-10 23:41:09', 1, 'Manual', 0);
+(10, 19, 0, 0, 800, NULL, '', '2018-06-10 23:41:09', 1, 'Manual', 0),
+(11, 22, 0, 0, 400, NULL, '', '2018-06-11 09:26:19', 1, 'Manual', 0),
+(12, 23, 0, 0, 260, NULL, '', '2018-06-11 09:31:29', 3, 'Manual', 0),
+(13, 24, 0, 0, 360, NULL, '', '2018-06-11 09:32:04', 2, 'Manual', 0),
+(14, 25, 0, 0, 180, NULL, '', '2018-06-11 09:44:21', 3, 'Manual', 0),
+(15, 27, 0, 0, 510, NULL, '', '2018-06-11 12:42:46', 1, 'Manual', 0),
+(16, 28, 0, 0, 600, NULL, '', '2018-06-11 12:53:49', 2, 'Manual', 0),
+(17, 29, 0, 0, 330, NULL, '', '2018-06-11 12:54:39', 1, 'Manual', 0),
+(18, 30, 0, 0, 70, NULL, '', '2018-06-11 13:45:21', 3, 'Manual', 0),
+(19, 31, 0, 0, 1120, NULL, '', '2018-06-11 13:52:05', 1, 'Manual', 0);
 
 -- --------------------------------------------------------
 
@@ -804,6 +992,12 @@ ALTER TABLE `menu`
   ADD PRIMARY KEY (`Menu_Id`,`Name`);
 
 --
+-- Indexes for table `menu_batter_rel`
+--
+ALTER TABLE `menu_batter_rel`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `menu_ingridient_rel`
 --
 ALTER TABLE `menu_ingridient_rel`
@@ -811,13 +1005,6 @@ ALTER TABLE `menu_ingridient_rel`
   ADD KEY `menu_id_constraint` (`Menu_id`),
   ADD KEY `Ingredients_id` (`Ingredients_id`),
   ADD KEY `Ingredients_id_2` (`Ingredients_id`);
-
---
--- Indexes for table `nutrition`
---
-ALTER TABLE `nutrition`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `nutrition_ibfk_1` (`Menu_id`);
 
 --
 -- Indexes for table `opening_amount`
@@ -880,7 +1067,7 @@ ALTER TABLE `background_image`
 -- AUTO_INCREMENT for table `batter`
 --
 ALTER TABLE `batter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `categories`
 --
@@ -900,17 +1087,17 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 --
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `fake_order`
 --
 ALTER TABLE `fake_order`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 --
 -- AUTO_INCREMENT for table `feedback`
 --
@@ -945,17 +1132,17 @@ ALTER TABLE `logo`
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+--
+-- AUTO_INCREMENT for table `menu_batter_rel`
+--
+ALTER TABLE `menu_batter_rel`
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `menu_ingridient_rel`
 --
 ALTER TABLE `menu_ingridient_rel`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT for table `nutrition`
---
-ALTER TABLE `nutrition`
-  MODIFY `Id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 --
 -- AUTO_INCREMENT for table `opening_amount`
 --
@@ -965,22 +1152,22 @@ ALTER TABLE `opening_amount`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 --
 -- AUTO_INCREMENT for table `order_status`
 --
 ALTER TABLE `order_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT for table `payment_details`
 --
 ALTER TABLE `payment_details`
-  MODIFY `payment_details_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `payment_details_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `sales_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- Constraints for dumped tables
 --
@@ -990,12 +1177,6 @@ ALTER TABLE `sales`
 --
 ALTER TABLE `customer_order`
   ADD CONSTRAINT `Order_constraint` FOREIGN KEY (`Order_id`) REFERENCES `orders` (`Order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `nutrition`
---
-ALTER TABLE `nutrition`
-  ADD CONSTRAINT `nutrition_ibfk_1` FOREIGN KEY (`Menu_id`) REFERENCES `menu` (`Menu_Id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order_status`

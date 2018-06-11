@@ -119,7 +119,9 @@
                                 <div class="col-xs-12" >
                                     <input type="hidden" name="id" value="<?php echo $value['id'];?>">
                                     <span id="printspan<?php echo $value['Order_id']; ?>">
+                                    <i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
                                     <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
+                                    
                                     <?php while($raw = $ress -> fetch_assoc()){ ?>
                     <p><strong ><?php 
                         //print_r($raw);
@@ -374,6 +376,27 @@ function pay_it(id){
                 success: function(resp){
                    // console.log(resp);
 				   $('#return_amount').val(parseInt(resp));
+					
+            }
+        });
+
+}
+
+function deleteOrderPayment(id){
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_deletepayment',
+                data:{
+                    'id':id,
+                  
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      window.location = '';
+                  }
 					
             }
         });

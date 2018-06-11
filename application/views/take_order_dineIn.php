@@ -277,6 +277,7 @@ $amt = $row['opening_amount'];
                                 <div class="col-xs-12" >
                                     <input type="hidden" name="id" value="<?php echo $value['Order_id'];?>">
                                     <span id="printspan<?php echo $value['Order_id']; ?>">
+									<i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
                                     <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
                                     <?php while($raw = $ress -> fetch_assoc()){ ?>
                     <p><strong ><?php 
@@ -292,7 +293,9 @@ $amt = $row['opening_amount'];
                             $rs = $ra -> fetch_assoc();    
                             echo $rs['Name'].": ".($q*$rs['Price']); 
                             ?>
-                </p>
+								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id']; ?>)" aria-hidden="true"></i>
+                </p>								
+
                         <?php } ?>
                         <p><strong>CGST: </strong><?php 
                     
@@ -703,6 +706,27 @@ $amt = $row['opening_amount'];
 <script>
 
 
+function deleteOrderPayment(id){
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_deletepayment',
+                data:{
+                    'id':id,
+                  
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      window.location = '';
+                  }
+					
+            }
+        });
+
+}
+
 function getOfflineOrders(){
             $.ajax({
                 type: 'POST',
@@ -808,6 +832,26 @@ function call(){
         });
     
     
+}
+
+function deleteOrderItem(id){
+	//console.log(id);
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_deleteorderitem',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
 }
 
 function pay_it(id){

@@ -75,81 +75,56 @@
         </nav>
 
         <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Add Expenses</h1>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- /.row -->
             
-            <?php
-            
-            ?>
-            
-            <!-- /.row -->
-            <div class="row" id="outOfStock">
-                <div class="col-lg-6">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Add Expenses
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <form method="POST" action="javascript:;" name="addExpenseForm">
-                                   <div class="form-group">
-                                        <label for="pwd">Name of person:</label>
-                                        <input type="text" class="form-control" id="nameOfPerson" name="nameOfPerson" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Reason:</label>
-                                        <input type="text" class="form-control" id="reason" name="reason" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Date:</label>
-                                        <input type="text" class="form-control" id="datepicker" name="date" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Time:</label>
-                                        <input type="time" class="form-control" id="time" name="time" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Type:</label>
-                                        <select name="type" id="type" class="form-control">
-											<option value="">Select</option>
-											<option value="grossary">Grossary</option>
-                                            <option value="general">General</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pwd">Name:</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
-                                    </div>
-                                      
-                                    <div class="form-group">
-                                        <label for="pwd">Amount:</label>
-                                        <input type="text" class="form-control" id="amt" name="amt" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary" onclick="addExpenses()">Submit</button>
-                                </form>
-                            </div>
-                            <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-6 -->
-                
-                <!-- /.col-lg-6 -->
-            </div>
-            <!-- /.row -->
 			
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Expenses List</h1>
                 </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+             <div class="row">
+                
+                <div class="col-lg-12"> 
+                <div class="panel panel-danger">
+                  <div class="panel-heading">Search</div>
+                  <div class="panel-body"> 
+                    <form action = "<?=base_url()?>index.php/Admin/addExpenses" method = "post">
+                      <div class="row">
+                        <div class="col-md-1"><label>From</label></div>
+                        <div class="col-md-3">
+                          <input type = "text" class = "form-control datepicker"  id = "start_date" name = "start_date" value = "<?php
+                          
+                          if(!isset($_POST['start_date'])){
+                            echo date('Y-m-d', mktime(0, 0, 0, date("m") , date("d") - 5, date("Y")));
+
+                          }else{
+                              echo $_POST['start_date'];
+                          }
+                          
+                          
+                          ?>" placeholder="Start Date">
+                        </div>
+                        <div class="col-md-1"><label>To</label></div>
+                        <div class="col-md-3">
+                          <input type = "text" class = "form-control datepicker"  id = "end_date" name = "end_date" value = "<?php 
+                          if(!isset($_POST['end_date'])){
+                            echo date("Y-m-d");
+
+                          }else{
+                              echo $_POST['end_date'];
+                          }
+                           ?>" placeholder="End Date">
+                        </div>
+                        <div class="col=md-2">
+                            <input type = "submit" class = "btn btn-success" value = "Search">
+                        </div>
+                      </div>    
+                    </form>
+                  </div>
+                </div>
+              </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
@@ -207,8 +182,81 @@
                 
                 <!-- /.col-lg-6 -->
             </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Add Expenses</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            
+            <?php
+            
+            ?>
+            
+            <!-- /.row -->
+            <div class="row" id="outOfStock">
+                <div class="col-lg-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Add Expenses
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <form method="POST" action="javascript:;" name="addExpenseForm">
+                                   <div class="form-group">
+                                        <label for="pwd">Name of person:</label>
+                                        <input type="text" class="form-control" id="nameOfPerson" name="nameOfPerson" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Reason:</label>
+                                        <input type="text" class="form-control" id="reason" name="reason" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Date:</label>
+                                        <input type="text" value="<?php echo date("Y-m-d") ?>" class="form-control" id="datepicker" name="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Time:</label>
+                                        <input type="time" value="now" class="form-control" id="time" name="time" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Type:</label>
+                                        <select name="type" id="type" class="form-control">
+											<option value="">Select</option>
+											<option value="grossary">Grossary</option>
+                                            <option value="general">General</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pwd">Name:</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                      
+                                    <div class="form-group">
+                                        <label for="pwd">Amount:</label>
+                                        <input type="text" class="form-control" id="amt" name="amt" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" onclick="addExpenses()">Submit</button>
+                                </form>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-6 -->
+                
+                <!-- /.col-lg-6 -->
+            </div>
+            <!-- /.row -->
+
+          
         </div>
         <!-- /#page-wrapper -->
+        
 
     </div>
     <!-- /#wrapper -->
@@ -276,6 +324,21 @@
         dateFormat:"yy-mm-dd"    
     });
   } );
+
+  $(function(){  
+  $('input[type="time"][value="now"]').each(function(){    
+    var d = new Date(),        
+        h = d.getHours(),
+        m = d.getMinutes();
+    if(h < 10) h = '0' + h; 
+    if(m < 10) m = '0' + m; 
+    $(this).attr({
+      'value': h + ':' + m
+    });
+  });
+});
+  
+
 	</script>
 </body>
 
