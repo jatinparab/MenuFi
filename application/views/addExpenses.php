@@ -117,6 +117,12 @@
                           }
                            ?>" placeholder="End Date">
                         </div>
+                        <select name="type">
+                        <option value="1">All</option>
+                          <option value="General">General</option>
+                          <option value="Grocery">Grocery</option>
+                          <option value="Salary">Salary</option>
+                        </select>
                         <div class="col=md-2">
                             <input type = "submit" class = "btn btn-success" value = "Search">
                         </div>

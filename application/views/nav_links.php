@@ -36,9 +36,7 @@ and open the template in the editor.
                             <a href="<?php echo base_url(); ?>index.php/Admin/addExpenses"><i class="fa fa-money fa-fw"></i> Add Expenses</a>
                         </li>
 						<?php if($_SESSION['user_type'] != 'chef'){ ?>
-                        <li>
-                            <a href="<?php echo base_url(); ?>index.php/Admin/manageDeliveries"><i class="fa fa-truck fa-fw"></i> Manage Deliveries</a>
-                        </li>
+                     
                         
                         <!-- <li>
                             <a href="#"><i class="fa fa-table fa-fw"></i> Manual Order<span class="fa arrow"></a>
@@ -100,14 +98,18 @@ and open the template in the editor.
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Sales Reports<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_restSales"><i class="fa fa-edit fa-fw"></i> Restaurant Sales Reports</a>
-                                </li>
+                                
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_execReport"><i class="fa fa-edit fa-fw"></i> Sales Execution Report</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_daily_reports"><i class="fa fa-edit fa-fw"></i> Daily Sales Report</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_guestBehaviour"><i class="fa fa-edit fa-fw"></i> Weekly Sales Reports</a>
+                                </li>
+                                <li>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_restSales"><i class="fa fa-edit fa-fw"></i> Monthly Sales Reports</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_labourReports"><i class="fa fa-edit fa-fw"></i> Labour Reports</a>
@@ -118,9 +120,7 @@ and open the template in the editor.
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_accReports"><i class="fa fa-edit fa-fw"></i> Accounting Reports</a>
                                 </li>
-                                <li>
-                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_guestBehaviour"><i class="fa fa-edit fa-fw"></i> Guest Behaviour Reports</a>
-                                </li>
+                                
                                  <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_rewardsReport"><i class="fa fa-edit fa-fw"></i> Gift Cards and Rewards Report</a>
                                 </li>

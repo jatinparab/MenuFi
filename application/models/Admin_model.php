@@ -269,7 +269,7 @@ public function updateMenuToDB($d){
 				return 1;
 			}
 			else{
-				return 0;
+				return $this->db->error();
 			}
 		}
 		public function deleteOrder(){
@@ -296,13 +296,15 @@ public function updateMenuToDB($d){
 		}
 		public function completeOrder($d)
 		{
+			
+				print_r($d);
 			$name = $d['Name'];
 			$quantity = $d['Quantity'];
 			$mid = $d['Menu_id'];
 			$addon = $d['addon'];
 			$batter = $d['batter'];
 			$myQuery = array();
-			for($i=0;$i<sizeof($name);$i++){
+			for($i = 0; $i<sizeof($name); $i++){
 			/*     echo "|".$mid[$i];
 			} */
 				$data['Menu_id'] = $mid[$i];  
@@ -325,8 +327,9 @@ public function updateMenuToDB($d){
 					
 					$success = $this->db->query($var);	
 					print_r($this->db->error());
-				}
+				
 			}
+		}
 			if($success && $sc)
 			{ 
 				$where = "(item_status = 1 OR item_status = 2)";
@@ -346,17 +349,21 @@ public function updateMenuToDB($d){
 					foreach($qwry as $val){
 						if($id == $val['Order_id'] ){
 							$sid = $val['Order_id'];
-							$total = $val['net_total'];
-							$cgst = $val['cgst'] ;
-							$sgst = $val['sgst'];
+						//	$total = $val['net_total'];
+						//	$cgst = $val['cgst'] ;
+						//	$sgst = $val['sgst'];
 						}
 					}
 					if(isset($sid)){
+						$total = 0;
 						foreach($row as $item){
 							$addons = $item->Addons;
 							$addons = explode(",",$addons);
+							$addons = array_filter($addons);
 							$b = $item->Menu_Id; 
+							
 							foreach($addons as $a){
+								
 								$sql3 = $this->db->query("SELECT * from menu_ingridient_rel WHERE Ingredients_id=$a AND Menu_id=$b");
 								$rw = $sql3->result_array();
 								$prce = $rw[0]['addon_price']; 
@@ -420,6 +427,22 @@ public function updateMenuToDB($d){
 				return 0;
 			} 
 		}
+
+		public function addOpeningAmt($opening_amount)
+		{  
+		//	$added_by = $this->session->userdata('admin_id');
+			$added_date= date('Y-m-d H:i:s');
+			
+			$var = "INSERT into opening_amount(`opening_amount`,`added_date`) values('$opening_amount','$added_date')";
+			$success = $this->db->query($var);		
+			if($success)
+			{   
+				return 1;
+			}else{
+				return $this->db->error();
+			}		
+		}
+
 		public function get_orderid()
 		{
 			$mobno = $this->input->post('mobno');

@@ -39,7 +39,27 @@
         'Friday'=>0,
         'Saturday'=>0,
     );
+    $orders = array(
+        'Sunday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Monday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Tuesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Wednesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Thursday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Friday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+        'Saturday'=>array('Cash'=>0,'Card'=>0,'Online'=>0)
+    );
 
+    $sql = "SELECT * FROM payment_details";
+    $res = $conn -> query($sql);
+    if($res){
+        
+        while($row = $res-> fetch_assoc()){
+            $ro = $row['added_date'];
+            $type = $row['payment_type'];
+            $week = date('l', strtotime($ro));
+            $orders[$week][$type] += 1;
+        }
+    }
       $sql = "SELECT * FROM sales WHERE refund='0'";
         $res = $conn -> query($sql);
         $total = 0;
@@ -177,11 +197,13 @@
    
       
    <tr><th>Week</th>
-    <th>Avg Bill Amount</th>   <th>Avg Freq of Visit</th></tr>
+    <th>Card</th>   <th>Cash</th> 
+    <th>Online</th>
+    </tr>
     <?php 
-        foreach($avg_bill_amount as $k => $v){
+        foreach($orders as $k => $v){
       ?>
-      <tr><td><?php echo $k; ?></td><td><?php echo (int)($v); ?></td><td><?php echo number_format($avg_freq_visit[$k],2,'.',''); ?></td></tr>
+      <tr><td><?php echo $k; ?></td><td><?php echo $v['Card']; ?></td><td><?php echo $v['Cash']; ?></td><td><?php echo $v['Online']; ?></td></tr>
     <?php 
         }
     ?>

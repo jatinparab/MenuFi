@@ -87,7 +87,7 @@
         </nav>
 
         <div id="page-wrapper">
-            <div class="row">
+            		<div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Update Cash Orders</h1>
                 </div>
@@ -101,12 +101,24 @@
            
             <div class="row" id="div_offlineOrders">
                 <?php if(!empty($pendingOrders)){
+					//print_r($pendingOrders);
                                      foreach ($pendingOrders as $value) {
 //    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
-                                        
-                        $idr = $value['Order_id'];
+                                     
+						$idr = $value['Order_id'];
+						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
+						$re1 = $conn ->query($sss);
+						$rew = $re1 -> fetch_assoc();
+						if($rew['Table_id'] == '-1'){
+							$table_no = 'Home Delivery';
+						}else if($rew['Table_id'] == '99'){
+							$table_no = 'Take Away';
+						}else{
+							$table_no = "Table No: ".$rew['Table_id'];
+						}
                         $sq3 = "SELECT * FROM customer_order WHERE Order_id='$idr'";
-                        $ress = $conn -> query($sq3);
+						$ress = $conn -> query($sq3);
+						
                         // print_r($ress);
                         if(mysqli_num_rows($ress) == 0 ){
                             continue;
@@ -117,12 +129,13 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-12" >
-                                    <input type="hidden" name="id" value="<?php echo $value['id'];?>">
+                                    <input type="hidden" name="id" value="<?php echo $value['Order_id'];?>">
                                     <span id="printspan<?php echo $value['Order_id']; ?>">
-                                    <i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
+									<i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
                                     <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
-                                    
-                                    <?php while($raw = $ress -> fetch_assoc()){ ?>
+									<p style="font-size:20px" class="text-center"><?php echo $table_no; ?></p>
+                                    <?php while($raw = $ress -> fetch_assoc()){
+										$cust_id = $raw['customer_id']; ?>
                     <p><strong ><?php 
                         //print_r($raw);
                         $q = $raw['Quantity'];
@@ -134,11 +147,26 @@
                             $sq4 = "SELECT * FROM menu WHERE Menu_Id='$mid'";
                             $ra = $conn -> query($sq4);
                             $rs = $ra -> fetch_assoc();    
-                            echo $rs['Name'].": ".($q*$rs['Price']); 
-                            ?>
-                            								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id']; ?>)" aria-hidden="true"></i>
+							echo $rs['Name'].": ".($q*$rs['Price']); 
+							if($table_no == 'Home Delivery'){
+								$cid = $raw['customer_id'];
+                            $sq5 = "SELECT * FROM customers WHERE customer_id='$cid'";
+                            $rr = $conn -> query($sq5);
+                            $rf = $rr -> fetch_assoc();
+                            $mob = $rf['mobile'];
+                            $sq6 = "SELECT * FROM addresses WHERE mobile='$mob'";
+                            $rg = $conn -> query($sq6);
+                            $rk = $rg -> fetch_assoc();
+                            $add = $rk['address'];
+							$name = $rk['name'];
 
-                </p>
+								
+							}
+							
+                            ?>
+								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id']; ?>)" aria-hidden="true"></i>
+                </p>								
+
                         <?php } ?>
                         <p><strong>CGST: </strong><?php 
                     
@@ -154,9 +182,16 @@
                                         }
                                     
                                     ?>
-                                        
+                                                                                <a style="margin-left:20px;" href="<?php echo base_url(); ?>index.php/Admin/searchD?oid=<?php echo $idr."&"; ?>customer_id=<?php echo $cust_id; ?>"  class="btn btn-info">Add</a>
+
                                         
                                 </h4>
+								<?php if($table_no == 'Home Delivery'){ ?>
+								<p><strong>Name:</strong> <?php if(isset($name)){echo $name;} ?><br><br>
+                        <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
+								<?php } ?>
+                    </p>
+
                                     </span>
                                     <?php
                                         if(!$r2['coupon_apply']){
@@ -170,7 +205,14 @@
                                     ?>
                                     <div>
                                         <br>
-                                        <input type="submit" value="Pay" class="btn btn-success form-control" onclick="showModal('<?php echo $idr; ?>');" >
+                                        <input type="submit" value="Pay" class="btn btn-success form-control" 
+										<?php if($table_no == 'Home Delivery'){ ?>
+											onclick="showModal_Home('<?php echo $idr; ?>');print_home('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>');"
+										<?php }else{ ?>
+										onclick="showModal('<?php echo $idr; ?>');" 
+										
+										<?php } ?>
+										>
                                     </div>
                                 </div>
                             </div>
@@ -257,7 +299,11 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" onclick="call()" >Submit</button>
+						<button type="button" class="btn btn-primary" <?php if($table_no == 'Home Delivery'){?>
+						 onclick="call_home()"
+						<?php }else{ ?>
+						 onclick="call()"
+						<?php } ?> >Submit</button>
 					</div>
 				</form>	
 			</div>
@@ -286,14 +332,212 @@
 </body>
 <script>
     
-//        getOfflineOrders();
-//        setInterval(function(){getOfflineOrders()},5000);
-function showModal(id){
+
+function deleteOrderPayment(id){
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_deletepayment',
+                data:{
+                    'id':id,
+                  
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      window.location = '';
+                  }
+					
+            }
+        });
+
+}
+
+function getOfflineOrders(){
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajx_cashOrders',
+                
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    $('#div_offlineOrders').html(resp);
+
+            }
+            });
+        }
+
+        function apply_code(id){
+			
+            let code = $('#code').val();
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_applyCode',
+                data:{
+                    'id':id,
+                    'code':code
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp=='success'){
+                        alert('Applied Coupon!');
+                        window.location = '';
+                    }else{
+                        alert(resp);
+                    }
+
+            }
+            });
+
+        }
+
+        function showModal(id){
     $('#modal_oid').val(id);
     $('#addPaymentModal').modal('show');
     $('#given_amount').val('');
     $('#return_amount').val('');
     console.log(id);
+}
+
+        function showModal_Home(id){
+    $('#modal_oid').val(id);
+    $('#addPaymentModal').modal('show');
+    $('#given_amount').val('');
+    $('#return_amount').val('');
+    console.log(id);
+}
+
+function print_home(id,address,name){
+           // var divContents = $("#printspan"+id).html();
+               var printWindow = window.open('', '', 'height=300,width=600');
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrderD',
+                data : {
+                    'Order_id':id,
+                    'name': name,
+                    'address': address
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
+        }
+
+		function call_home(){
+    let gamt = 0;
+    let ramt = 0;
+    id = $('#modal_oid').val();
+    if($('#given_amount').val()!=''){
+        gamt = $('#given_amount').val();    
+    }
+    if($('#return_amount').val()!=''){
+        ramt = $('#return_amount').val();    
+    }
+
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_payitaway',
+                data:{
+                    'id':id,
+                    'type': $('#payment_type').val(),
+                    'given_amt':gamt,
+                    'return_amt': ramt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    //console.log(resp);
+                    if(resp == 'success'){
+                       sendDelivery(id);
+                       pay_it(id);
+                     //  window.location = '';
+
+                    }
+
+            }
+        });
+    
+    
+}
+
+function sendDelivery(id){
+    $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "ajax_Deliver",
+            data: {
+                'id':id
+            },
+            success: function (result) {
+                if(result == 'success'){
+                    window.location = '';
+                }
+            }
+        });
+}
+
+		function addOpeningAmt(){
+			var opening_amount = $('#opening_amount').val();
+			if(opening_amount !=""){
+				$.ajax({
+					type: 'GET',
+					dataType: "json",
+					url: '<?php echo base_url(); ?>index.php/Admin/addOpeningAmt',
+					data:{
+						'opening_amount':opening_amount
+					},
+					//cache:false,
+					success: function(resp){
+						if(resp==1){
+							alert('Opening amount added successfully!');
+							location.reload();
+						}else{
+							alert('Opening amount not added!');
+						}	
+					}
+
+				});
+			}			
+			
+		} 
+
+
+function getReturnAmount(){
+	given = $('#given_amount').val();
+	id = $('#modal_oid').val();
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_getreturn',
+                data:{
+                    'id':id,
+                    'given':given
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				   $('#return_amount').val(parseInt(resp));
+					
+            }
+        });
+
 }
 
 function call(){
@@ -306,6 +550,8 @@ function call(){
     if($('#return_amount').val()!=''){
         ramt = $('#return_amount').val();    
     }
+
+
 
     $.ajax({
                 type: 'GET',
@@ -331,6 +577,26 @@ function call(){
         });
     
     
+}
+
+function deleteOrderItem(id){
+	//console.log(id);
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_deleteorderitem',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
 }
 
 function pay_it(id){
@@ -363,47 +629,6 @@ function pay_it(id){
 		    });
 		});
 
-        function getReturnAmount(){
-	given = $('#given_amount').val();
-	id = $('#modal_oid').val();
-	$.ajax({
-                type: 'GET',
-                url: 'ajax_getreturn',
-                data:{
-                    'id':id,
-                    'given':given
-                },
-                cache:false,
-                
-                success: function(resp){
-                   // console.log(resp);
-				   $('#return_amount').val(parseInt(resp));
-					
-            }
-        });
-
-}
-
-function deleteOrderPayment(id){
-    $.ajax({
-                type: 'GET',
-                url: 'ajax_deletepayment',
-                data:{
-                    'id':id,
-                  
-                },
-                cache:false,
-                
-                success: function(resp){
-                   // console.log(resp);
-				  if(resp == 'success'){
-                      window.location = '';
-                  }
-					
-            }
-        });
-
-}
         
         function getOfflineOrders(){
             $.ajax({
@@ -473,25 +698,8 @@ function deleteOrderPayment(id){
           
         }
         
-        function deleteOrderItem(id){
-	//console.log(id);
-	$.ajax({
-                type: 'GET',
-                url: 'ajax_deleteorderitem',
-                data:{
-                    'id':id
-                },
-                cache:false,
-                
-                success: function(resp){
-                    console.log(resp);
-                    if(resp == 'success'){
-                        window.location = '';
-                    }
-
-            }
-            });
-}
+        
+        
  
         
   

@@ -138,6 +138,10 @@
                                         </thead>
                                         <tbody>
                                             <?php if(!empty($pendingOrdershistory)){
+                                        //    $pendingOrdershistory = array_unique($pendingOrdershistory);
+                                            //print_r($pendingOrdershistory);
+                                            $pendingOrdershistory = array_map("unserialize", array_unique(array_map("serialize", $pendingOrdershistory)));
+
                                              $i=1;
                                              foreach ($pendingOrdershistory as $value) { ?>
                                                 <?php if($value['status'] == '4'){$status="Completed";}?>

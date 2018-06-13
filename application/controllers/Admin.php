@@ -916,7 +916,7 @@ if(!isset($_SESSION['admin_id']))
 //          $_SESSION['k']=1;
         
         
-        $q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and order_status.status=3 and sales.Order_id = order_status.Order_id")->result_array();
+        $q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
         $pendingOrders = $q;
         $r = "";
 //        $this->load->view('updateCashOrders',$data);
@@ -966,11 +966,13 @@ if(!isset($_SESSION['admin_id']))
 
      
     public function addExpenses(){
-        if(isset($_POST['start_date'])){
+        if(isset($_POST['start_date'])&&($_POST['type']!='1')){
             $start_date = $_POST['start_date'];
             $end_date = $_POST['end_date'];
-            $expenses = $this->db->query("SELECT * FROM expenses where date between '$start_date' and '$end_date'")->result_array();
-
+            $type = $_POST['type'];
+            echo $type;
+            $expenses = $this->db->query("SELECT * FROM expenses where (date between '$start_date' and '$end_date' )AND type='$type'")->result_array();
+            print_r($expenses);
         }else{
             $expenses = $this->db->query("SELECT * FROM expenses")->result_array();
 
@@ -1017,7 +1019,7 @@ if(!isset($_SESSION['admin_id']))
 
     public function cashOrder(){
         
-        $q = $this->db->query("SELECT order_status.Order_id as Order_id ,order_status.id as id , sales.net_total as net_total from order_status , sales where day(order_status.TIMESTAMP)= day(curdate()) and order_status.status=3 and sales.Order_id = order_status.Order_id")->result_array();
+        $q = $this->db->query("SELECT order_status.Order_id as Order_id ,order_status.id as id , sales.net_total as net_total from order_status , sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
         $data['pendingOrders']=$q;
         // foreach($q as $val){
         //     echo $val['Order_id'].$val['net_total'];
@@ -1145,6 +1147,9 @@ if(!isset($_SESSION['admin_id']))
         if(isset($_GET['oid'])){
             $_SESSION['order_id'] = $_GET['oid'];
         }
+        if(isset($_GET['customer_id'])){
+            $_SESSION['customer_id'] = $_GET['customer_id'];
+        }
         $this->load->model('Admin_model');
         $data['query2'] = $this->Admin_model->get_search();
         $data['orderid'] = $_SESSION['order_id'];
@@ -1165,6 +1170,15 @@ if(!isset($_SESSION['admin_id']))
         $this->load->view('footer');
     }
 
+    public function addOpeningAmt(){
+  
+        $opening_amount = $_GET['opening_amount'];
+        
+        $this->load->model('Admin_model');
+        $success = $this->Admin_model->addOpeningAmt($opening_amount);   
+        echo(json_encode($success));die;
+      }
+
 
     public function addfakeD(){
         $data['menu_id'] = $_POST['Menu_id'];
@@ -1174,7 +1188,9 @@ if(!isset($_SESSION['admin_id']))
         $data['addon_list'] = $_POST['addon_list'];
         $data['batter'] = $_POST['batter'];
         $this->load->model('Admin_model');
+        // print_r($data);
         $success = $this->Admin_model->intofakeOrder($data);
+        //print_r($success);
         $this->load->model('Admin_model');
 
          $d['todaysOrders'] = $this->Admin_model->total_orders();
@@ -1196,6 +1212,9 @@ if(!isset($_SESSION['admin_id']))
             $this->load->view('footer');
         }
     }
+
+    
+
     public function complete_orderD(){
         $data['Menu_id'] =  $_POST['Menu_id'];
         $data['Name'] =  $_POST['name'];
@@ -1341,6 +1360,83 @@ if(!isset($_SESSION['admin_id']))
         
       }
 
+      public function printkot(){
+        $id = $_GET['id'];
+        $res = $this->db->query("SELECT * FROM orders WHERE Order_id='$id'");
+        $x = $res->result_array();
+        //print_r($x);
+        $table_id = $x[0]['Table_id'];
+        if($table_id == '99' || $table_id == '-1'){
+            $table_id = '0';
+        }
+        $re = $this->db->query("SELECT * FROM fake_order");
+        $orders = $re->result_array();
+
+        $table= "<table  class='' style='font-size: 16px;'><tr><td colspan='4' align='center' style='font-weight:bold;font-size: 24px;'></td></tr>
+          
+    
+          <tr ><td colspan='4' style='font-weight:bold;font-size: 23px;' align='center'>(TABLE NO : ".$table_id." )</td></tr>
+          ";
+          foreach($orders as $r){
+              $addons = $r['addon'];
+              $addons = explode(',',$addons);
+              $addons = array_filter($addons);
+              $name = $r['Menu_id'];
+              $quantity = $r['Quantity'];
+              $res = $this->db->query("SELECT * FROM menu WHERE Menu_Id='$name'");
+              $re = $res->result_array();
+              $name = $re[0]['Name'];
+            $table .="<tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            <tr style='text-align:center'>
+            <td colspan='4' style='font-size:25px;' align='center'>".$quantity." </td>
+            </tr>
+            <tr style='text-align:center'>
+              <td colspan='4' align='center' style='font-size:20px;'> ".$name." </td>
+            </tr>";
+            $batter = $r['batter'];
+            $res = $this->db->query("SELECT * FROM batter WHERE id='$batter'");
+            $re = $res->result_array();
+            $batter = $re[0]['name'];
+            if($batter != 'None'){
+                $table .="
+            <tr style='text-align:center'>
+              <td colspan='4' align='center'>~~~~ Batter ~~~~</td>
+            </tr>
+            <tr style='text-align:center'>
+              <td colspan='4' style='font-size:20px;' align='center'>".$batter."</td>
+            </tr>";
+            }
+            
+
+            if(sizeof($addons) > 0){
+                $table .="
+            <tr style='text-align:center'>
+            <td colspan='4' align='center'>~~~ Addons ~~~</td>
+            </tr>";
+            foreach($addons as $addon){
+                $res = $this->db->query("SELECT * FROM ingredients WHERE Ingredients_id='$addon'");
+                $re = $res->result_array();
+                $name = $re[0]['Name'];
+                $table .= "
+                <tr style='text-align:center'>
+                  <td colspan='4' style='font-size:20px;' align='center'>".$name." </td>
+                </tr>";
+              }
+            }
+            
+          
+          
+            
+          
+        }
+        $table .=" <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
+            
+        </table>";
+            echo $table;
+
+
+
+      }
       public function sales_daily_reports()
       {
         $hour_arr = array(
@@ -1386,11 +1482,12 @@ if(!isset($_SESSION['admin_id']))
             $end_date=$today_date;
           }
           
-          $q = "SELECT count(s.sales_id) AS count,SUM(s.net_total) AS total_sales FROM sales s LEFT JOIN order_status os ON os.Order_id=s.Order_id WHERE os.status ='1' AND s.Timestamp>=str_to_date(concat('".$start_date."',' ".$start."'),'%Y-%m-%d %H') AND s.Timestamp<=str_to_date(concat('".$end_date."',' ".$end."'),'%Y-%m-%d %H')";
-  
+          $q = "SELECT count(pd.payment_details_id) AS count,SUM(pd.total_amount) AS total_sales FROM payment_details pd WHERE pd.added_date>=str_to_date(concat('".$start_date."',' ".$start."'),'%Y-%m-%d %H') AND pd.added_date<=str_to_date(concat('".$end_date."',' ".$end."'),'%Y-%m-%d %H')";
+         // echo $q;
           $query = $this->db->query($q);
+            //print_r($this->db->error());
           $result = $query->row_array();
-        
+   
           $data_arr[$key]['hour'] = $hr['hour'];
           $data_arr[$key]['total_customer'] = $result['count'];
           $data_arr[$key]['sales_hour'] = round($result['total_sales'],2);
@@ -1696,6 +1793,8 @@ if(!isset($_SESSION['admin_id']))
           LEFT JOIN payment_details p ON p.Order_id=o.Order_id 
           LEFT JOIN customers c ON c.customer_id=s.customer_id
           WHERE os.status=4 ORDER BY o.Timestamp DESC")->result_array();
+          $history = array_map("unserialize", array_unique(array_map("serialize", $history)));
+
           
 		      $data['pendingOrdershistory'] = $history;
 
