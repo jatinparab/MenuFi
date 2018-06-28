@@ -91,7 +91,7 @@ public function addMenuToDB($d){
     $data['Description']=$d['Description'];
     $data['Type']=$d['Type'];
     $data['Category']=$d['Category'];
-   // $data['Image']=$d['Image'];
+    $data['Image']=$d['img'];
     $data['time']=$d['time'];
     $data['spice_level']=$d['spice_level'];
     

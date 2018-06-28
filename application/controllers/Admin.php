@@ -2250,6 +2250,7 @@ public function addmenu(){
     $data1['spice_level']=$_POST['ddlspiceLevel'];
     if(isset($_FILES['img']['name'])){
         $image = $_FILES['img']['name'];
+        $data1['img']=$image;
         $conn = mysqli_connect("localhost","root", "", "menufi");
         $cwd= getcwd();
         $sql = "UPDATE menu SET Image='$image' WHERE Name='$n'";
