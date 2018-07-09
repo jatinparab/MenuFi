@@ -15,7 +15,17 @@ class Admin_model Extends CI_Model {
 					avg(staff_courtesy) as avg_staff_courtesy, 
 					avg(staff_knowledge) as avg_staff_knowledge
 				from feedback) as tt")->result();
-            }
+			}
+			
+	public function preparationTimeOut(){
+		$query="select Order_id from order_status os where (unix_timestamp(now())  - unix_timestamp(Timestamp))>=(select max(time)*60 from menu m where Menu_Id IN (select Menu_Id from customer_order where Order_id=os.Order_id)) and os.status=1";
+		 return $this->db->query($query)->result_array();
+	}	
+	
+	public function orderReady(){
+		$query="select Order_id from order_status os where seen=1 and (unix_timestamp(now())  - unix_timestamp(seen_timestamp))>=(select max(time)*60 from menu m where Menu_Id IN (select Menu_Id from customer_order where Order_id=os.Order_id))";
+		return $this->db->query($query)->result_array();
+	}
 
     public function checkPassword($curPwd){
         $this->db->select('*');
@@ -189,7 +199,7 @@ public function updateMenuToDB($d){
 			return $query;
 		}
 		public function get_fake(){
-			$query = $this->db->query('select M.Menu_id as Menu_id, M.Name as name,f.quantity as quantity from menu M,fake_order f where f.Menu_id = M.Menu_id');
+			$query = $this->db->query('select M.Menu_id as Menu_id, M.Name as name,f.quantity as quantity,f.id as id from menu M,fake_order f where f.Menu_id = M.Menu_id');
 			$sql = $query->result_array();
 			return $sql;
 		}
@@ -235,16 +245,17 @@ public function updateMenuToDB($d){
 			//$date = date('y-m-d');
 			//$data = date('Y-m-d');
 
-			$this->db->select('*');
+			// $this->db->select('*');
 
-			$this->db->from('order_status');
+			// $this->db->from('order_status');
 
-			$this->db->where('Timestamp >= CURDATE() AND status = 1');
+			// $this->db->where('Timestamp >= CURDATE() AND status = 1');
 
-			$query = $this->db->get();
-			$row = $query->result();
+			// $query = $this->db->get();
+			// $row = $query->result_array();
+			$query = $this->db->query('select Order_id,Table_id from orders where Order_id IN (select Order_id from order_status where Timestamp >= CURDATE() AND status = 1 )')->result_array();
 			//echo $this->db->last_query();
-			return $row;
+			return $query;
 			//$query = "select * from table where DATE(emailsend)=CURDATE()";
 		}
 		public function getAllOrder(){
@@ -949,4 +960,3 @@ order by maxQ desc")->result();
 	}
 
 ?>
-

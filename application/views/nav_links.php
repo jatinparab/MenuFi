@@ -106,10 +106,10 @@ and open the template in the editor.
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_daily_reports"><i class="fa fa-edit fa-fw"></i> Daily Sales Report</a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_guestBehaviour"><i class="fa fa-edit fa-fw"></i> Weekly Sales Reports</a>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sr_weekly"><i class="fa fa-edit fa-fw"></i> Weekly Sales Reports</a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_restSales"><i class="fa fa-edit fa-fw"></i> Monthly Sales Reports</a>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sr_monthly"><i class="fa fa-edit fa-fw"></i> Monthly Sales Reports</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_labourReports"><i class="fa fa-edit fa-fw"></i> Labour Reports</a>

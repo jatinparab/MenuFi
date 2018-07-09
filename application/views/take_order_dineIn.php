@@ -71,7 +71,9 @@ if(mysqli_num_rows($res)>0){
 		while($rowonline = $re4 -> fetch_assoc()){
 			$online +=  $rowonline['total_amount'];
 		}
-	}
+    }
+    
+    
 
 	?>
 	
@@ -142,7 +144,42 @@ if(mysqli_num_rows($res)>0){
             </div>
             <!-- /.navbar-header -->
 
-            <ul style="z-index:999;"  class="nav navbar-top-links navbar-right" >
+            <ul  class="nav navbar-top-links navbar-right" >
+
+            <li class="dropdown" >
+                    <a  href="<?php echo base_url(); ?>index.php/Admin/tableStatus" >
+                        <i class="fa fa-bell fa-fw"></i><i class="fa fa-caret-down"></i>
+
+                    </a>
+                    <ul class="dropdown-menu dropdown-user" id="order-notify">
+                       
+                         <li><h5 style="padding-left: 3px; background-color: white">You have <?php echo $countNotifications;   ?> notifications</h5></li>
+                         <hr style="padding: 0px; margin: 0px; color: #fff">
+                         
+                    <?php   foreach($todaysOrders as $order):   ?>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">New Order:<?php echo $order['Order_id'];  ?></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: <?php echo $order['Table_id'];  ?></i></a>
+                        </li>
+                    <?php   endforeach; ?>
+                    <?php   foreach($preparedList as $prepared):   ?>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Preparation Timeout :<?php echo $prepared['Order_id']; ?> </i></a>
+                        </li>
+                        
+                    <?php   endforeach; ?>
+
+                    <?php   foreach($servedOrders as $order):   ?>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Ready To Serve:<?php echo $order['Order_id']; ?> </i></a>
+                        </li>
+                        
+                    <?php   endforeach; ?>
+                   
+                    </ul>
+                </li>
                 
 
             
@@ -337,6 +374,7 @@ if(mysqli_num_rows($res)>0){
                             $rk = $rg -> fetch_assoc();
                             $add = $rk['address'];
 							$name = $rk['name'];
+							$number = $mob;
 
 								
 							}
@@ -366,7 +404,8 @@ if(mysqli_num_rows($res)>0){
                                 </h4>
 								<?php if($table_no == 'Home Delivery'){ ?>
 								<p><strong>Name:</strong> <?php if(isset($name)){echo $name;} ?><br><br>
-                        <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
+								<strong>Number:</strong> <?php if(isset($number)){echo $number;} ?>	<br><br>
+                	    <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
 								<?php } ?>
                     </p>
 
@@ -385,7 +424,8 @@ if(mysqli_num_rows($res)>0){
                                         <br>
                                         <input type="submit" value="Pay" class="btn btn-success form-control" 
 										<?php if($table_no == 'Home Delivery'){ ?>
-											onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');print_home('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>');"
+											onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');print_home('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>','<?php
+											if(isset($number)){echo $number;} ?>');"
 										<?php }else{ ?>
 										onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');" 
 										
@@ -424,92 +464,18 @@ if(mysqli_num_rows($res)>0){
 
 										<div class="table-responsive">
 
-											<table class="table table-bordered">
-												<tr>
-													<th class="hidden">Menu Id</th>
-													<th>Name</th>
-													<th class="hidden">Category</th>
-													<th>Quantity</th>
-													<th>Addon</th>
-													<th>Addons Added</th>
-													<th>Batter</th>
-                                                    <th>Price</th>
-													<th>Add Item</th>
-												</tr>
+											
+												
 												<?php 
                                                 if(isset($query2) && !empty($query2)){
                                                     foreach ($query2 as $value) {
+                                                      
                                                 ?>
-												<tr id="<?php echo $value['Menu_Id']; ?>" class="menu-item <?php echo str_replace(' ','',$value['Category']); ?>">
-													<form action="addfakeD" method="post">
-														<td class="hidden">
-															<input type="text" name="Menu_id" class="form-control" value='<?php echo $value['Menu_Id'];?>'>
-														</td>
-														<td >
-															<?php echo $value['Name']; ?>
-														</td>
-														<td class="hidden">
-															<?php echo $value['Category'];?>
-														</td>
-														<td>
-															<input type="number" name="quantity" class="form-control">
-														</td>
-														<td>
-															<?php
-                                                    $m = $value['Menu_Id'];
-                                                    echo "<select onchange='addon(".$m.")' id="."'ad".$m."'>";
-                                                    echo "<option value='-1'> No addons</option>";
-                                                     $sql = "SELECT * FROM menu_ingridient_rel WHERE addons = '1' AND Menu_id = '$m'";
-                                                     $result = $conn->query($sql);
-                                                     if($result->num_rows >0){
-                                                        while($row = $result -> fetch_assoc()){
-                                                            $ix = $row['Ingredients_id'];
-                                                            $sql = "SELECT * FROM ingredients WHERE Ingredients_id = '$ix'";
-                                                            $res = $conn -> query($sql);
-                                                            $ro = $res -> fetch_assoc();
-                                                            echo "<option value=".$ro['Ingredients_id'].">" .$ro['Name']."</option>";
-                                                        }
-                                                     }else{
-                                                            
-                                                     }
-                                                     
-                                                     
-                                                    
-                                                    ?></select>
-																<input class="hidden" name='addon_list' id="addonv<?php echo $value['Menu_Id'] ?>">
-														</td>
-														<td id="addon<?php echo $value['Menu_Id'] ?>">
-
-														</td>
-														<td>
-															<select name="batter">
-																<?php 
-																	$sql = "SELECT * FROM batter";
-																	$res = $conn -> query($sql);
-																	while($row = $res -> fetch_assoc()){
-																		?> 
-																		<option value="<?php echo $row['id']; ?>">
-																		<?php
-																		echo $row['name'];
-																		?>
-																	</option>
-																		
-																		<?php
-																	}
-																
-																?>
-															</select>
-															
-
-														</td>
-                                                        <td>
-                                                                    <?php echo $value['Price']; ?>
-                                                        </td>
-														<td>
-															<input type="submit" name='add' value="Add Item" class="btn btn-primary">
-														</td>
-													</form>
-												</tr>
+												<button onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?>" style="margin:5px;">
+                                                
+                                                        <?php   echo $value['Name']; ?>
+                                                        
+                                                </button>
 
 												<?php }
                                                 
@@ -518,7 +484,7 @@ if(mysqli_num_rows($res)>0){
                                                         echo 'Data not available at this moment.';
                                                 }
                                                 ?>
-											</table>
+											
 										</div>
 									</div>
                                 </div>
@@ -535,77 +501,9 @@ if(mysqli_num_rows($res)>0){
 														<div class="panel-body">
 															<div class="table-responsive">
 																<form action="complete_orderD" method="post">
-																	<table class="table table-bordered">
-																		<tr>
-																			<th>Item ID</th>
-																			<th>Item Name</th>
-																			<th class="col-md-4">Quantity</th>
-																			<th> Addons </th>
-																			<th> Batter </th>
-                                                                         
-
-																		</tr>
-																		<?php 
-                                                if(isset($fake) && !empty($fake)){
-                                                    foreach ($fake as $value) {
-                                                ?>
-																		<tr>
-																			<td>
-																				<?php echo $value['Menu_id']; ?>
-																				<input type="hidden" name="Menu_id[]" value="<?php echo $value['Menu_id']?>" class="form-control">
-																			</td>
-																			<td>
-																				<?php echo $value['name']; ?>
-																				<input type="hidden" name="name[]" value="<?php echo $value['name']?>" class="form-control">
-																			</td>
-																			<td>
-																				<div class="input-group">
-																					<input type="number" id="quantity" name="quantity[]" class="form-control input-number" value="<?php echo $value['quantity']?>"
-																					min="0" max="100">
-																				</div>
-																			</td>
-																			<td>
-																				<?php $he = $value['Menu_id'];
-                                                            $v = $value['quantity'];
-                                                        $ssql = "SELECT * FROM fake_order WHERE Menu_id='$he' AND Quantity='$v'";
-                                                        $req = $conn -> query($ssql);
-                                                        $raw = $req -> fetch_assoc();
-                                                        ?>
-																				<input type="hidden" name="addon[]" value="<?php echo $raw['addon']; ?>" class="form-control">
-
-																				<?php
-                                                        //$x = substr($raw['addon'], 0, -1);
-                                                        //echo $x;
-                                                        $arr = explode(',',$raw['addon']);
-                                                        if(count($arr)>0){
-                                                            foreach($arr as $val){
-                                                                $sq = "SELECT * FROM ingredients WHERE Ingredients_id = '$val'";
-                                                                $ress = $conn -> query($sq);
-                                                                $ra = $ress -> fetch_assoc();
-                                                                echo $ra['Name']."<br>";
-                                                            }
-                                                            
-                                                        }
-                                                      ?>
-																			</td>
-																			<td>
-																			<input type="hidden" name="batter[]" value="<?php echo $raw['batter']; ?>" class="form-control">
-																			<?php
-																				$batter_id = $raw['batter'];
-																				$sql = "SELECT * FROM batter WHERE id='$batter_id'";
-																				if($res = $conn -> query($sql)){
-																					echo $res -> fetch_assoc()['name'];
-																				}
-																			?>
-																			</td>
-                                                                            <td>
-                                                                                <?php echo $ra['Price']; ?>
-                                                                            </td>
-																		</tr>
-																		<?php }
-                                                }else{
-                                                    echo "No Item added Yet";
-                                                }?>
+																	<table class="table table-bordered" style="padding:10px" id="fakeOrder_here">
+																		
+								
 
 																	</table>
 																	<button type="submit" onclick="kotprint(<?php echo $_SESSION['order_id']; ?>)" name="place_order" class="form-control btn btn-success">Place Order</button>
@@ -777,7 +675,68 @@ if(mysqli_num_rows($res)>0){
 </script>
 
 <script>
+get_fake_order();
 
+function changeBatter(id,item){
+    batter_id = item;
+    console.log(id,batter_id);
+    $.ajax({
+                type: 'GET',
+                url: 'changeBatter_ajax',
+                data:{
+                    'id':id,
+                    'batter_id': batter_id
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+        });
+}
+
+function addAddon(id,item){
+    $.ajax({
+                type: 'GET',
+                url: 'addAddon_ajax',
+                data:{
+                    'id':id,
+                    'addon_id':item
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+    });
+}
+
+function removeAddon(id){
+    $.ajax({
+                type: 'GET',
+                url: 'removeAddon_ajax',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+    });
+}
 
 function deleteOrderPayment(id){
     $.ajax({
@@ -795,6 +754,24 @@ function deleteOrderPayment(id){
                       window.location = '';
                   }
 					
+            }
+        });
+
+}
+
+function addItem(id,customer_id){
+  //  alert('ehe');
+    $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/addItem_ajax',
+                data : {
+                    'id':id,
+                    'customer_id': customer_id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    get_fake_order();
             }
         });
 
@@ -842,6 +819,19 @@ function getOfflineOrders(){
             }
             });
         }
+
+function get_fake_order(){
+    $.ajax({
+                type: 'GET',
+                url: 'getFake',
+                
+                cache:false,
+                
+                success: function(resp){
+                    $('#fakeOrder_here').html(resp);
+            }
+            });
+}
 
         function apply_code(id){
 			
@@ -891,7 +881,7 @@ function getOfflineOrders(){
     console.log(id);
 }
 
-function print_home(id,address,name){
+function print_home(id,address,name,number){
            // var divContents = $("#printspan"+id).html();
                var printWindow = window.open('', '', 'height=300,width=600');
     //             printWindow.document.write(`<html><head><style>@page {
@@ -909,7 +899,8 @@ function print_home(id,address,name){
                 data : {
                     'Order_id':id,
                     'name': name,
-                    'address': address
+                    'address': address,
+                    'number':number
                 },
                 cache:false,
                 dataType:'html',
@@ -949,7 +940,7 @@ function print_home(id,address,name){
                     if(resp == 'success'){
                        //sendDelivery(id);
                       pay_it(id);
-                      window.location = '';
+                     // window.location = '';
 
                     }
 
@@ -1093,7 +1084,7 @@ function pay_it(id){
                 success: function(resp){
                     console.log(resp);
                     if(resp == 'success'){
-                       // window.location = '';
+                        window.location = '';
                     }
 
             }

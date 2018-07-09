@@ -1,15 +1,34 @@
-
 <?php
-$conn = mysqli_connect("localhost","root", "", "menufi");
-$s = "SELECT * 
-FROM opening_amount
+    $conn = mysqli_connect("localhost","root", "", "menufi");
+    $start_date = date('Y-m-d');
+    $end_date = date('Y-m-d',strtotime(date('Y-m-d').'+1 day'));
+    //echo $start_date;
+    $s1 = "SELECT * 
+FROM opening_amount WHERE added_date BETWEEN '$start_date' AND '$end_date'
 ORDER BY opening_amount_id DESC
 LIMIT 1";
-$res = $conn->query($s);
-$row = $res -> fetch_assoc();
-$amt = $row['opening_amount'];
-$ye = 0;
-    if(isset($mobno)){
+//echo $s1;
+$res = $conn->query($s1);
+$amt = 0;
+if(mysqli_num_rows($res)>0){
+    $row = $res -> fetch_assoc();
+    $amt = $row['opening_amount'];
+}
+
+
+
+    $s = "SELECT * FROM menu";
+    $r = $conn -> query($s);
+    $categories = array();
+    while($rf = $r -> fetch_assoc()){
+        array_push($categories, $rf['Category']);
+    }
+    $categories = array_unique($categories);
+    //echo $latest;
+    $ye = 0;
+
+
+    if(isset($mobno) && isset($tableno)){
         //echo $address;
          //echo $mobno;
         
@@ -18,84 +37,100 @@ $ye = 0;
         //$_SESSION['isredirect']=1;
         //header("Location: create_orderH?mobno=$mobno&address=$address&table=-1&CreateOrder=Create+Order");
     }
-   // echo $orderid;
-
-   $sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card'";
-	$res = $conn -> query($sql3);
-	$card = 0;
-	$online = 0;
-	
-	
-	$sql4 = "SELECT * FROM payment_details WHERE payment_type ='Online'";
-	$re4 = $conn -> query($sql4);
-
-	if(mysqli_num_rows($res)>0){
-		while($rowcard = $res -> fetch_assoc()){
-			$card +=  $rowcard['total_amount'];
-		}
-	}
-	
-	if(isset($re4)){
-		while($rowonline = $re4 -> fetch_assoc()){
-			$online +=  $rowonline['total_amount'];
-		}
-	}
-
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Menu Fi</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- MetisMenu CSS -->
-    <link href="../../assets/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="../../assets/dist/css/sb-admin-2.css" rel="stylesheet">
-
-    <!-- Morris Charts CSS -->
-    <link href="../../assets/vendor/morrisjs/morris.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="../../assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+    $card = 0;
+    $online = 0;
+    $cash = 0;
+    // Pending Cash Order
+    $q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
+    $pendingOrders = $q;
+    
+    $sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card' AND added_date BETWEEN '$start_date' AND '$end_date'";
+    $res = $conn -> query($sql3);
+    if(mysqli_num_rows($res)>0){
+        while($rowcard = $res -> fetch_assoc()){
+            $card +=  $rowcard['total_amount'];
+        }
+    }
+    
+    
+    $sql5 = "SELECT * FROM payment_details WHERE payment_type ='Cash' AND added_date BETWEEN '$start_date' AND '$end_date'";
+    $rescash = $conn -> query($sql5);
+    if(mysqli_num_rows($rescash)>0){
+        while($rowcash = $rescash -> fetch_assoc()){
+            $cash +=  $rowcash['total_amount'];
+        }
+    }
+    
+    
+    $sql4 = "SELECT * FROM payment_details WHERE payment_type ='Online' AND added_date BETWEEN '$start_date' AND '$end_date'";
+    $re4 = $conn -> query($sql4);
 
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    
+    if(isset($re4)){
+        while($rowonline = $re4 -> fetch_assoc()){
+            $online +=  $rowonline['total_amount'];
+        }
+    }
+
+    ?>
+    
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Menu Fi</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- MetisMenu CSS -->
+        <link href="../../assets/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="../../assets/dist/css/sb-admin-2.css" rel="stylesheet">
+
+        <!-- Morris Charts CSS -->
+        <link href="../../assets/vendor/morrisjs/morris.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="../../assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
- 
 
 
-</head>
 
-<body>
+    </head>
 
-    <div id="wrapper">
+    <body>
 
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div id="wrapper">
+
+            <!-- Navigation -->
+           <!-- Navigation -->
+           <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -103,18 +138,24 @@ $ye = 0;
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Menu Fi</a>
+                <a class="navbar-brand" href="#" ><p style="color:white;"><img src="../../images/logo/logo-main.png" alt="" srcset=""> Menufi</p></a>
             </div>
             <!-- /.navbar-header -->
 
-            <ul class="nav navbar-top-links navbar-right">
+            <ul style="z-index:999;"  class="nav navbar-top-links navbar-right" >
                 
+
+            
+                    <!-- /.dropdown-user -->
+
+
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a style="z-index:999;" class="dropdown-toggle"  href="<?php echo base_url(); ?>index.php/Admin/tableStatus" >
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="<?php echo base_url(); ?>index.php/Admin/changePwd"><i class="fa fa-sign-out fa-fw"></i> Change Password</a>
+                        
+                         <li><a href="<?php echo base_url(); ?>index.php/Admin/changePwd"><i class="fa fa-sign-out fa-fw"></i> Change Password</a>
                         </li>
                         <li><a href="<?php echo base_url(); ?>index.php/Admin/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
@@ -123,79 +164,80 @@ $ye = 0;
                 </li>
                 <!-- /.dropdown -->
             </ul>
-            <!-- /.navbar-top-links -->
+            <!-- /.navbar-top-links --> 
+                <!-- /.navbar-top-links -->
 
-            <?php include 'nav_links.php'; ?>
-            <!-- /.navbar-static-side -->
-        </nav>
+                <?php include 'nav_links.php'; ?>
+                <!-- /.navbar-static-side -->
+            </nav>
 
-       <div id="page-wrapper">
-        
-       <div class="row">
-	 		<div class="col-lg-12" style="margin-top:10px">
-		 		<div class="col-md-2 ">
-		 			<input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
-		 		</div>
-		 		<div class="col-md-2">
-		 			<input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
-		 		</div>
-		 		<div class="col-md-6 col-sm-offset-2">
-		 			<p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
-		 		</div>
-		 	</div>
-		 	<div class="col-lg-12">
-		 		
-		 		<div class="col-md-3 col-sm-offset-6">
-					 <p style="color:white;font-size:16px;">Total Sales Amount : <?php 
-					 $net_total = 0;
-					 foreach($totalSaleOfDay as $sale)
-					 {
-						 $net_total +=(int) $sale->net_total;
-					 }
-					 
-					 echo $net_total; ?> </p>
-		 		</div>
-				 <div class="col-md-3 ">
-					 <p style="color:white;font-size:16px;">Total Card Sales : <?php 
-					 
-					 
-					 echo $card; ?> </p>
-		 		</div>
-		 	</div>
-		 	<div class="col-lg-12">
-		 		
-		 		<div class="col-md-3 col-sm-offset-6">
-		 			<p style="color:white;font-size:16px;">Total Amount : <?php echo $amt + $net_total; ?></p>
-		 		</div>
-				 <div class="col-md-3">
-		 			<p style="color:white;font-size:16px;">Total Online Payments : <?php echo $online; ?></p>
-		 		</div>
-		 	</div>
-	 	</div>
-        
-     
+            <div  id="page-wrapper">
+
             <div class="row">
+            <div class="col-lg-12" style="margin-top:10px">
+                <div class="col-md-2 ">
+                    <input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
+                </div>
+                <div class="col-md-2">
+                    <input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
+                </div>
+                <div class="col-md-3 col-sm-offset-2">
+                    <p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
+                     
+                </div>
+
+                 <div class="col-md-2 pull-left">
+                    <p style="color:white;font-size:16px;">Total Card Sales : <?php echo $card; ?> </p>
+                     
+                </div>
+            </div>
+            <div class="col-lg-12">
+                
+                <div class="col-md-3 col-sm-offset-6">
+                     <p style="color:white;font-size:16px;">Total Cash Amount : <?php 
+                     
+                     echo $cash; ?> </p>
+                </div>
+                 <div class="col-md-3 ">
+                     <p style="color:white;font-size:16px;">Total Online Sales : <?php 
+                     
+                     
+                     echo  $online; ?> </p>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                
+                <div class="col-md-3 col-sm-offset-6">
+                    <p style="color:white;font-size:16px;">Total Drawer Amount : <?php echo $amt + $cash; ?></p>
+                </div>
+                 <div class="col-md-3">
+                    <p style="color:white;font-size:16px;">Total Gross Sales : <?php echo $online + $cash + $card; ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <?php if(!(isset($_SESSION['order_id']))){ ?>
+            
             <div class="col-sm-3 pull-right" style="padding-top:30px;padding-bottom:30px;">
-			<br>
+            <br>
             <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Dine In</a>
+            <a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:0px;" class="btn btn-info btn-lg">Dine In</a>
             </div>
             <br>
             <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Take Away</a>
+            <a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:20px;" class="btn btn-info btn-lg">Take Away</a>
             </div>
-			<br>
+            <br>
 
             <div class="col-sm-12">
 
-            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:40px;" class="btn btn-info btn-lg">Home Delivery</a>
+            <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" style="font-size:15px;width:150px;text-align:center;margin-left:10px;margin-top:20px;" class="btn btn-info btn-lg">Home Delivery</a>
             </div>
                                         </div>
-                <div class="col-sm-9" style="padding-top:20px;">
-                    <div class="row">
-                <div class="col-lg-12">
+            <?php } ?>
+            <div class="col-lg-9">
                     <h1 class="page-header">Manual Order</h1>
                     <div class="form-body" >
                        <!-- JAVASCRIPT ADD ITEM TO ORDER CONTENT WILL BE HERE -->
@@ -230,6 +272,7 @@ $ye = 0;
                                     <div class="panel-heading">
                                         Menu
                                     </div>
+                                </div>
                                     <!-- /.panel-heading -->
                                     <div class="panel-body">
                                         <div class="table-responsive">

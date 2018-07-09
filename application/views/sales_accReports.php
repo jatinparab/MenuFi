@@ -6,9 +6,12 @@ $conn = mysqli_connect("localhost","root", "", "menufi");
     $res = $conn -> query($sql);
     if($res){
       while($row = $res -> fetch_assoc()){
-        $ro = $row['type']; 
-       
-        $orders[$ro] += 1;
+        $ro = $row['type'];
+
+       //print_r($orders);
+        //echo "test ".$ro."<br>";
+            $orders[$ro] += 1;
+
       }
       
     }

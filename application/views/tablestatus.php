@@ -1,3 +1,81 @@
+<?php
+	$conn = mysqli_connect("localhost","root", "", "menufi");
+	$start_date = date('Y-m-d');
+	$end_date = date('Y-m-d',strtotime(date('Y-m-d').'+1 day'));
+	//echo $start_date;
+	$s1 = "SELECT * 
+FROM opening_amount WHERE added_date BETWEEN '$start_date' AND '$end_date'
+ORDER BY opening_amount_id DESC
+LIMIT 1";
+//echo $s1;
+$res = $conn->query($s1);
+$amt = 0;
+if(mysqli_num_rows($res)>0){
+	$row = $res -> fetch_assoc();
+	$amt = $row['opening_amount'];
+}
+
+
+
+    $s = "SELECT * FROM menu";
+    $r = $conn -> query($s);
+    $categories = array();
+    while($rf = $r -> fetch_assoc()){
+        array_push($categories, $rf['Category']);
+    }
+    $categories = array_unique($categories);
+	//echo $latest;
+	$ye = 0;
+
+
+    if(isset($mobno) && isset($tableno)){
+        //echo $address;
+         //echo $mobno;
+        
+            $ye = 1;
+        
+        //$_SESSION['isredirect']=1;
+        //header("Location: create_orderH?mobno=$mobno&address=$address&table=-1&CreateOrder=Create+Order");
+	}
+	$card = 0;
+	$online = 0;
+	$cash = 0;
+	// Pending Cash Order
+	$q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
+	$pendingOrders = $q;
+	
+	$sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card' AND added_date BETWEEN '$start_date' AND '$end_date'";
+	$res = $conn -> query($sql3);
+	if(mysqli_num_rows($res)>0){
+		while($rowcard = $res -> fetch_assoc()){
+			$card +=  $rowcard['total_amount'];
+		}
+	}
+	
+	
+	$sql5 = "SELECT * FROM payment_details WHERE payment_type ='Cash' AND added_date BETWEEN '$start_date' AND '$end_date'";
+	$rescash = $conn -> query($sql5);
+	if(mysqli_num_rows($rescash)>0){
+		while($rowcash = $rescash -> fetch_assoc()){
+			$cash +=  $rowcash['total_amount'];
+		}
+	}
+	
+	
+	$sql4 = "SELECT * FROM payment_details WHERE payment_type ='Online' AND added_date BETWEEN '$start_date' AND '$end_date'";
+	$re4 = $conn -> query($sql4);
+
+
+	
+	if(isset($re4)){
+		while($rowonline = $re4 -> fetch_assoc()){
+			$online +=  $rowonline['total_amount'];
+		}
+	}
+
+	?>
+	
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,23 +138,32 @@
                         <i class="fa fa-bell fa-fw"></i><i class="fa fa-caret-down"></i>
 
                     </a>
-                    <ul class="dropdown-menu dropdown-user" >
+                    <ul class="dropdown-menu dropdown-user" id="order-notify">
                        
-                         <li><h5 style="padding-left: 3px; background-color: white">You have 5 notifications</h5></li>
+                         <li><h5 style="padding-left: 3px; background-color: white">You have <?php echo $countNotifications;   ?> notifications</h5></li>
                          <hr style="padding: 0px; margin: 0px; color: #fff">
-                         <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">New Order: 438 </i></a>
+                         
+                    <?php   foreach($todaysOrders as $order):   ?>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">New Order:<?php echo $order['Order_id'];  ?></i></a>
                         </li>
                         <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: 3</i></a>
+                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: <?php echo $order['Table_id'];  ?></i></a>
                         </li>
+                    <?php   endforeach; ?>
+                    <?php   foreach($preparedList as $prepared):   ?>
                         <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Served: 432 </i></a>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Preparation Timeout :<?php echo $prepared['Order_id']; ?> </i></a>
                         </li>
+                        
+                    <?php   endforeach; ?>
+
+                    <?php   foreach($servedOrders as $order):   ?>
                         <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: 2</i></a>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Ready To Serve:<?php echo $order['Order_id']; ?> </i></a>
                         </li>
-                  
+                        
+                    <?php   endforeach; ?>
                    
                     </ul>
                 </li>
@@ -110,6 +197,19 @@
         
             <div class="row">
                 <div class="col-md-12" style="padding-top:20px;">
+                <div  style="margin-bottom:30px" class="row">
+                <div class="col-md-2 ">
+		 			<input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
+		 		</div>
+		 		<div class="col-md-2">
+		 			<input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
+		 		</div>
+		 		<div class="col-md-4 col-sm-offset-2">
+		 			<p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
+					 
+		 		</div>
+                 
+                </div>
                     <div class="row">
                             <div class="col-lg-3 col-md-6">
                                 <div class="panel panel-primary">
@@ -119,8 +219,8 @@
                                                 <i class="fa fa-cutlery fa-5x" aria-hidden="true"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge"><?php echo count($todaysOrders); ?></div>
-                                                <div>Total Orders (Today)</div>
+                                                <div class="huge"><?php echo $amt ?></div>
+                                                <div>Total Cash Amount </div>
                                             </div>
                                         </div>
                                     </div>
@@ -142,14 +242,10 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><?php
-                                        $net_total = 0;
-                                        foreach($totalSaleOfDay as $sale)
-                                        {
-                                            $net_total +=(int) $sale->net_total;
-                                        }
-                                        echo "Rs ".$net_total;
+                                        
+                                        echo "Rs ".$card;
                                         ?></div>
-                                    <div>Total Sale of the day</div>
+                                    <div>Total Card Sales (Today)</div>
                                 </div>
                             </div>
                         </div>
@@ -170,8 +266,8 @@
                                     <i class="fa fa-times fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge"><?php echo count($outOfStockItems);?></div>
-                                    <div>Out of stock</div>
+                                    <div class="huge"><?php echo $online;?></div>
+                                    <div>Total Online Sales</div>
                                 </div>
                             </div>
                         </div>
@@ -194,9 +290,8 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><?php
-                                    if(isset($avg_feedback)&& !empty($avg_feedback))
-                                    echo number_format($avg_feedback[0]->global_avg, 2, '.', '');?></div>
-                                    <div>Avg. Feedback</div>
+                                    echo $online + $cash + $card; ?></div>
+                                    <div>Total Gross Sales</div>
                                 </div>
                             </div>
                         </div>
@@ -552,6 +647,7 @@
 	<script>
 	$(document).ready(function(){
 		setInterval(checkLiveOrder,(5*1000));
+        setInterval(liveNotification,5000);
 	});
 	function checkLiveOrder(){
 		$.ajax({
@@ -564,6 +660,48 @@
 			}
 		});
 	}
+
+    function liveNotification(){
+        $.ajax({
+			url: "<?php echo base_url();?>index.php/Admin/ajax_notify",
+            method:"GET",
+            dataType:"json",
+			success: function(data){
+				console.log(data);
+                var popup = document.getElementById("order-notify");
+                popup.innerHTML="";
+                
+                popup.innerHTML+=`<li><h5 style="padding-left: 3px; background-color: white">You have `+data.countNotifications+` notifications</h5></li>
+                         <hr style="padding: 0px; margin: 0px; color: #fff">`;
+                         
+                    data.todaysOrders.forEach(function(obj){
+                        popup.innerHTML+=`<li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">New Order:`+obj.Order_id+`</i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: `+obj.Table_id+`</i></a>
+                        </li>`;
+                    });
+                        
+                
+                    data.preparedList.forEach(function(obj){
+                        popup.innerHTML+=`<li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Preparation Timeout :`+obj.Order_id+` </i></a>
+                        </li>`;
+
+                    });
+                        
+                    
+
+                    data.servedOrders.forEach(function(obj){
+                        popup.innerHTML+=`<li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
+                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Ready To Serve:`+obj.Order_id+` </i></a>
+                        </li>`;
+                    });        
+                
+			}
+		});
+    }
 
 	</script>
 	<script>
@@ -587,6 +725,31 @@
 	    }
 	  }
 	}
+
+    		function addOpeningAmt(){
+			var opening_amount = $('#opening_amount').val();
+			if(opening_amount !=""){
+				$.ajax({
+					type: 'GET',
+					dataType: "json",
+					url: '<?php echo base_url(); ?>index.php/Admin/addOpeningAmt',
+					data:{
+						'opening_amount':opening_amount
+					},
+					//cache:false,
+					success: function(resp){
+						if(resp==1){
+							alert('Opening amount added successfully!');
+							location.reload();
+						}else{
+							alert('Opening amount not added!');
+						}	
+					}
+
+				});
+			}			
+			
+		} 
 	</script>
 
 	
