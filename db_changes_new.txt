@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `order_type` VARCHAR(155) NOT NULL AFTER `Timestamp`;
