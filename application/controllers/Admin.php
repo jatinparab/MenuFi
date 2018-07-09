@@ -103,6 +103,7 @@ where mir.addons=1 and mir.id=$id")->result_array();
 
         
         if(isset($fake) && !empty($fake)){
+          //  print_r($fake);
             $response = '
             <thead>
 																			<th class="hidden" >Item ID</th>
@@ -133,9 +134,9 @@ where mir.addons=1 and mir.id=$id")->result_array();
                                         </div>
                                     </td>
                                     <td>';
-                                         $he = $value['Menu_id'];
+                                         $he = $value['id'];
                     $v = $value['quantity'];
-                    $raw = $this -> db -> query("SELECT * FROM fake_order WHERE Menu_id='$he' AND Quantity='$v'") -> result_array();
+                    $raw = $this -> db -> query("SELECT * FROM fake_order WHERE id='$he' AND Quantity='$v'") -> result_array();
                     //print_r($raw[0]);
                     $response .= '
                 
@@ -179,7 +180,7 @@ where mir.addons=1 and mir.id=$id")->result_array();
                                         
                                            
                                     //print_r($value);
-                                    $response .=  '<select onfocus="changeBatter(\''.$value['id'].'\',this.value)">';
+                                    $response .=  '<select onchange="changeBatter(\''.$value['id'].'\',this.value)">';
                                     $rex = $this -> db -> query("SELECT * FROM batter")->result_array();
             
                                     foreach($rex as $val){
