@@ -1,98 +1,3 @@
-<?php 
-      $conn = mysqli_connect("localhost","root", "", "menufi");
-      $avg_bill_amount = array(
-          'Sunday'=>0,
-          'Monday'=>0,
-          'Tuesday'=>0,
-          'Wednesday'=>0,
-          'Thursday'=>0,
-          'Friday'=>0,
-          'Saturday'=>0,
-          
-      );
-      $avg_bill_amount_number = array(
-        'Sunday'=>0,
-        'Monday'=>0,
-        'Tuesday'=>0,
-        'Wednesday'=>0,
-        'Thursday'=>0,
-        'Friday'=>0,
-        'Saturday'=>0,
-        
-    );
-    $avg_bill_amount_total = array(
-        'Sunday'=>0,
-        'Monday'=>0,
-        'Tuesday'=>0,
-        'Wednesday'=>0,
-        'Thursday'=>0,
-        'Friday'=>0,
-        'Saturday'=>0,
-        
-    );
-    $avg_freq_visit = array(
-        'Sunday'=>0,
-        'Monday'=>0,
-        'Tuesday'=>0,
-        'Wednesday'=>0,
-        'Thursday'=>0,
-        'Friday'=>0,
-        'Saturday'=>0,
-    );
-    $orders = array(
-        'Sunday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Monday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Tuesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Wednesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Thursday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Friday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
-        'Saturday'=>array('Cash'=>0,'Card'=>0,'Online'=>0)
-    );
-
-    $sql = "SELECT * FROM payment_details";
-    $res = $conn -> query($sql);
-    if($res){
-        
-        while($row = $res-> fetch_assoc()){
-            $ro = $row['added_date'];
-            $type = $row['payment_type'];
-            $week = date('l', strtotime($ro));
-            $orders[$week][$type] += 1;
-        }
-    }
-      $sql = "SELECT * FROM sales WHERE refund='0'";
-        $res = $conn -> query($sql);
-        $total = 0;
-        $c = 0;
-        if($res){
-            while($row = $res -> fetch_assoc()){
-            $ro = $row['Timestamp']; 
-            $day = date('l', strtotime($ro));
-            $avg_bill_amount_total[$day] += $row['net_total'];
-            $avg_bill_amount_number[$day] += 1;
-            }
-            foreach($avg_bill_amount as $k => $v){
-                if($avg_bill_amount_number[$k] != 0 && $avg_bill_amount_number[$k] !=0){
-                $avg_bill_amount[$k] = $avg_bill_amount_total[$k]/$avg_bill_amount_number[$k];
-                }
-            }
-            $total_visits = 0;
-            foreach($avg_bill_amount_number as $k => $v){
-                $total_visits += $v;
-            }
-            foreach($avg_freq_visit as $k => $v){
-                
-                $avg_freq_visit[$k] = $avg_bill_amount_number[$k]/7;
-            }
-
-            
-        }
-
-        //print_r($avg_bill_amount);
-        // print_r($avg_bill_amount_number);
-        // print_r($total_visits);
-        // print_r($avg_freq_visit);
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -128,10 +33,108 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script>
+function chartsLoad(bill,freq){
+var avg_bill_amount =[];
+var avg_visit_freq = [];
+for(var index in bill)
+    avg_bill_amount.push(bill[index]);
+for(var index in freq)
+    avg_visit_freq.push(freq[index]);
+
+const chart9 = document.getElementById("avgBillAmount");
+Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
+console.log(chart9);
+let lineChart9 = new Chart(chart9, {
+  type:'line',
+  data: {
+  labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thurseday", "Friday" , "Saturday" ],
+  datasets: [{
+           label: "Average Bill Amount",
+           fill: true,
+           lineTension: 0.1,
+           backgroundColor:"rgba(75, 192, 192, 0.4)",
+           borderColor:"rgba(75,192,192,1)",
+           borderCapStyle: 'butt',
+           borderWidth:1.5,
+           borderDash:[],
+           borderDashOfset: 0.0,
+           borderJoinStyle: 'miter',
+           pointBorderColor: "rgba(75,192,192,1)",
+           pointBackgroundColor: "#fff",
+           pointBorderWidth: 1,
+           pointHoverRadius: 5,
+           pointHoverBackgroundColor:"rgba(75,192,192,1)",
+           pointHoverBorderColor: "rgba(220,220,220,1)",
+           pointHoverBorderWidth: 2,
+           pointRadius: 1,
+           pointHitRadius: 10,
+           data: avg_bill_amount,
+         },
+        
+       ]
+     }
+   });
+
+const chart10 = document.getElementById("avgFreqVisit");
+Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
+console.log(chart10);
+let lineChart10 = new Chart(chart10, {
+  type:'line',
+  data: {
+  labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thurseday", "Friday" , "Saturday" ],
+  datasets: [{
+           label: "Average Frequency of Visit",
+           fill: true,
+           lineTension: 0.1,
+           backgroundColor:"rgba(75, 192, 192, 0.4)",
+           borderColor:"rgba(75,192,192,1)",
+           borderCapStyle: 'butt',
+           borderWidth:1.5,
+           borderDash:[],
+           borderDashOfset: 0.0,
+           borderJoinStyle: 'miter',
+           pointBorderColor: "rgba(75,192,192,1)",
+           pointBackgroundColor: "#fff",
+           pointBorderWidth: 1,
+           pointHoverRadius: 5,
+           pointHoverBackgroundColor:"rgba(75,192,192,1)",
+           pointHoverBorderColor: "rgba(220,220,220,1)",
+           pointHoverBorderWidth: 2,
+           pointRadius: 1,
+           pointHitRadius: 10,
+           data: avg_visit_freq,
+         },
+        
+       ]
+     }
+   });
+};
+</script>
+
+<script>
+     jQuery.ready(function(){
+    Morris.Bar({
+        element: 'morris-bar-chart',
+        data: [<?php echo $chartData; ?>],
+        xkey: 'MonthYear',
+        ykeys: ['Sales'],
+        labels: 'Sales',
+        hideHover: 'auto',
+        resize: true
+    });
+    });
+
+
+    
+</script>
+   
+</body>
+
 
 </head>
 
-<body>
+<body onload="chartsLoad()">
 
     <div id="wrapper">
 
@@ -190,23 +193,18 @@
            		 	</div>
            		 <div class="col-lg-6">
                   <div class="panel panel-info">
-                    <div class="panel-heading">Gross Sale & Net Sale</div>
+                    <div class="panel-heading">Gross Sale &amp; Net Sale<br>
+                    <span>
+
+                    From : <input type="date" id="preweek" onchange="changedate()" value=<?php echo date('Y-m-d', strtotime('-6 days'))?>> 
+                    To : <input type="date" disabled id="today" value=<?php echo date('Y-m-d')?>>
+                    <input type="submit" id="go" value="Go"></input>
+                    
+                    <span>
+                    </div>
                     <div class="panel-body"> 
                   <table class="table table-striped table-dark">
   <thead class="thead-light">
-   
-      
-   <tr><th>Week</th>
-    <th>Card</th>   <th>Cash</th> 
-    <th>Online</th>
-    </tr>
-    <?php 
-        foreach($orders as $k => $v){
-      ?>
-      <tr><td><?php echo $k; ?></td><td><?php echo $v['Card']; ?></td><td><?php echo $v['Cash']; ?></td><td><?php echo $v['Online']; ?></td></tr>
-    <?php 
-        }
-    ?>
   </thead>
  
 </table>
@@ -267,104 +265,75 @@
 
 
 <!--AVERAGE BILL AMOUNT-->
-<script> 
-const chart9 = document.getElementById("avgBillAmount");
-Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
-console.log(chart9);
-let lineChart9 = new Chart(chart9, {
-  type:'line',
-  data: {
-  labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thurseday", "Friday" , "Saturday" ],
-  datasets: [{
-           label: "Average Bill Amount",
-           fill: true,
-           lineTension: 0.1,
-           backgroundColor:"rgba(75, 192, 192, 0.4)",
-           borderColor:"rgba(75,192,192,1)",
-           borderCapStyle: 'butt',
-           borderWidth:1.5,
-           borderDash:[],
-           borderDashOfset: 0.0,
-           borderJoinStyle: 'miter',
-           pointBorderColor: "rgba(75,192,192,1)",
-           pointBackgroundColor: "#fff",
-           pointBorderWidth: 1,
-           pointHoverRadius: 5,
-           pointHoverBackgroundColor:"rgba(75,192,192,1)",
-           pointHoverBorderColor: "rgba(220,220,220,1)",
-           pointHoverBorderWidth: 2,
-           pointRadius: 1,
-           pointHitRadius: 10,
-           data: [
-            <?php foreach($avg_bill_amount as $k => $v){
-               echo $v.",";
-             } ?>
-           ],
-         },
-        
-       ]
-     }
-   })
 
-</script>
+<script>
+    function changedate(){
+        var date2 = document.getElementById("preweek").value;
+        var date1 = new Date(date2);
+        // date1.setDate(date1.getMonth()+1);
+        date1.setDate(date1.getDate()+6);
+        var month=0,date3=0;
+        date1.getMonth()+1 < 10 ? month = "0"+(date1.getMonth()+1) : month = date1.getMonth()+1;
+        date1.getDate() < 10 ? date3 = "0"+(date1.getDate()) : date3 = date1.getDate();
+        console.log(date1);
+        document.getElementById("today").value = date1.getFullYear()+"-"+month+"-"+date3;
+    }
+    var orders,avg_bill_amount,avg_freq_visit;
+    $(document).ready(function(){
+        $("#go").click(function(event){
+            event.preventDefault();
+            var from = $("#preweek").val();
+            var to = $("#today").val();
+            jQuery.ajax({
+                type: "POST",
+                url: "<?php echo base_url(); ?>"+"index.php/admin/sales_guestBehaviour_ajax",
+                dataType: 'JSON',
+                data: {fromday: from,today: to},
+                success: function(res){
+                    orders = res[0];
+                    avg_bill_amount = res[1];
+                    avg_freq_visit = res[2];
+                    chartsLoad(avg_bill_amount,avg_freq_visit);
+                    var htmlString="<tr><th>Week</th><th>Card</th><th>Cash</th><th>Online</th></tr>";
+                    for(var index in orders)
+                    {
+                        htmlString = htmlString+"<tr><td>"+index+"</td><td>"+orders[index]['Card']+"</td><td>"+orders[index]['Cash']+"</td><td>"+orders[index]['Online']+"</td></tr>"
+                    }
+                    $('.thead-light').html(htmlString);
 
-
-<!--TOTAL CUSTOMERS-->
-<script> 
-const chart10 = document.getElementById("avgFreqVisit");
-Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
-console.log(chart10);
-let lineChart10 = new Chart(chart10, {
-  type:'line',
-  data: {
-  labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thurseday", "Friday" , "Saturday" ],
-  datasets: [{
-           label: "Average Frequency of Visit",
-           fill: true,
-           lineTension: 0.1,
-           backgroundColor:"rgba(75, 192, 192, 0.4)",
-           borderColor:"rgba(75,192,192,1)",
-           borderCapStyle: 'butt',
-           borderWidth:1.5,
-           borderDash:[],
-           borderDashOfset: 0.0,
-           borderJoinStyle: 'miter',
-           pointBorderColor: "rgba(75,192,192,1)",
-           pointBackgroundColor: "#fff",
-           pointBorderWidth: 1,
-           pointHoverRadius: 5,
-           pointHoverBackgroundColor:"rgba(75,192,192,1)",
-           pointHoverBorderColor: "rgba(220,220,220,1)",
-           pointHoverBorderWidth: 2,
-           pointRadius: 1,
-           pointHitRadius: 10,
-           data: [
-            <?php foreach($avg_freq_visit as $k => $v){
-               echo $v.",";
-             } ?>
-           ],
-         },
-        
-       ]
-     }
-   })
-
-</script>
-
-
-   
-</body>
- <script>
-     jQuery.ready(function(){
-    Morris.Bar({
-        element: 'morris-bar-chart',
-        data: [<?php echo $chartData; ?>],
-        xkey: 'MonthYear',
-        ykeys: ['Sales'],
-        labels: 'Sales',
-        hideHover: 'auto',
-        resize: true
+                }
+            });
+        });
     });
+
+    $(document).ready(function(){
+        var today = new Date();
+
+        
+        var to = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        today.setDate(today.getDate()-6);
+        var from = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        jQuery.ajax({
+            type: "POST",
+            url: "<?php echo base_url(); ?>"+"index.php/admin/sales_guestBehaviour_ajax",
+            dataType: 'JSON',
+            data: {fromday: from,today: to},
+            success: function(res){
+                orders = res[0];
+                avg_bill_amount = res[1];
+                avg_freq_visit = res[2];
+                chartsLoad(avg_bill_amount,avg_freq_visit);
+                var htmlString="<tr><th>Week</th><th>Card</th><th>Cash</th><th>Online</th></tr>";
+                for(var index in orders)
+                {
+                    htmlString = htmlString+"<tr><td>"+index+"</td><td>"+orders[index]['Card']+"</td><td>"+orders[index]['Cash']+"</td><td>"+orders[index]['Online']+"</td></tr>"
+                }
+                $('.thead-light').html(htmlString);
+
+            }
+        });
     });
-    </script>
+    
+</script>
+    
 </html>

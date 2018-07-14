@@ -28,181 +28,6 @@ where mir.addons=1 and mir.id=$id")->result_array();
         }
     }
 
-    public function addItem_ajax(){
-        $customer_id = $_GET['customer_id'];
-        $menu_id = $_GET['id'];
-
-        $res = $this -> db -> query("SELECT * FROM fake_order WHERE Menu_id='$menu_id'") -> result_array();
-        if(count($res)>0){
-            if($res[0]['addon'] == '' && $res[0]['batter'] == 0){
-                $quantity = (int)$res[0]['Quantity'];
-                $quantity+=1;
-                $re = $this -> db -> query("UPDATE fake_order SET Quantity='$quantity' WHERE Menu_id='$menu_id'");
-                if(isset($re)){
-                    echo 'success';
-                }
-
-            }else{
-                echo "yes";
-                $re = $this -> db -> query("INSERT into fake_order (Menu_id,Customer_id,Quantity,batter) VALUES ('$menu_id','$customer_id','1','0')");
-                if(isset($re)){
-                    echo 'success';
-                }else{
-                    $this -> db -> error();
-                }
-            }
-        }else{
-            $re = $this -> db -> query("INSERT into fake_order (Menu_id,Customer_id,Quantity,batter) VALUES ('$menu_id','$customer_id','1','0')");
-                if(isset($re)){
-                    echo 'success';
-                }else{
-                    $this -> db -> error();
-            }
-        }
-
-    }
-    public function changeBatter_ajax(){
-        $id = $_GET['id'];
-        $batter_id = $_GET['batter_id'];
-        $re = $this -> db -> query("UPDATE fake_order SET batter = '$batter_id' WHERE id = '$id'");
-        if(isset($re)){
-            echo 'success';
-        }
-
-    }
-
-    public function addAddon_ajax(){
-        $id = $_GET['id'];
-        $addon_id = $_GET['addon_id'];
-        
-            $res = $this -> db -> query("SELECT * FROM fake_order WHERE id='$id'")->result_array();
-            $array = $res[0]['addon'];
-            $array = explode(',', $array); 
-            $array = array_filter($array);
-            array_push($array,$addon_id);
-            $str = implode (", ", $array);            
-            $res2 = $this -> db -> query("UPDATE fake_order SET addon = '$str' WHERE id='$id'");
-            if(isset($res2)){
-                echo 'success';
-            }
-        
-    }
-
-    public function removeAddon_ajax(){
-        $id = $_GET['id'];
-        $res = $this -> db -> query("UPDATE fake_order SET addon = '' WHERE id='$id'");
-        if(isset($res)){
-            echo 'success';
-        }
-    }
-
-    public function getFake(){
-
-        $this->load->model('Admin_model');
-        $fake = $this->Admin_model->get_fake();
-
-        
-        if(isset($fake) && !empty($fake)){
-          //  print_r($fake);
-            $response = '
-            <thead>
-																			<th class="hidden" >Item ID</th>
-																			<th>Item Name</th>
-																			<th>Quantity</th>
-                                                                            <th> Addons </th>
-                                                                            <th > Add Addon </th>
-																			<th> Batter </th>
-                                                                         
-
-																		</thead>';
-                                                                        
-            foreach ($fake as $value) {
-        
-                              $response .= '<tr style="padding:100px;">
-                                    <td class="hidden">
-                                        
-                                        <input type="hidden" name="Menu_id[]" value="'.$value['Menu_id'].'" class="form-control">'.$value['Menu_id'].'
-                                    </td><td>';
-                                    
-                               $response .=       $value['name'].
-                                        '<input type="hidden" name="name[]" value="'.$value['name'].'" class="form-control">
-                                    </td>
-                                    <td>';
-                                     $response .=   '<div class="input-group">
-                                            <input type="number" id="quantity" name="quantity[]" class="form-control input-number" value="'.$value['quantity'].'"
-                                            min="0" max="100">
-                                        </div>
-                                    </td>
-                                    <td>';
-                                         $he = $value['id'];
-                    $v = $value['quantity'];
-                    $raw = $this -> db -> query("SELECT * FROM fake_order WHERE id='$he' AND Quantity='$v'") -> result_array();
-                    //print_r($raw[0]);
-                    $response .= '
-                
-                                        <input type="hidden" name="addon[]" value="'.$raw[0]['addon'].'" class="form-control">';
-
-                                        
-                //$x = substr($raw['addon'], 0, -1);
-                //echo $x;
-                $arr = explode(',',$raw[0]['addon']);
-                $arr = array_filter($arr);
-                if(count($arr)>0){
-                    foreach($arr as $val){
-                        
-                        $ra = $this -> db -> query("SELECT * FROM ingredients WHERE Ingredients_id = '$val'") -> result_array();
-                        
-                        
-                        $response .= $ra[0]['Name']."<br>";
-                        
-                    }
-                    $response .= '<a onclick="removeAddon(\''.$value['id'].'\')" class="btn btn-xs btn-danger">Clear</a>';
-                }
-               
-              $response .= '
-                                    </td>
-                                    <td><select onchange="addAddon(\''.$value['id'].'\',this.value)" style="max-width:75px;">
-                                    ';
-                                    
-                                    $bha = $this -> db -> query("SELECT * FROM ingredients") -> result_array();
-                                    $response .= '<option value="-1">None</option>';
-                                    foreach($bha as $b){
-                                        $response .= '<option value="'.$b['Ingredients_id'].'">'.$b['Name'].'</option>';
-                                    }
-                                    
-                                   $response .= '</select></td>
-                                    <td>
-                                    <input type="hidden" name="batter[]" value="'.$raw[0]['batter'].'" class="form-control">';
-                                   
-                                        $batter_id = $raw[0]['batter'];
-                                        $rum = $this -> db -> query("SELECT * FROM batter WHERE id='$batter_id'")->result_array();
-                                        
-                                        
-                                           
-                                    //print_r($value);
-                                    $response .=  '<select onchange="changeBatter(\''.$value['id'].'\',this.value)">';
-                                    $rex = $this -> db -> query("SELECT * FROM batter")->result_array();
-            
-                                    foreach($rex as $val){
-                                        if($val['name'] == $rum[0]['name']){
-                                            $response .= '<option value="'.$val['id'].'" selected>'.$val['name'].'</option>';
-                                        }else{
-                                            $response .= '<option value="'.$val['id'].'">'.$val['name'].'</option>';
-                                        }
-                                    }
-
-                                    $response .=
-                                    '</select>
-                                    </td>
-
-                                </tr>';
-                                 }
-                                 echo $response;
-        }else{
-            echo "No Item added Yet";
-        }
-    }
-
     public function refund(){
         $id = $_GET['oid'];
         $res = $this->db->query("update sales set refund='1' where Order_id='$id'");
@@ -483,6 +308,124 @@ where mir.addons=1")->result_array();
     	$this->load->view('footer');
     }
 
+    public function sales_restSales_ajax(){
+        $from = $this->input->post('fromday');
+        $to = $this->input->post('today');
+        $gross_profit = array(
+            "January" => 0,
+            "February" => 0,
+            "March" => 0,
+            "April" => 0,
+            "May" => 0,
+            "June" => 0,
+            "July" => 0,
+            "August" => 0,
+            "September" => 0,
+            "October" => 0,
+            "November" => 0,
+            "December" => 0,
+          );
+        
+          $net_profit = array(
+            "January" => 0,
+            "February" => 0,
+            "March" => 0,
+            "April" => 0,
+            "May" => 0,
+            "June" => 0,
+            "July" => 0,
+            "August" => 0,
+            "September" => 0,
+            "October" => 0,
+            "November" => 0,
+            "December" => 0,
+          );
+          $customers = array(
+            "January" => 0,
+            "February" => 0,
+            "March" => 0,
+            "April" => 0,
+            "May" => 0,
+            "June" => 0,
+            "July" => 0,
+            "August" => 0,
+            "September" => 0,
+            "October" => 0,
+            "November" => 0,
+            "December" => 0,
+          );
+        
+          $orders = array(
+            "January" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "February" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "March" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "April" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "May" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "June" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "July" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "August" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "September" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "October" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "November" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+            "December" => array("Card"=>0,"Cash"=>0,"Online"=>0),
+          );
+        
+        //   $sql = "SELECT * FROM customers";
+          $res = $this-> db -> query("SELECT * FROM customers WHERE Last_Visited BETWEEN '$from' AND '$to'");
+          if($res){
+            foreach($res->result_array() as $row){
+              $r = $row['Last_Visited'];
+              $month = date('F',strtotime($r));
+              $customers[$month] += 1;
+            }
+          }
+        
+        
+        //   $sql = "SELECT * FROM sales WHERE refund='0'";
+          $res = $this-> db -> query("select * from sales where refund ='0' and Timestamp between '$from' and '$to'");
+          if($res){
+            foreach($res->result_array() as $row){
+              $ro = $row['Timestamp']; 
+              $month = date('F', strtotime($ro));
+              $gross_profit[$month] += $row['net_total'];
+            }
+            
+          }
+        
+        //   $sql = "SELECT * FROM payment_details";
+          $res = $this -> db -> query("select * from payment_details where added_date between '$from' and '$to'");
+          if($res){
+            foreach($res->result_array() as $row){
+              $ro = $row['added_date']; 
+                $type = $row['payment_type'];
+              $month = date('F', strtotime($ro));
+              $orders[$month][$type] += 1;
+            }
+            
+          }
+        
+          //print_r($orders);
+        
+        
+        //   $sql = "SELECT * FROM ingredients";
+          $res =$this->db->query("SELECT * FROM ingredients");
+          $expenses = 0;
+          if($res){
+            foreach($res->result_array() as $row){
+              $expenses += ($row['quantity'] * $row['cost']);
+            }
+          }
+          foreach($gross_profit as $k => $v){
+            if($v>0){
+              $net_profit[$k] = $gross_profit[$k] - $expenses;
+            }
+        
+          }
+
+          $final_array = [$customers,$gross_profit,$orders];
+          echo json_encode($final_array);
+    }
+
     public function sales_execReport()
     {
     	$this->load->view("sales_execReport");
@@ -533,7 +476,105 @@ where mir.addons=1")->result_array();
     	$this->load->view("sales_guestBehaviour");
     	$this->load->view('footer');
     }
+    public function sales_guestBehaviour_ajax(){
+        $from = $this->input->post('fromday');
+        $to = $this->input->post('today');
+        // $data = $this->db->query("select * from payment_details where added_date between '$from' and '$to'")->result_array();
+        $avg_bill_amount = array(
+            'Sunday'=>0,
+            'Monday'=>0,
+            'Tuesday'=>0,
+            'Wednesday'=>0,
+            'Thursday'=>0,
+            'Friday'=>0,
+            'Saturday'=>0,
+            
+        );
+        $avg_bill_amount_number = array(
+            'Sunday'=>0,
+            'Monday'=>0,
+            'Tuesday'=>0,
+            'Wednesday'=>0,
+            'Thursday'=>0,
+            'Friday'=>0,
+            'Saturday'=>0,
+            
+        );
+        $avg_bill_amount_total = array(
+            'Sunday'=>0,
+            'Monday'=>0,
+            'Tuesday'=>0,
+            'Wednesday'=>0,
+            'Thursday'=>0,
+            'Friday'=>0,
+            'Saturday'=>0,
+            
+        );
+        $avg_freq_visit = array(
+            'Sunday'=>0,
+            'Monday'=>0,
+            'Tuesday'=>0,
+            'Wednesday'=>0,
+            'Thursday'=>0,
+            'Friday'=>0,
+            'Saturday'=>0,
+        );
+        $orders = array(
+            'Sunday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Monday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Tuesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Wednesday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Thursday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Friday'=>array('Cash'=>0,'Card'=>0,'Online'=>0),
+            'Saturday'=>array('Cash'=>0,'Card'=>0,'Online'=>0)
+        );
+        $res = $this->db->query("select * from payment_details where added_date between '$from' and '$to'");
+        if($res){
+            foreach ($res->result_array() as $row) {
+                $ro = $row['added_date'];
+                $type = $row['payment_type'];
+                $week = date('l', strtotime($ro));
+                $orders[$week][$type] += 1;
+            }
+            
+        }
+        $res = $this->db->query("select * from sales where refund ='0' and Timestamp between '$from' and '$to'");
 
+        $total = 0;
+        $c = 0;
+        if($res){
+            // while($row = $res -> fetch_assoc()){
+            // $ro = $row['Timestamp']; 
+            // $day = date('l', strtotime($ro));
+            // $avg_bill_amount_total[$day] += $row['net_total'];
+            // $avg_bill_amount_number[$day] += 1;
+            // }
+            foreach($res->result_array() as $row)
+            {
+                $ro = $row['Timestamp']; 
+                $day = date('l', strtotime($ro));
+                $avg_bill_amount_total[$day] += $row['net_total'];
+                $avg_bill_amount_number[$day] += 1;
+            }
+            foreach($avg_bill_amount as $k => $v){
+                if($avg_bill_amount_number[$k] != 0 && $avg_bill_amount_number[$k] !=0){
+                $avg_bill_amount[$k] = $avg_bill_amount_total[$k]/$avg_bill_amount_number[$k];
+                }
+            }
+            $total_visits = 0;
+            foreach($avg_bill_amount_number as $k => $v){
+                $total_visits += $v;
+            }
+            foreach($avg_freq_visit as $k => $v){
+                
+                $avg_freq_visit[$k] = $avg_bill_amount_number[$k]/7;
+            }
+
+            
+        }
+        $finalarray = [$orders,$avg_bill_amount,$avg_freq_visit];
+        echo json_encode($finalarray);
+    }
      public function sales_rewardsReport()
     {
     	$this->load->view("sales_rewardsReport");
@@ -580,22 +621,6 @@ where mir.addons=1")->result_array();
 		$this->load->view('footer');
     }
      */
-
-    public function sr_weekly(){
-        // sr = sales report
-        $this->load->model('Admin_model');
-        $data['salesByWeek'] = $this->Admin_model->salesByWeek();
-        $this->load->view("sr_weekly",$data);
-		$this->load->view('footer');
-    }
-    public function sr_monthly(){
-        // sr = sales report
-        $this->load->model('Admin_model');
-        $data['salesByMonth'] = $this->Admin_model->salesByMonths();
-        $this->load->view("sr_monthly",$data);
-		$this->load->view('footer');
-    }
-
     public function staffView()
     {
         $data['staff_details'] = $this->db->query("select id, name, salary, shifts, chores, table_no from staff_management")->result(); 
@@ -2465,6 +2490,7 @@ public function addmenu(){
     $data1['spice_level']=$_POST['ddlspiceLevel'];
     if(isset($_FILES['img']['name'])){
         $image = $_FILES['img']['name'];
+        $data1['img']=$image;
         $conn = mysqli_connect("localhost","root", "", "menufi");
         $cwd= getcwd();
         $sql = "UPDATE menu SET Image='$image' WHERE Name='$n'";
@@ -2696,3 +2722,4 @@ FROM
                     redirect('./Admin/login','refresh');
                 }
 }
+
