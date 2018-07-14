@@ -27,7 +27,167 @@ where mir.addons=1 and mir.id=$id")->result_array();
 			$this->load->view('footer');
         }
     }
-
+    public function addItem_ajax(){
+        $customer_id = $_GET['customer_id'];
+        $menu_id = $_GET['id'];
+        $res = $this -> db -> query("SELECT * FROM fake_order WHERE Menu_id='$menu_id'") -> result_array();
+        if(count($res)>0){
+            if($res[0]['addon'] == '' && $res[0]['batter'] == 0){
+                $quantity = (int)$res[0]['Quantity'];
+                $quantity+=1;
+                $re = $this -> db -> query("UPDATE fake_order SET Quantity='$quantity' WHERE Menu_id='$menu_id'");
+                if(isset($re)){
+                    echo 'success';
+                }
+            }else{
+                echo "yes";
+                $re = $this -> db -> query("INSERT into fake_order (Menu_id,Customer_id,Quantity,batter) VALUES ('$menu_id','$customer_id','1','0')");
+                if(isset($re)){
+                    echo 'success';
+                }else{
+                    $this -> db -> error();
+                }
+            }
+        }else{
+            $re = $this -> db -> query("INSERT into fake_order (Menu_id,Customer_id,Quantity,batter) VALUES ('$menu_id','$customer_id','1','0')");
+                if(isset($re)){
+                    echo 'success';
+                }else{
+                    $this -> db -> error();
+            }
+        }
+    }
+    public function changeBatter_ajax(){
+        $id = $_GET['id'];
+        $batter_id = $_GET['batter_id'];
+        $re = $this -> db -> query("UPDATE fake_order SET batter = '$batter_id' WHERE id = '$id'");
+        if(isset($re)){
+            echo 'success';
+        }
+    }
+    public function addAddon_ajax(){
+        $id = $_GET['id'];
+        $addon_id = $_GET['addon_id'];
+        
+            $res = $this -> db -> query("SELECT * FROM fake_order WHERE id='$id'")->result_array();
+            $array = $res[0]['addon'];
+            $array = explode(',', $array); 
+            $array = array_filter($array);
+            array_push($array,$addon_id);
+            $str = implode (", ", $array);            
+            $res2 = $this -> db -> query("UPDATE fake_order SET addon = '$str' WHERE id='$id'");
+            if(isset($res2)){
+                echo 'success';
+            }
+        
+    }
+    public function removeAddon_ajax(){
+        $id = $_GET['id'];
+        $res = $this -> db -> query("UPDATE fake_order SET addon = '' WHERE id='$id'");
+        if(isset($res)){
+            echo 'success';
+        }
+    }
+    public function getFake(){
+        $this->load->model('Admin_model');
+        $fake = $this->Admin_model->get_fake();
+        
+        if(isset($fake) && !empty($fake)){
+          //  print_r($fake);
+            $response = '
+            <thead>
+																			<th class="hidden" >Item ID</th>
+																			<th>Item Name</th>
+																			<th>Quantity</th>
+                                                                            <th> Addons </th>
+                                                                            <th > Add Addon </th>
+																			<th> Batter </th>
+                                                                         
+																		</thead>';
+                                                                        
+            foreach ($fake as $value) {
+        
+                              $response .= '<tr style="padding:100px;">
+                                    <td class="hidden">
+                                        
+                                        <input type="hidden" name="Menu_id[]" value="'.$value['Menu_id'].'" class="form-control">'.$value['Menu_id'].'
+                                    </td><td>';
+                                    
+                               $response .=       $value['name'].
+                                        '<input type="hidden" name="name[]" value="'.$value['name'].'" class="form-control">
+                                    </td>
+                                    <td>';
+                                     $response .=   '<div class="input-group">
+                                            <input type="number" id="quantity" name="quantity[]" class="form-control input-number" value="'.$value['quantity'].'"
+                                            min="0" max="100">
+                                        </div>
+                                    </td>
+                                    <td>';
+                                         $he = $value['id'];
+                    $v = $value['quantity'];
+                    $raw = $this -> db -> query("SELECT * FROM fake_order WHERE id='$he' AND Quantity='$v'") -> result_array();
+                    //print_r($raw[0]);
+                    $response .= '
+                
+                                        <input type="hidden" name="addon[]" value="'.$raw[0]['addon'].'" class="form-control">';
+                                        
+                //$x = substr($raw['addon'], 0, -1);
+                //echo $x;
+                $arr = explode(',',$raw[0]['addon']);
+                $arr = array_filter($arr);
+                if(count($arr)>0){
+                    foreach($arr as $val){
+                        
+                        $ra = $this -> db -> query("SELECT * FROM ingredients WHERE Ingredients_id = '$val'") -> result_array();
+                        
+                        
+                        $response .= $ra[0]['Name']."<br>";
+                        
+                    }
+                    $response .= '<a onclick="removeAddon(\''.$value['id'].'\')" class="btn btn-xs btn-danger">Clear</a>';
+                }
+               
+              $response .= '
+                                    </td>
+                                    <td><select onchange="addAddon(\''.$value['id'].'\',this.value)" style="max-width:75px;">
+                                    ';
+                                    
+                                    $bha = $this -> db -> query("SELECT * FROM ingredients") -> result_array();
+                                    $response .= '<option value="-1">None</option>';
+                                    foreach($bha as $b){
+                                        $response .= '<option value="'.$b['Ingredients_id'].'">'.$b['Name'].'</option>';
+                                    }
+                                    
+                                   $response .= '</select></td>
+                                    <td>
+                                    <input type="hidden" name="batter[]" value="'.$raw[0]['batter'].'" class="form-control">';
+                                   
+                                        $batter_id = $raw[0]['batter'];
+                                        $rum = $this -> db -> query("SELECT * FROM batter WHERE id='$batter_id'")->result_array();
+                                        
+                                        
+                                           
+                                    //print_r($value);
+                                    $response .=  '<select onchange="changeBatter(\''.$value['id'].'\',this.value)">';
+                                    $rex = $this -> db -> query("SELECT * FROM batter")->result_array();
+            
+                                    foreach($rex as $val){
+                                        if($val['name'] == $rum[0]['name']){
+                                            $response .= '<option value="'.$val['id'].'" selected>'.$val['name'].'</option>';
+                                        }else{
+                                            $response .= '<option value="'.$val['id'].'">'.$val['name'].'</option>';
+                                        }
+                                    }
+                                    $response .=
+                                    '</select>
+                                    </td>
+                                </tr>';
+                                 }
+                                 echo $response;
+        }else{
+            echo "No Item added Yet";
+        }
+    }
     public function refund(){
         $id = $_GET['oid'];
         $res = $this->db->query("update sales set refund='1' where Order_id='$id'");
