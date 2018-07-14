@@ -216,7 +216,7 @@ if(mysqli_num_rows($res)>0){
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-3">
-                                                <i class="fa fa-cutlery fa-5x" aria-hidden="true"></i>
+                                                <i class="fa fa-money fa-5x" aria-hidden="true"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
                                                 <div class="huge"><?php echo $amt ?></div>
@@ -238,7 +238,7 @@ if(mysqli_num_rows($res)>0){
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
-                                    <i class="fa fa-book fa-5x" aria-hidden="true"></i>
+                                    <i class="fa fa-line-chart fa-5x" aria-hidden="true"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><?php
@@ -263,7 +263,7 @@ if(mysqli_num_rows($res)>0){
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
-                                    <i class="fa fa-times fa-5x"></i>
+                                    <i class="fa fa-wifi fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><?php echo $online;?></div>
@@ -286,7 +286,7 @@ if(mysqli_num_rows($res)>0){
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-3">
-                                    <i class="fa fa-thumbs-up fa-5x"></i>
+                                    <i class="fa fa-pie-chart fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><?php
@@ -613,10 +613,167 @@ if(mysqli_num_rows($res)>0){
                 <?php }?>
             </div>
         </div>
+        <br>
+        <br>
+
+     <div class="row" id="div_offlineOrders">
+                <?php if(!empty($pendingOrders)){
+					//print_r($pendingOrders);
+                                     foreach ($pendingOrders as $value) {
+//    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
+                                     
+						$idr = $value['Order_id'];
+						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
+						$re1 = $conn ->query($sss);
+						$rew = $re1 -> fetch_assoc();
+						if($rew['Table_id'] == '-1'){
+							$table_no = 'Home Delivery';
+						}else if($rew['Table_id'] == '99'){
+							$table_no = 'Take Away';
+						}else{
+							$table_no = "Table No: ".$rew['Table_id'];
+						}
+                        $sq3 = "SELECT * FROM customer_order WHERE Order_id='$idr'";
+						$ress = $conn -> query($sq3);
+						
+                        // print_r($ress);
+                        if(mysqli_num_rows($ress) == 0 ){
+                            continue;
+                        }
+                                        ?>  
+                <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-12" >
+                                    <input type="hidden" name="id" value="<?php echo $value['Order_id'];?>">
+                                    <span id="printspan<?php echo $value['Order_id']; ?>">
+									<i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
+                                    <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
+									<p style="font-size:20px" class="text-center"><?php echo $table_no; ?></p>
+                                    <?php while($raw = $ress -> fetch_assoc()){
+										$cust_id = $raw['customer_id']; ?>
+                    <p><strong ><?php 
+                        //print_r($raw);
+                        $q = $raw['Quantity'];
+                        echo $raw['Quantity']." x "; ?>
+                        
+                    </strong>
+                    <?php
+                            $mid = $raw['Menu_Id'];
+                            $sq4 = "SELECT * FROM menu WHERE Menu_Id='$mid'";
+                            $ra = $conn -> query($sq4);
+                            $rs = $ra -> fetch_assoc();    
+							echo $rs['Name'].": ".($q*$rs['Price']); 
+							if($table_no == 'Home Delivery'){
+								$cid = $raw['customer_id'];
+                            $sq5 = "SELECT * FROM customers WHERE customer_id='$cid'";
+                            $rr = $conn -> query($sq5);
+                            $rf = $rr -> fetch_assoc();
+                            $mob = $rf['mobile'];
+                            $sq6 = "SELECT * FROM addresses WHERE mobile='$mob'";
+                            $rg = $conn -> query($sq6);
+                            $rk = $rg -> fetch_assoc();
+                            $add = $rk['address'];
+							$name = $rk['name'];
+							$number = $mob;
+
+								
+							}
+							
+                            ?>
+								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id']; ?>)" aria-hidden="true"></i>
+                </p>								
+
+                        <?php } ?>
+                        <p><strong>CGST: </strong><?php 
+                    
+                    $sq = "SELECT * FROM sales WHERE Order_id='$idr'";
+                    $r = $conn -> query($sq);
+                    $r2 = $r -> fetch_assoc();
+                    
+                    echo $r2['cgst']; ?></p>
+                    <p><strong>SGST: </strong><?php echo $r2['sgst']; ?></p>
+                                    <h4>Bill Amount :<?php echo $value['net_total'];
+                                        if($r2['coupon_apply']){
+                                            echo "<br><small> (coupon applied)</small>";
+                                        }
+                                    
+                                    ?>
+                    <a style="margin-left:20px;" href="<?php echo base_url(); ?>index.php/Admin/searchD?oid=<?php echo $idr."&"; ?>customer_id=<?php echo $cust_id; ?>"  class="btn btn-info">Add</a>
+
+                                        
+                                </h4>
+								<?php if($table_no == 'Home Delivery'){ ?>
+								<p><strong>Name:</strong> <?php if(isset($name)){echo $name;} ?><br><br>
+								<strong>Number:</strong> <?php if(isset($number)){echo $number;} ?>	<br><br>
+                	    <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
+								<?php } ?>
+                    </p>
+
+                                    </span>
+                                    <?php
+                                        if(!$r2['coupon_apply']){
+                                    ?>
+                                    <input id="code" class="form-control" placeholder="Coupon Code" >
+                                    <br>
+                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
+                                    <br>
+                                    <?php 
+                                        }
+                                    ?>
+                                    <div>
+                                        <br>
+                                        <input type="submit" value="Pay" class="btn btn-success form-control" 
+										<?php if($table_no == 'Home Delivery'){ ?>
+											onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');print_home('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>','<?php
+											if(isset($number)){echo $number;} ?>');"
+										<?php }else{ ?>
+										onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');" 
+										
+										<?php } ?>
+										>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            
+                        
+                    </div>
+                </div>
+            </div>
+
+                <?php
+                }
+                                  }
+                                  
+                                  else{
+                                      echo '<div class="col-lg-12">No Offline Orders.</div>';
+                                  }
+?>
+                                        
+
+
+
+<div class="col-sm-4" style="margin-bottom:2%;">
+
+<a href="<?php echo base_url('index.php/Admin/DineIn'); ?>" class="btn btn-info btn-lg" style="font-size:15px;width:150px">Dine In</a>
+</div>
+<div class="col-sm-4" style="margin-bottom:2%;">
+
+<a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>"  class="btn btn-info btn-lg" style="font-size:15px;width:150px">Take Away</a>
+</div>
+
+<div class="col-sm-4" style="margin-bottom:2%;">
+
+<a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>"  class="btn btn-info btn-lg" style="font-size:15px;width:150px">Home Delivery</a>
+</div>
 
         
     </div>
-    
+    <br>
+    <br>
     <!-- jQuery -->
     <script src="../../assets/vendor/jquery/jquery.min.js"></script>
 
