@@ -22,11 +22,11 @@ and open the template in the editor.
                         </li>
 						
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php/Admin/DineIn"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/tableStatus"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
 
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php/Admin/tableStatus"><i class="fa fa-dashboard fa-fw"></i> Table Status</a>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/DineIn"><i class="fa fa-dashboard fa-fw"></i>Home Delivery/Take Away</a>
                         </li>
                          <?php }?>
                         <li>

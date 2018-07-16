@@ -1257,7 +1257,7 @@ if(!isset($_SESSION['admin_id']))
 			redirect('./Admin/login', 'refresh');
 		}
         else{
-            redirect('./Admin/DineIn', 'refresh'); 
+            redirect('./Admin/tableStatus', 'refresh'); 
         }
 //		$this->load->model('Admin_model');
 //		$data['orders'] = $this->Admin_model->order_list();
