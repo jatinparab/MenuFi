@@ -1,120 +1,3 @@
-<?php 
-  $conn = mysqli_connect("localhost","root", "", "menufi");
-  //$months = array("January", "Febrauary", "March", "April", "May", "June" , "July" , "August" , "September" , "October" , "November" , "December");
-  $gross_profit = array(
-    "January" => 0,
-    "February" => 0,
-    "March" => 0,
-    "April" => 0,
-    "May" => 0,
-    "June" => 0,
-    "July" => 0,
-    "August" => 0,
-    "September" => 0,
-    "October" => 0,
-    "November" => 0,
-    "December" => 0,
-  );
-
-  $net_profit = array(
-    "January" => 0,
-    "February" => 0,
-    "March" => 0,
-    "April" => 0,
-    "May" => 0,
-    "June" => 0,
-    "July" => 0,
-    "August" => 0,
-    "September" => 0,
-    "October" => 0,
-    "November" => 0,
-    "December" => 0,
-  );
-  $customers = array(
-    "January" => 0,
-    "February" => 0,
-    "March" => 0,
-    "April" => 0,
-    "May" => 0,
-    "June" => 0,
-    "July" => 0,
-    "August" => 0,
-    "September" => 0,
-    "October" => 0,
-    "November" => 0,
-    "December" => 0,
-  );
-
-  $orders = array(
-    "January" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "February" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "March" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "April" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "May" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "June" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "July" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "August" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "September" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "October" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "November" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-    "December" => array("Card"=>0,"Cash"=>0,"Online"=>0),
-  );
-
-  $sql = "SELECT * FROM customers";
-  $res = $conn -> query($sql);
-  if($res){
-    while($row = $res -> fetch_assoc()){
-      $r = $row['Last_Visited'];
-      $month = date('F',strtotime($r));
-      $customers[$month] += 1;
-    }
-  }
-
-
-  $sql = "SELECT * FROM sales WHERE refund='0'";
-  $res = $conn -> query($sql);
-  if($res){
-    while($row = $res -> fetch_assoc()){
-      $ro = $row['Timestamp']; 
-      $month = date('F', strtotime($ro));
-      $gross_profit[$month] += $row['net_total'];
-    }
-    
-  }
-
-  $sql = "SELECT * FROM payment_details";
-  $res = $conn -> query($sql);
-  if($res){
-    while($row = $res -> fetch_assoc()){
-      $ro = $row['added_date']; 
-        $type = $row['payment_type'];
-      $month = date('F', strtotime($ro));
-      $orders[$month][$type] += 1;
-    }
-    
-  }
-
-  //print_r($orders);
-
-
-  $sql = "SELECT * FROM ingredients";
-  $res = $conn -> query($sql);
-  $expenses = 0;
-  if($res){
-    while($row = $res -> fetch_assoc()){
-      $expenses += ($row['quantity'] * $row['cost']);
-    }
-  }
-  foreach($gross_profit as $k => $v){
-    if($v>0){
-      $net_profit[$k] = $gross_profit[$k] - $expenses;
-    }
-
-  }
-  
-  
-
-?>
 
 
 
@@ -152,6 +35,101 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script>
+    function chartsLoad(customers,gross_profit){
+      var gross_profit_value = [];
+      var customers_value = [];
+
+      for(var index in gross_profit)
+        gross_profit_value.push(gross_profit[index]);
+      
+      for(var index in customers)
+        customers_value.push(customers[index]);
+      const chart = document.getElementById("rest_grossSalesReport");
+      Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
+      console.log(chart);
+      let lineChart = new Chart(chart, {
+        type:'line',
+        data: {
+        labels: ["January", "Febrauary", "March", "April", "May", "June" , "July" , "August" , "September" , "October" , "November" , "December"],
+        datasets: [{
+                label: "Gross Sale",
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor:"rgba(75, 192, 192, 0.4)",
+                borderColor:"rgba(75,192,192,1)",
+                borderCapStyle: 'butt',
+                borderWidth:1.5,
+                borderDash:[],
+                borderDashOfset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor:"rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: gross_profit_value,
+              },
+              
+            ]
+          }
+        });
+        
+    
+      const chart2 = document.getElementById("totalCustomers");
+      Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
+      console.log(chart2);
+      let lineChart2 = new Chart(chart2, {
+        type:'line',
+        data: {
+        labels: ["January", "Febrauary", "March", "April", "May", "June" , "July" , "August" , "September" , "October" , "November" , "December"],
+        datasets: [{
+                label: "Total Customers",
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor:"rgba(75, 192, 192, 0.4)",
+                borderColor:"rgba(75,192,192,1)",
+                borderCapStyle: 'butt',
+                borderWidth:1.5,
+                borderDash:[],
+                borderDashOfset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor:"rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: customers_value,
+              },
+              
+            ]
+          }
+        });
+      }
+    </script>
+
+    <script>
+    jQuery.ready(function(){
+    Morris.Bar({
+    element: 'morris-bar-chart',
+    data: [<?php echo $chartData; ?>],
+    xkey: 'MonthYear',
+    ykeys: ['Sales'],
+    labels: 'Sales',
+    hideHover: 'auto',
+    resize: true
+  });
+});
+    </script>
 
 </head>
 
@@ -206,8 +184,10 @@
            		 	<div class="col-lg-6">
            		 		<div class="panel panel-info">
            		 			<div class="panel-heading">Gross Sale</div>
-           		 			<div class="panel-body"> 
+           		 			<div class="panel-body">
+                      <div id="panel-body-inside">
            		 				<canvas id="rest_grossSalesReport" ></canvas>
+                      </div>
            		 			</div>	  
                   </div>
                   
@@ -217,24 +197,18 @@
            		 
            		 	<div class="col-lg-6">
            		 		<div class="panel panel-info">
-           		 			<div class="panel-heading">Gross Sale & Net Sale</div>
+           		 			<div class="panel-heading">Gross Sale &amp; Net Sale<br>
+                      <span>
+
+                      From : <input type="date" id="preweek" onchange="changedate()" value=<?php echo date('Y-m-d', strtotime('-30 days'))?>> 
+                      To : <input type="date" disabled id="today" value=<?php echo date('Y-m-d')?>>
+                      <input type="submit" id="go" value="Go"></input>
+
+                      <span>
+                    </div>
            		 			<div class="panel-body"> 
            		 		<table class="table table-striped table-dark">
-  <thead class="thead-light">
-   
-      
-   <tr><th>Months</th>
-    <th>Card Sales</th>   <th>Cash Sales</th><th>Online Sales</th></tr>
-      <!-- <tr><td>January</td><td>45</td><td>35</td></tr>       -->
-      <?php 
-        foreach($orders as $k => $v){
-      ?>
-      <tr><td><?php echo $k; ?></td><td><?php echo $v['Card'] ?></td><td><?php echo $v['Cash'] ?></td><td><?php echo $v['Online'] ?></td></tr>
-    <?php 
-        }
-    ?>
- 
-      
+  <thead class="thead-light" id="gross_sale">  
   </thead>
  
 </table>
@@ -257,8 +231,10 @@
                   	<div class="col-lg-6">
            		 	 	<div class="panel panel-info">
            		 	 		<div class="panel-heading">Total Customers</div>
-           		 	 		<div class="panel-body"> 
+           		 	 		<div class="panel-body">
+                      <div id="panel-body-inside1"> 
            		 	 			<canvas id="totalCustomers" ></canvas>
+                      </div>
            		 	 		</div>	
                     </div>
     </div>
@@ -274,24 +250,10 @@
            		 
          <div class="col-lg-6">
                   <div class="panel panel-info">
-                    <div class="panel-heading">Total Customers & Turn Around Time</div>
+                    <div class="panel-heading">Total Customers &amp; Turn Around Time</div>
                     <div class="panel-body"> 
                   <table class="table table-striped table-dark">
-  <thead class="thead-light">
-   
-     
-   <tr><th>Months</th>
-    <th>Total Customers</th>   </tr>
-    <?php 
-        foreach($customers as $k => $v){
-      ?>
-      <tr><td><?php echo $k; ?></td><td><?php echo (int)($v); ?></td></tr>
-    <?php 
-        }
-    ?>
-    
- 
-      
+  <thead class="thead-light" id="total_customer">    
   </thead>
  
 </table>
@@ -372,48 +334,11 @@
 
 
 <!--GROSS SALE LINE GRAPH -->
-<script> 
-const chart = document.getElementById("rest_grossSalesReport");
-Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
-console.log(chart);
-let lineChart = new Chart(chart, {
-  type:'line',
-  data: {
-  labels: ["January", "Febrauary", "March", "April", "May", "June" , "July" , "August" , "September" , "October" , "November" , "December"],
-  datasets: [{
-           label: "Gross Sale",
-           fill: true,
-           lineTension: 0.1,
-           backgroundColor:"rgba(75, 192, 192, 0.4)",
-           borderColor:"rgba(75,192,192,1)",
-           borderCapStyle: 'butt',
-           borderWidth:1.5,
-           borderDash:[],
-           borderDashOfset: 0.0,
-           borderJoinStyle: 'miter',
-           pointBorderColor: "rgba(75,192,192,1)",
-           pointBackgroundColor: "#fff",
-           pointBorderWidth: 1,
-           pointHoverRadius: 5,
-           pointHoverBackgroundColor:"rgba(75,192,192,1)",
-           pointHoverBorderColor: "rgba(220,220,220,1)",
-           pointHoverBorderWidth: 2,
-           pointRadius: 1,
-           pointHitRadius: 10,
-           data: [<?php foreach($gross_profit as $k => $v){
-               echo $v.",";
-             } ?>],
-         },
-        
-       ]
-     }
-   })
 
-</script>
 
 
 <!--NET SALES REPORT-->
-<script> 
+<!-- <script> 
 const chart1 = document.getElementById("rest_netSalesReport");
 Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
 console.log(chart1);
@@ -453,11 +378,11 @@ let lineChart1 = new Chart(chart1, {
      }
    })
 
-</script>
+</script> -->
 
 
 <!--TABLE TURNAROUND TIME-->
-<script> 
+<!-- <script> 
 const chart11 = document.getElementById("turnaroundTime");
 Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
 console.log(chart11);
@@ -492,56 +417,16 @@ let lineChart11 = new Chart(chart11, {
      }
    })
 
-</script>
+</script> -->
 
 
 
 
 <!--TOTAL CUSTOMERS-->
-<script> 
-const chart2 = document.getElementById("totalCustomers");
-Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
-console.log(chart2);
-let lineChart2 = new Chart(chart2, {
-  type:'line',
-  data: {
-  labels: ["January", "Febrauary", "March", "April", "May", "June" , "July" , "August" , "September" , "October" , "November" , "December"],
-  datasets: [{
-           label: "Total Customers",
-           fill: true,
-           lineTension: 0.1,
-           backgroundColor:"rgba(75, 192, 192, 0.4)",
-           borderColor:"rgba(75,192,192,1)",
-           borderCapStyle: 'butt',
-           borderWidth:1.5,
-           borderDash:[],
-           borderDashOfset: 0.0,
-           borderJoinStyle: 'miter',
-           pointBorderColor: "rgba(75,192,192,1)",
-           pointBackgroundColor: "#fff",
-           pointBorderWidth: 1,
-           pointHoverRadius: 5,
-           pointHoverBackgroundColor:"rgba(75,192,192,1)",
-           pointHoverBorderColor: "rgba(220,220,220,1)",
-           pointHoverBorderWidth: 2,
-           pointRadius: 1,
-           pointHitRadius: 10,
-           data: [
-            <?php foreach($customers as $k => $v){
-               echo $v.",";
-             } ?>
-           ],
-         },
-        
-       ]
-     }
-   })
-
-</script>
 
 
 <!--PAYMENT METHOD-->
-<script>
+<!-- <script>
 const chart3 = document.getElementById("paymentMethod");
 Chart.defaults.global.legend.fontColor = "rgba(23,56,98,1)";
 console.log(chart3);
@@ -565,21 +450,96 @@ let pieChart3 = new Chart(chart3, {
   }
 
 });
-</script>
+</script> -->
 
    
 </body>
- <script>
-     jQuery.ready(function(){
-    Morris.Bar({
-        element: 'morris-bar-chart',
-        data: [<?php echo $chartData; ?>],
-        xkey: 'MonthYear',
-        ykeys: ['Sales'],
-        labels: 'Sales',
-        hideHover: 'auto',
-        resize: true
+<script>
+  
+</script>
+
+<script>
+  function changedate(){
+        var date2 = document.getElementById("preweek").value;
+        var date1 = new Date(date2);
+        // date1.setDate(date1.getMonth()+1);
+        date1.setDate(date1.getDate()+30);
+        var month=0,date3=0;
+        date1.getMonth()+1 < 10 ? month = "0"+(date1.getMonth()+1) : month = date1.getMonth()+1;
+        date1.getDate() < 10 ? date3 = "0"+(date1.getDate()) : date3 = date1.getDate();
+        console.log(date1);
+        document.getElementById("today").value = date1.getFullYear()+"-"+month+"-"+date3;
+    }
+    $(document).ready(function(){
+        $("#go").click(function(event){
+            event.preventDefault();
+            $('.panel-body #rest_grossSalesReport').remove();
+            $('.panel-body #panel-body-inside').after("<canvas id='rest_grossSalesReport' ></canvas>");
+            $('.panel-body #totalCustomers').remove();
+            $('.panel-body #panel-body-inside1').after("<canvas id='totalCustomers' ></canvas>")
+            var from = $("#preweek").val();
+            var to = $("#today").val();
+            jQuery.ajax({
+            type: "POST",
+            url: "<?php echo base_url(); ?>"+"index.php/admin/sales_restSales_ajax",
+            dataType: 'JSON',
+            data: {fromday: from,today: to},
+            success: function(res){
+                var customer = res[0];
+                var gross_profit = res[1];
+                var orders = res[2];
+                chartsLoad(customer,gross_profit);
+                var htmlString="<tr><th>Months</th><th>Card Sales</th><th>Cash Sales</th><th>Online Sales</th></tr>";
+                for(var index in orders)
+                {
+                    htmlString = htmlString+"<tr><td>"+index+"</td><td>"+orders[index]['Card']+"</td><td>"+orders[index]['Cash']+"</td><td>"+orders[index]['Online']+"</td></tr>"
+                }
+                var htmlString1 = "<tr><td>Months</td><td>Total Customers</td></tr>"
+                for(var index in customer)
+                {
+                  htmlString1 = htmlString1+"<tr><td>"+index+"</td><td>"+customer[index]+"</td></tr>";
+                }
+                $('#gross_sale').html(htmlString);
+                $('#total_customer').html(htmlString1);
+
+            }
+        });
+        });
     });
+
+
+    $(document).ready(function(){
+        var today = new Date();
+        // $('#rest_grossSalesReport').empty();
+        
+        var to = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        today.setDate(today.getDate()-30);
+        var from = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        jQuery.ajax({
+            type: "POST",
+            url: "<?php echo base_url(); ?>"+"index.php/admin/sales_restSales_ajax",
+            dataType: 'JSON',
+            data: {fromday: from,today: to},
+            success: function(res){
+                var customer = res[0];
+                var gross_profit = res[1];
+                var orders = res[2];
+                chartsLoad(customer,gross_profit);
+                var htmlString="<tr><th>Months</th><th>Card Sales</th><th>Cash Sales</th><th>Online Sales</th></tr>";
+                for(var index in orders)
+                {
+                    htmlString = htmlString+"<tr><td>"+index+"</td><td>"+orders[index]['Card']+"</td><td>"+orders[index]['Cash']+"</td><td>"+orders[index]['Online']+"</td></tr>"
+                }
+                var htmlString1 = "<tr><td>Months</td><td>Total Customers</td></tr>"
+                for(var index in customer)
+                {
+                  htmlString1 = htmlString1+"<tr><td>"+index+"</td><td>"+customer[index]+"</td></tr>";
+                }
+                $('#gross_sale').html(htmlString);
+                $('#total_customer').html(htmlString1);
+                
+            }
+        });
     });
-    </script>
+</script>
 </html>
