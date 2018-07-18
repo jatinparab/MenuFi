@@ -2,8 +2,8 @@
 -- version 4.6.5.2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jul 09, 2018 at 10:53 PM
+-- Host: 127.0.0.1
+-- Generation Time: Jul 14, 2018 at 06:33 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -123,13 +123,15 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `name`) VALUES
-(6, 'Beer'),
-(7, 'Scotch'),
-(8, 'SeaFood'),
-(9, 'Tandoori Specials'),
-(10, 'Vegetable Dishes'),
-(12, 'Side Orders - Bread'),
-(13, 'Side Orders - Sundries');
+(14, 'Beer'),
+(15, 'Uthappa'),
+(16, 'Fusion'),
+(17, 'Wraps'),
+(18, 'Pardesi'),
+(19, 'ThalI'),
+(20, 'Desserts'),
+(21, 'Sides'),
+(30, 'Dosa');
 
 -- --------------------------------------------------------
 
@@ -176,7 +178,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `mobile`, `email`, `otp`, `views`, `revenue`, `Last_Visited`) VALUES
-(1, '9820181347', '', '1', 37, 0, '2018-07-10 02:08:51'),
+(1, '9820181347', '', '1', 41, 0, '2018-07-14 21:26:14'),
 (2, '9820181343', '', '0', 7, 0, '2018-06-11 18:23:41'),
 (3, '9820181341', '', '0', 9, 0, '2018-07-09 23:39:26'),
 (4, '9096017752', '', '0', 3, 0, '2018-06-26 22:37:54');
@@ -547,7 +549,8 @@ INSERT INTO `menu` (`Menu_Id`, `Name`, `Price`, `Description`, `Type`, `Category
 (65, 'Sweet Coconut wrap', 90, 'scw', 'Veg', 'Desserts', '', '90', 1),
 (66, 'Chocolate Banana Wrap', 120, 'cbw', 'Veg', 'Desserts', '', '10', 1),
 (67, 'Fried Ice cream', 180, 'fic', 'Veg', 'Desserts', '', '10', 2),
-(68, 'cheese', 30, 'cheese', 'Veg', 'Sides', '', '2', 1);
+(68, 'cheese', 30, 'cheese', 'Veg', 'Sides', '', '2', 1),
+(69, 'beer', 100, 'asdfsasa', 'Veg', 'Beer', 'tuborg.jpg', '10', 1);
 
 -- --------------------------------------------------------
 
@@ -790,7 +793,9 @@ INSERT INTO `orders` (`Order_id`, `Table_id`, `Timestamp`, `order_type`) VALUES
 (50, 2, '2018-07-09 18:09:26', 'Dine In'),
 (51, 5, '2018-07-09 19:27:12', 'Dine In'),
 (52, 4, '2018-07-09 19:28:57', 'Dine In'),
-(53, 4, '2018-07-09 20:38:51', 'Dine In');
+(53, 4, '2018-07-09 20:38:51', 'Dine In'),
+(54, 3, '2018-07-14 07:19:32', ''),
+(55, 2, '2018-07-14 08:16:34', '');
 
 -- --------------------------------------------------------
 
@@ -859,7 +864,9 @@ INSERT INTO `order_status` (`id`, `Order_id`, `status`, `Timestamp`, `seen`, `se
 (47, 50, 1, '2018-07-09 18:09:26', 0, NULL),
 (48, 51, 4, '2018-07-09 19:27:12', 0, NULL),
 (49, 52, 1, '2018-07-09 19:28:57', 0, NULL),
-(50, 53, 4, '2018-07-09 20:38:51', 1, '2018-07-09 20:40:35');
+(50, 53, 4, '2018-07-09 20:38:51', 1, '2018-07-09 20:40:35'),
+(51, 54, 0, '2018-07-14 07:19:32', 0, NULL),
+(52, 55, 0, '2018-07-14 08:16:34', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -1173,12 +1180,12 @@ ALTER TABLE `background_image`
 -- AUTO_INCREMENT for table `batter`
 --
 ALTER TABLE `batter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 --
 -- AUTO_INCREMENT for table `coupons`
 --
@@ -1203,7 +1210,7 @@ ALTER TABLE `expenses`
 -- AUTO_INCREMENT for table `fake_order`
 --
 ALTER TABLE `fake_order`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `feedback`
 --
@@ -1238,7 +1245,7 @@ ALTER TABLE `logo`
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `Menu_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 --
 -- AUTO_INCREMENT for table `menu_batter_rel`
 --
@@ -1258,12 +1265,12 @@ ALTER TABLE `opening_amount`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `Order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 --
 -- AUTO_INCREMENT for table `order_status`
 --
 ALTER TABLE `order_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 --
 -- AUTO_INCREMENT for table `payment_details`
 --

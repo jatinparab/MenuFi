@@ -32,7 +32,7 @@
         //$category = str_replace(' ', '', $category);
         $top_menu[$category] = 0;
       }
-      //print_r($top_menu);
+      // print_r($top_menu);
       $sql = "SELECT * FROM menu";
       $res = $conn -> query($sql);
       if($res){
