@@ -219,7 +219,7 @@ if(mysqli_num_rows($res)>0){
                                                 <i class="fa fa-money fa-5x" aria-hidden="true"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge"><?php echo $amt ?></div>
+                                                <div class="huge"><?php echo $cash ?></div>
                                                 <div>Total Cash Amount </div>
                                             </div>
                                         </div>
@@ -775,6 +775,44 @@ if(mysqli_num_rows($res)>0){
     <br>
     <br>
     <!-- jQuery -->
+    <div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="mySmallModalLabel">Payment</h4>
+                        <input class="hidden" id="modal_oid">
+				</div>
+				<form action="">
+					<div class="modal-body">
+						<div class="form-group">
+						  	<label for="email">Payment Type:</label>
+						 	<select class="form-control" name="payment_type" id="payment_type">
+						 		<option value="">Select Payment Type</option>
+								<option value="Cash">Cash</option>
+								<option value="Card">Card</option>
+								<option value="Online">Online</option>
+							</select>
+						</div>
+						<div id="cash_div" style="display: none;">
+							<div class="form-group">
+							  <label for="pwd">Given Amount:</label>
+							  <input type="text" class="form-control" oninput="getReturnAmount()" id="given_amount" placeholder="Enter Given Amount" name="given_amount" onblur="getReturnAmount()">
+							</div>
+							<div class="form-group">
+							  <label for="pwd">Return Amount:</label>
+							  <input type="text" class="form-control" id="return_amount" placeholder="Enter Return Amount" name="return_amount">
+							</div>
+						</div>			
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" id="subp" class="btn btn-primary" >Submit</button>
+					</div>
+				</form>	
+			</div>
+		</div>
+	</div>
     <script src="../../assets/vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
@@ -881,7 +919,501 @@ if(mysqli_num_rows($res)>0){
 	      }
 	    }
 	  }
-	}
+    }
+    
+    function changeBatter(id,item){
+    batter_id = item;
+    console.log(id,batter_id);
+    $.ajax({
+                type: 'GET',
+                url: 'changeBatter_ajax',
+                data:{
+                    'id':id,
+                    'batter_id': batter_id
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+        });
+}
+
+function addAddon(id,item){
+    $.ajax({
+                type: 'GET',
+                url: 'addAddon_ajax',
+                data:{
+                    'id':id,
+                    'addon_id':item
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+    });
+}
+
+function removeAddon(id){
+    $.ajax({
+                type: 'GET',
+                url: 'removeAddon_ajax',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      get_fake_order();
+                  }
+					
+            }
+    });
+}
+
+function deleteOrderPayment(id){
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_deletepayment',
+                data:{
+                    'id':id,
+                  
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				  if(resp == 'success'){
+                      window.location = '';
+                  }
+					
+            }
+        });
+
+}
+
+function addItem(id,customer_id){
+  //  alert('ehe');
+    $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/addItem_ajax',
+                data : {
+                    'id':id,
+                    'customer_id': customer_id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    get_fake_order();
+            }
+        });
+
+}
+
+function kotprint(id){
+  //  alert('print kot');
+
+	             var printWindow = window.open('', '', 'height=300,width=600');
+
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printkot',
+                data : {
+                    'id':id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+            }
+            });
+}
+
+function getOfflineOrders(){
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajx_cashOrders',
+                
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    $('#div_offlineOrders').html(resp);
+
+            }
+            });
+        }
+
+function get_fake_order(){
+    $.ajax({
+                type: 'GET',
+                url: 'getFake',
+                
+                cache:false,
+                
+                success: function(resp){
+                    $('#fakeOrder_here').html(resp);
+            }
+            });
+}
+
+        function apply_code(id){
+			
+            let code = $('#code').val();
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_applyCode',
+                data:{
+                    'id':id,
+                    'code':code
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp=='success'){
+                        alert('Applied Coupon!');
+                        window.location = '';
+                    }else{
+                        alert(resp);
+                    }
+
+            }
+            });
+
+        }
+
+        function showModal(id,table){
+    $('#modal_oid').val(id);
+   // $('#modal_table').val(table);
+   if(table=='Home Delivery'){
+    document.getElementById("subp").addEventListener("click", call_home);
+   }else{
+    document.getElementById("subp").addEventListener("click", call);
+
+   }
+    $('#addPaymentModal').modal('show');
+    $('#given_amount').val('');
+    $('#return_amount').val('');
+    console.log(id);
+}
+
+        function showModal_Home(id){
+    $('#modal_oid').val(id);
+    $('#addPaymentModal').modal('show');
+    $('#given_amount').val('');
+    $('#return_amount').val('');
+    console.log(id);
+}
+
+function print_home(id,address,name,number){
+           // var divContents = $("#printspan"+id).html();
+               var printWindow = window.open('', '', 'height=300,width=600');
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrderD',
+                data : {
+                    'Order_id':id,
+                    'name': name,
+                    'address': address,
+                    'number':number
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
+        }
+
+		function call_home(){
+    let gamt = 0;
+    let ramt = 0;
+    id = $('#modal_oid').val();
+    if($('#given_amount').val()!=''){
+        gamt = $('#given_amount').val();    
+    }
+    if($('#return_amount').val()!=''){
+        ramt = $('#return_amount').val();    
+    }
+
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_payitaway',
+                data:{
+                    'id':id,
+                    'type': $('#payment_type').val(),
+                    'given_amt':gamt,
+                    'return_amt': ramt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    //console.log(resp);
+                    if(resp == 'success'){
+                       //sendDelivery(id);
+                      pay_it(id);
+                     // window.location = '';
+
+                    }
+
+            }
+        });
+    
+    
+}
+
+function sendDelivery(id){
+    $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "ajax_Deliver",
+            data: {
+                'id':id
+            },
+            success: function (result) {
+                if(result == 'success'){
+                    window.location = '';
+                }
+            }
+        });
+}
+
+		function addOpeningAmt(){
+			var opening_amount = $('#opening_amount').val();
+			if(opening_amount !=""){
+				$.ajax({
+					type: 'GET',
+					dataType: "json",
+					url: '<?php echo base_url(); ?>index.php/Admin/addOpeningAmt',
+					data:{
+						'opening_amount':opening_amount
+					},
+					//cache:false,
+					success: function(resp){
+						if(resp==1){
+							alert('Opening amount added successfully!');
+							location.reload();
+						}else{
+							alert('Opening amount not added!');
+						}	
+					}
+
+				});
+			}			
+			
+		} 
+
+
+function getReturnAmount(){
+	given = $('#given_amount').val();
+	id = $('#modal_oid').val();
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_getreturn',
+                data:{
+                    'id':id,
+                    'given':given
+                },
+                cache:false,
+                
+                success: function(resp){
+                   // console.log(resp);
+				   $('#return_amount').val(parseInt(resp));
+					
+            }
+        });
+
+}
+
+function call(){
+    let gamt = 0;
+    let ramt = 0;
+    id = $('#modal_oid').val();
+    if($('#given_amount').val()!=''){
+        gamt = $('#given_amount').val();    
+    }
+    if($('#return_amount').val()!=''){
+        ramt = $('#return_amount').val();    
+    }
+
+
+
+    $.ajax({
+                type: 'GET',
+                url: 'ajax_payitaway',
+                data:{
+                    'id':id,
+                    'type': $('#payment_type').val(),
+                    'given_amt':gamt,
+                    'return_amt': ramt
+                },
+                cache:false,
+                
+                success: function(resp){
+                    //console.log(resp);
+                    if(resp == 'success'){
+                       pay_it(id);
+                       print(id);
+                       window.location = '';
+
+                    }
+
+            }
+        });
+    
+    
+}
+
+function deleteOrderItem(id){
+	//console.log(id);
+	$.ajax({
+                type: 'GET',
+                url: 'ajax_deleteorderitem',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
+}
+
+function pay_it(id){
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_payOrder',
+                data:{
+                    'id':id
+                },
+                cache:false,
+                
+                success: function(resp){
+                    console.log(resp);
+                    if(resp == 'success'){
+                        window.location = '';
+                    }
+
+            }
+            });
+
+        }
+
+        $(function() {
+		    $('#payment_type').change(function(){
+		        if($('#payment_type').val() == 'Cash') {
+		            $('#cash_div').show(); 
+		        } else {
+		            $('#cash_div').hide(); 
+		        } 
+		    });
+		});
+
+        
+        function getOfflineOrders(){
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo base_url(); ?>index.php/Admin/ajx_cashOrders',
+                
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    $('#div_offlineOrders').html(resp);
+
+            }
+            });
+        }
+
+        function apply_code(id){
+			
+            let code = $('#code').val();
+            $.ajax({
+                type: 'GET',
+                url: 'ajax_applyCode',
+                data:{
+                    'id':id,
+                    'code':code
+                },
+                cache:false,
+                
+                success: function(resp){
+                    if(resp=='success'){
+                        alert('Applied Coupon!');
+                        window.location = '';
+                    }else{
+                        alert(resp);
+                    }
+
+            }
+            });
+
+        }
+
+        function print(id){
+           // var divContents = $("#printspan"+id).html();
+               var printWindow = window.open('', '', 'height=300,width=600');
+    //             printWindow.document.write(`<html><head><style>@page {
+    //                 size: 3in 3.6in;
+    // margin: 30%
+    // }
+    // </style><title></title>`);
+    //             printWindow.document.write('</head><body style="height:100px;width:300px;">');
+    //             printWindow.document.write(divContents);
+    //             printWindow.document.write('</body></html>');
+    //             printWindow.document.close();
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrder',
+                data : {
+                    'Order_id':id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
+        }
 
     		function addOpeningAmt(){
 			var opening_amount = $('#opening_amount').val();
