@@ -2820,7 +2820,7 @@ public function checkLogin(){
 			redirect(base_url('index.php/Admin/kitchen_dashboard'));
 		}else{
 			
-			redirect(base_url('index.php/Admin/dashboard'));
+			redirect(base_url('index.php/Admin/tableStatus'));
 		}
     }
     else{
