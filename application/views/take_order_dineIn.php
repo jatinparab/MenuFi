@@ -245,7 +245,7 @@ if(mysqli_num_rows($res)>0){
                                             ?>
                                             
                                             
-                                            <h1>First Floor</h1>
+                                            <h1>First Flor</h1>
                                              <?php
                                             for($i=11; $i<21; $i++){
                                                 if($i==13){
