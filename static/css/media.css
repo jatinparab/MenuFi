@@ -1,0 +1,671 @@
+	body {
+
+		background:url(../../images/table-image/table_bg.png) no-repeat center;
+
+		background-size:cover;
+
+	}
+
+	
+
+/* The side navigation menu */
+
+.sidenav {
+
+    height: 100%; /* 100% Full-height */
+
+    width: 0; /* 0 width - change this with JavaScript */
+
+    position: fixed; /* Stay in place */
+
+    z-index: 999; /* Stay on top */
+
+    top: 0;
+
+    right: 0;
+
+    background-color: #000; /* Black*/
+
+    overflow-x: hidden; /* Disable horizontal scroll */
+
+    padding-top: 60px; /* Place content 60px from the top */
+
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+
+}
+
+
+
+/* The navigation menu links */
+
+.sidenav a {
+
+    padding: 8px 8px 8px 32px;
+
+    text-decoration: none;
+
+    font-size: 20px;
+
+    color: #fff;
+
+    display: block;
+
+    transition: 0.3s;
+
+	text-align: center;
+
+}
+
+
+
+/* When you mouse over the navigation links, change their color */
+
+.sidenav a:hover, .offcanvas a:focus{
+
+    color: #f1f1f1;
+
+}
+
+
+
+/* Position and style the close button (top right corner) */
+
+.sidenav .closebtn {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 25px;
+
+    font-size: 36px;
+
+    margin-left: 50px;
+
+}
+
+
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+
+#main {
+
+    transition: margin-left .5s;
+
+    padding: 20px;
+
+}
+
+
+
+
+
+@media  (max-width: 667px) {
+
+	body {
+
+		background:url(../../images/table-image/table_bg.png) no-repeat;
+
+		-webkit-background-size: cover;
+
+		  -moz-background-size: cover;
+
+		  -o-background-size: cover;
+
+		  background-size: cover;
+
+		  color:#fff;
+
+		  font-size:14px;
+
+		  font-family: 'Didact Gothic';
+
+		  overflow-x:hidden;
+
+	}
+
+.header h1 {
+
+		color:#fff;
+
+		font-size:20px;
+
+		position:absolute;
+
+		right:15px;
+
+		top:15px;
+
+		margin:0px;
+
+		padding:0px;
+
+		}
+
+.logo {
+
+		text-align:center;
+
+		}
+
+.logo img  {
+
+		margin:10% auto;
+
+		width:40%;
+
+		}
+
+.btn-bg-none {
+
+		background:none;
+
+		border:none;
+
+		}
+
+.btn-bg-none, .btn-bg-none.focus, .btn-bg-none:hover {
+
+    color: #fff;
+
+    background:none;
+
+    border: none;
+
+    outline: none;
+
+    font-size:15px;
+
+}
+
+.form-control1 {
+
+	height:50px;
+
+	background:rgba(99, 88, 85, 0.33);
+
+	border:none;
+
+	color:#fff;
+
+	}
+
+.input-group-addon {
+
+	background:none;
+
+	background:#6f6868;
+
+	border:none;
+
+	}
+
+.input-group-addon img {
+
+	height:34px;
+
+	}
+
+select{
+
+    background:rgba(99, 88, 85, 0.33);
+
+	display: block;
+
+	margin: 0 auto;
+
+}
+
+.btn-bg-none.active.focus, .btn-bg-none.active:focus, .btn-bg-none.focus, .btn-bg-none:active.focus, .btn-bg-none:active:focus, .btn-bg-none:focus {
+
+	background:none !important;
+
+	border:none !important;
+
+	outline: none;
+
+	}
+
+.btn-bg-none.active.focus, .btn-bg-none.active:focus, .btn-bg-none.active:hover, .btn-bg-none:active.focus, .btn-bg-none:active:focus, .btn-bg-none:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover {
+
+	background:none !important;
+
+	border:none !important;
+
+	outline: none;
+
+	}
+
+#body {
+
+	margin:0px;
+
+	}
+
+.header2 h1 {
+
+	left:15px;
+
+	}
+
+.icon-property {
+
+	position:relative;
+
+	margin-right: 34px;
+
+    margin-top: 15px;
+
+	display: block;
+
+	float:right;
+
+	}
+
+.food_icon {
+
+	margin-left:15px;
+
+	}
+
+.table-hover>tbody>tr:hover {
+
+    background:none;
+
+	color:#fff;
+
+}
+
+.table>tbody>tr>td  {
+
+	/*text-align:center;*/
+
+	cursor:pointer;
+
+	}
+
+.table>thead>tr>th {
+
+	/*text-align:center;*/
+
+	border: none;
+
+	}
+
+.btn-block-place {
+
+	margin-top:15px;
+
+	margin-bottom:15px;
+
+	}
+
+.btn-block-place {
+
+	border-radius:0px !important;
+
+	background:rgba(51, 122, 183, 0.75);
+
+	}
+
+.table-responsive {
+
+	width:99%;
+
+	margin:0 auto;
+
+	font-size: 15px;
+
+       letter-spacing: 1px;
+
+       font-weight: 500;
+
+       border:none !important;
+
+	}
+
+.modal-content {
+
+	background:url(../../images/table-image/table_bg.png) no-repeat center center fixed;
+
+	-webkit-background-size: cover;
+
+	-moz-background-size: cover;
+
+	-o-background-size: cover;
+
+	 background-size: cover;
+
+	}
+
+#item_details h1 {
+
+	font-size:14px;	
+
+	}
+
+.btn-number {
+
+	background:#000;
+
+	color:#fff;
+
+	}
+
+.btn-number:hover ,.btn-default[disabled]:hover {
+
+	background:#F00;
+
+	color:#fff;
+
+	}
+
+.addon_button_ing , .addon_button {
+
+	font-size:10px;
+
+	color:#fff;
+
+	background:#063;
+
+	border:1px solid #000;
+
+	float:left;
+
+	width:100%;
+
+	}
+
+.modal-header .close { 
+
+	color:#fff;
+
+    opacity: 1.2;
+
+}
+
+.btn-secondary {
+
+	background:#ff6666;
+
+	}
+
+.form-group-btn-table {
+
+	background:#fff;
+
+}
+
+.header_align_center {
+
+	color:#fff !important;
+
+}
+
+/*.header img {
+
+	float:right !important;
+
+}*/
+
+.header2 img {
+
+	 float: left;
+
+    padding-left: 30px;
+
+    padding-top: 15px;
+
+}
+
+.table>tbody>tr>td { 
+
+       border: none !important;	
+
+}
+
+.close {
+
+     color:#fff;
+
+}
+
+.modal {
+
+     overflow-y:scroll;
+
+}
+
+.width-img-sucess {
+
+	width:20%;
+
+	margin:0 auto;
+
+}
+
+/*css 32-10-2017*/
+
+
+
+.btn-number_on_menu {
+
+	float:left;
+
+	background: none;
+
+    border-radius: 50% !important;
+
+    font-size: 10px;
+
+    width: 25px;
+
+    height: 25px;
+
+	border-top-left-radius:50% !important;
+
+    border-bottom-left-radius: 50% !important;
+
+	
+
+	}
+
+.form-control-m {
+
+	width:30px !important;
+
+	float: left;
+
+	margin-left: 25%;
+
+    margin-right: 6%;
+
+	background: none;
+
+    border: none;
+
+	font-size: 15px;
+
+    color: #fff;
+
+	height:auto;
+
+	padding:0px;
+
+	}
+
+.input-group-btn {
+
+	float:left;
+
+	outline: none;
+
+	}
+
+.glyphicon-minus {
+
+	color:#F00;
+
+	position: relative;
+
+    right: 8px;
+	top:-3px;
+
+	}
+
+.glyphicon-plus {
+
+	color:#060;
+
+	position: relative;
+
+    right: 7px;
+	
+	 top: -3px;
+
+	}
+
+.input-group-btn>.btn:active, .input-group-btn>.btn:focus, .input-group-btn>.btn:hover {
+
+	background:none !important;
+
+	outline:none !important;
+
+	}
+
+}
+
+/*css 8-11-2017*/
+.social-login ul li {
+	list-style:none;
+	margin-bottom:10px;
+	}
+.social-login ul li button {
+	margin-bottom:10px;
+	}
+.social-login ul li a {
+	text-decoration:none;
+	color:#fff;
+}
+.social-login ul {
+	padding-left:0px;
+	}
+.social-login { width:300px; margin:auto;}
+.btn { font-size:15px;}
+.btn-primary:focus ,.btn-primary:hover , .btn-primary { background:rgba(255, 0, 0, 0.48); border-radius:0px; border:1px solid rgba(255, 0, 0, 0.48);}
+#container { width:100%;}
+.thumbnail { background:none; border-radius:10px; border: none !important; margin-bottom: 0px;}
+.food_modal_title { padding-bottom: 0px;  padding-top: 0px; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; font-weight:bold;}
+.modal-header { padding-bottom:0px; border:none;}
+/*#quantity_desc_1 { width:20%;}*/
+.modal-dialog { width:100%;}
+.glyphicon-arrow-left-c { margin-top:0px;}
+.width-sl { width:47%;}
+.margin-s { width:100% !important;}
+.chill-icon ul li img { width: 22px !important;}
+.quantityCounters button { background:none !important; width: 20px; height: 20px; border-radius: 20px !important;}
+.quantityCounters .glyphicon { color:#fff !important; font-size: 10px; top: -8px; right: 4px;}
+.quantityCounters { width:90px;}
+.width-sr { padding-left:0px !important; padding-right:5px !important; width:90% !important;}
+.width-sr h3 { font-size: 18px !important; text-transform: uppercase;}
+.chill-icon ul li { padding-bottom:10px !important;}
+.r-margin .table-swidth tr td { padding-top:5px; padding-bottom:5px;}
+.bth-placeorder { font-size: 20px !important;}
+.modal-footer { border: none !important;}
+.glyphicon-arrow-left-c { margin-top:0px !important; font-size:16px !important;}
+.gohome a { text-decoration:none !important; }
+.s-bg { margin-bottom:10px !important;}
+.btn-secondary , .btn-secondary:hover {  background: rgba(255, 0, 0, 0.48); border-radius: 0px; border: 1px solid rgba(255, 0, 0, 0.48); color:#fff;}
+.bg-color1 ,.bg-color1:hover , .bg-color2 , .bg-color2:hover { background:rgba(218, 215, 215, 0.21) !important;}
+.addon_button_ing , .addon_button { width: 20px; position: relative; right: -56px; border-radius: 10px; background:#000 !important; outline: none !important; top: -16px;}
+.addon_button_ing span .glyphicon-minus {top:0px !important;}
+.glyphicon-plus-inn { top: 1px !important; left: -1px !important;}
+.addon_button { margin-right: -15px !important;}
+.modal-dialog { margin:0px !important;}
+.width-veg { padding-left:42% !important;}
+.width-veg .btn-number-m1 { position: absolute; left: -55px !important; width: 25px; height: 25px; border-radius: 10px !important; background:none !important; border: 1px solid #fff;}
+.width-veg .btn-number2 { position: absolute;  right: -50px !important; width: 25px; height: 25px; border-radius: 10px !important; background:none !important; border: 1px solid #fff;}
+.form-control { color:#fff;}
+.width-veg input { background:none !important; border:none !important; height:35px !important; font-size: 20px; width:31% !important;}
+.modal-content-bg { background: rgba(255, 255, 255, 0.19) !important;}
+.modal-body { background:none !important; padding:0px !important;}
+}
+/*15-11-2017*/
+.td-padd { padding-top:20px !important;}
+.glyphicon-minus-inn { top: 1px !important; right: 5px !important;}
+.btn-number-m1 .glyphicon-minus , .btn-number2 .glyphicon-plus, .btn-number_on_menu .glyphicon-minus , .btn-number_on_menu .glyphicon-plus{ color:#fff;}
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+
+
+@media  (max-width: 450px) {
+
+    .sidenav {padding-top: 15px;}
+
+    .sidenav a {font-size: 18px;}
+	.social-login { width:300px; margin:auto;}
+
+}
+
+@media  (max-width: 375px) {
+
+	.logo {
+
+		padding-top:20%;
+
+		}
+
+	.logo img  {
+
+		width:50%;
+
+		}
+
+	.btn-number_on_menu {
+
+    width: 20px;
+
+    height: 20px;
+
+	}
+
+.form-control-m {
+
+	padding-left:13px;
+
+	}
+
+.glyphicon-plus , .glyphicon-minus {
+
+    top: -3px;
+
+}
+
+.btn-number_on_menu {
+
+    border-radius: 20px !important;
+
+    width: 25px;
+
+    height: 25px;
+
+    border-top-left-radius: 20px !important;
+
+    border-bottom-left-radius: 20px !important;
+
+}
+.glyphicon-minus-iing {top:1px !important; right:5px !important;}
+.quantity_desc_1 { height:35px;}
+	}
+
+@media  (max-width: 320px) {
+
+	.logo img {
+
+    width: 65%;
+
+}
+
+#body { margin-top:30px; }
+
+	}
+
