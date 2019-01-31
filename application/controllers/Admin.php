@@ -1695,7 +1695,18 @@ if(!isset($_SESSION['admin_id']))
         $s = $this->db->query("DELETE FROM customer_order WHERE id='$id'");
         //print_r($id);
         if(isset($s)){
-            $this->db->query("UPDATE `sales` SET `net_total`=`net_total`-".$amount." WHERE `Order_id`=".$order_id);
+           // echo "jatin";
+            $s = $this->db->query("SELECT * FROM sales WHERE Order_id='$order_id'")->result_array();
+          //  print_r($s);
+            $cgst =$s['0']['cgst'];
+            $sgst = $s['0']['sgst'];
+         //   echo $cgst;
+           // echo $sgst;
+            $cgst = $cgst - (($amount/100)*2.5);
+            $sgst = $sgst - (($amount/100)*2.5);
+            $amount = $amount + (($amount/100)*5);
+            $amount = floor($amount);
+            $this->db->query("UPDATE `sales` SET `net_total`=`net_total`-".$amount.", cgst='$cgst', sgst='$sgst' WHERE `Order_id`=".$order_id);
             echo 'success';
         }else{
             echo 'error';
