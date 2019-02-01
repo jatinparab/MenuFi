@@ -226,13 +226,9 @@ if(mysqli_num_rows($res)>0){
                                             <h1 style="color:#fff">Ground Floor</h1>
                                             <?php
                                             for($i=0; $i<5; $i++){
-                                                if($i<3){
-                                                    $p = 40;
-                                                }else{
-                                                    $p = 30;
-                                                }
+                                                
                                                 ?>
-<button class="btn btn-lg" onclick="order('<?=$i+1?>')" style="font-size:50px;padding:<?=$p?>px;"><?=$i+1?></button>
+<button class="btn btn-warning btn-lg" onclick="order('<?=$i+1?>')" style="font-size:50px;padding:30px;margin:10px;"><?=$i+1?></button>
 
                                                 <?php
 
@@ -247,14 +243,8 @@ if(mysqli_num_rows($res)>0){
                                                     continue;
                                                 }
 
-                                                if($i<20){
-                                                    $p = 20;
-                                                }else{
-                                                    $p = 10;
-                                                }
-
                                                 ?>
-<button class="btn btn-lg" onclick="order('<?=$i?>')"  style="font-size:50px;padding:<?=$p?>px;"><?=$i?></button>
+<button class="btn btn-info btn-lg" onclick="order('<?=$i?>')"  style="font-size:50px;padding:30px;margin:10px;"><?=$i?></button>
 
                                                 <?php
 
