@@ -28,15 +28,14 @@ if(mysqli_num_rows($res)>0){
     $ye = 0;
 
 
-    if(isset($mobno) && isset($tableno)){
+    if(isset($mobno)){
         //echo $address;
          //echo $mobno;
-        
             $ye = 1;
-        
         //$_SESSION['isredirect']=1;
         //header("Location: create_orderH?mobno=$mobno&address=$address&table=-1&CreateOrder=Create+Order");
     }
+    echo($ye);
     $card = 0;
     $online = 0;
     $cash = 0;
