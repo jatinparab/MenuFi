@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //Changes done by Bansilal on 02.05.18 for localhost Path
-$config['base_url'] = 'http://localhost/menufi/';
+$config['base_url'] = 'http://192.168.0.105/menufi/';
 //$config['base_url'] = 'http://192.168.43.118/menufi/';
 
 /*
