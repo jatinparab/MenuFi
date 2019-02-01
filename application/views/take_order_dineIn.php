@@ -49,7 +49,7 @@ if(mysqli_num_rows($res)>0){
 						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
 						$re1 = $conn ->query($sss);
                         $rew = $re1 -> fetch_assoc();
-                        print_r($rew);
+                    //    print_r($rew);
     }
 	
 	$sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card' AND added_date BETWEEN '$start_date' AND '$end_date'";
