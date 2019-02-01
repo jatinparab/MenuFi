@@ -211,24 +211,19 @@ if(mysqli_num_rows($res)>0){
 			<div  id="page-wrapper">
 
           <div class="row">
-                <div class="col-md-12" style="padding-top:20px;">
-                <div  style="margin-bottom:30px" class="row">
-                <div class="col-md-2 ">
-		 			<input id="opening_amount" type="text" name="opening_amount" class="form-control" value="" placeholder="Enter opening amount">
-		 		</div>
-		 		<div class="col-md-2">
-		 			<input id="addOpeningAmt" type="button" name="addOpeningAmt" class="btn btn-success" value="ADD" onclick="addOpeningAmt()">
-		 		</div>
-		 		<div class="col-md-4 col-sm-offset-2">
-		 			<p style="color:white;font-size:16px;">Total Opening Amount : <?php echo $amt; ?> </p>
-					 
-		 		</div>
-                 
+          <br><br>
+                <div class="col-sm-6">
+                <a href="<?php echo base_url('index.php/Admin/HomeDelivery'); ?>" class="btn btn-success btn-lg">Home Delivery</a>
                 </div>
+                <div class="col-sm-6"><a href="<?php echo base_url('index.php/Admin/TakeAway'); ?>" class="btn btn-success btn-lg">Take Away</a></div>
+                
+                 
+                <br><br>
+                
                    
-                <div class="row">
+                <div class="row" style="padding:20px;">
                     <?php if(!(isset($_SESSION['order_id']))){ ?>
-                                            <h1>Ground Floor</h1>
+                                            <h1 style="color:#fff">Ground Floor</h1>
                                             <?php
                                             for($i=0; $i<5; $i++){
                                                 if($i<3){
@@ -245,7 +240,7 @@ if(mysqli_num_rows($res)>0){
                                             ?>
                                             
                                             
-                                            <h1>First Flor</h1>
+                                            <h1 style="color:#fff">First Floor</h1>
                                              <?php
                                             for($i=11; $i<21; $i++){
                                                 if($i==13){
@@ -272,20 +267,16 @@ if(mysqli_num_rows($res)>0){
 
 
          
-								<div class="col-sm-
-								 <?php if(!(isset($_SESSION['order_id']))){
-									 echo 9;
-								 }
-									 else{
-										 echo 12;
-									 } ?> 
-								
+                                <div class="col-sm-12
+                               
+                                
+                            
 								">
 									
 									<div class="form-body">
 										<!-- JAVASCRIPT ADD ITEM TO ORDER CONTENT WILL BE HERE -->
 										<?php if(!(isset($_SESSION['order_id']))){ ?>
-										<div class="col-lg-5" style="color: white">
+										<div class="col-lg-" style="color: white">
 											<form method="post" action="create_orderD">
 												<div class="form-group">
 													<input class="hidden" id="nu" pattern="[7-9]{1}[0-9]{9}" type="text" value="9999999999" name="mobno" class="form-control" required>
@@ -310,7 +301,7 @@ if(mysqli_num_rows($res)>0){
             
             ?>
                         
-           <br><br><br>
+          
             <div class="row"  id="div_offlineOrders">
             <?php if(!empty($pendingOrders)){
 					//print_r($pendingOrders);
@@ -596,6 +587,14 @@ if(mysqli_num_rows($res)>0){
 
 					<!-- jQuery -->
 
+ <div class="modal fade" id = "addComment">
+        <div class="modal-dialog">
+            <div class="modal-content ">
+            </div>
+        </div>
+    </div>
+
+
 						<div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
@@ -604,6 +603,9 @@ if(mysqli_num_rows($res)>0){
 						<h4 class="modal-title" id="mySmallModalLabel">Payment</h4>
                         <input class="hidden" id="modal_oid">
 				</div>
+
+
+
 				<form action="">
 					<div class="modal-body">
 						<div class="form-group">
@@ -700,10 +702,10 @@ if(mysqli_num_rows($res)>0){
 
 	<!-- Refreshing the table view after each 5 seconds-->
 	<script>
-	$(document).ready(function(){
-		setInterval(checkLiveOrder,(5*1000));
-        setInterval(liveNotification,5000);
-	});
+	
+    $('#addComment').on('hide.bs.modal', function (e) {
+           $('body').load('<?=base_url()?>index.php/Admin/searchD');
+       });
 	function checkLiveOrder(){
 		$.ajax({
 			url: "<?php echo base_url();?>index.php/Admin/check_live_order",
@@ -880,6 +882,8 @@ function addItem(id,customer_id){
         });
 
 }
+
+get_fake_order();
 
 function kotprint(id){
   //  alert('print kot');

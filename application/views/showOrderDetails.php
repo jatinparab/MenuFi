@@ -9,9 +9,10 @@
         <th>Menu Id</th>
         <th>Menu</th>   
         <th>Quantity</th>
-        <th>Addons</th>
-        <th>Batter</th>
+      
+ 
         <th>Amount</th>
+        <th>Print</th>
       </tr>  
     </thead>
     <tbody>
@@ -21,9 +22,8 @@
               <td><?=$value[ 'menu_id' ]?></td>
               <td><?=$value[ 'menu_name' ]?></td>
               <td><?=$value[ 'quantity' ]?></td>
-              <td><?=$value[ 'addons_name' ]?></td>
-              <td><?=$value[ 'batter_name' ]?></td>
               <td><?=$value[ 'amount' ]?></td>
+              <td><button onclick="print('<?=$order_id?>')" class="btn btn-sm btn-success">Print</button></td>
           </tr>
       <?php 
           } }
@@ -31,4 +31,27 @@
   </tbody>
   </table>
 </div>
+
+<script> 
+function print(id){
+           
+               var printWindow = window.open('', '', 'height=300,width=600');
+
+             $.ajax({
+                type: 'GET',
+                url: '<?php echo base_url(); ?>index.php/Admin/printafterOrder',
+                data : {
+                    'Order_id':id
+                },
+                cache:false,
+                dataType:'html',
+                success: function(resp){
+                    printWindow.document.write(resp);
+                    printWindow.print();
+
+            }
+            });
+          
+        }
+</script>
                 

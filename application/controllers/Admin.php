@@ -103,9 +103,9 @@ where mir.addons=1 and mir.id=$id")->result_array();
                                                                             <th>Item Name</th>
                                                                             
 																			<th>Quantity</th>
-                                                                            <th> Addons </th>
-                                                                            <th > Add Addon </th>
                                                                             
+                                                                            
+                                                                            <th>Add Comment</th>
                                                                             <th>Price</th>
                                                                             <th>Remove</th>
                                                                          
@@ -130,43 +130,19 @@ where mir.addons=1 and mir.id=$id")->result_array();
                                             <input type="number" onchange="editItem(\''.$value['id'].'\',this.value)" id="quantity" name="quantity[]" class="form-control input-number" value="'.$value['quantity'].'"
                                             min="0" max="100">
                                         </div>
-                                    </td>
-                                    <td>';
+                                    </td><td>
+                                    ';
                                          $he = $value['id'];
                     $v = $value['quantity'];
                     $raw = $this -> db -> query("SELECT * FROM fake_order WHERE id='$he' AND Quantity='$v'") -> result_array();
                     //print_r($raw[0]);
-                    $response .= '
-                
-                                        <input type="hidden" name="addon[]" value="'.$raw[0]['addon'].'" class="form-control">';
+                    
                                         
-                //$x = substr($raw['addon'], 0, -1);
-                //echo $x;
-                $arr = explode(',',$raw[0]['addon']);
-                $arr = array_filter($arr);
-                $addon_price = 0;
-                if(count($arr)>0){
-                    foreach($arr as $val){
-                        
-                        $ra = $this -> db -> query("SELECT * FROM ingredients WHERE Ingredients_id = '$val'") -> result_array();
-                        $addon_price += $ra[0]['cost']; 
-                        
-                        $response .= $ra[0]['Name']."<br>";
-                        
-                    }
-                    $response .= '<a onclick="removeAddon(\''.$value['id'].'\')" class="btn btn-xs btn-danger">Clear</a>';
-                }
+                
                
-              $response .= '
-                                    </td>
-                                    <td><select onchange="addAddon(\''.$value['id'].'\',this.value)" style="max-width:75px;">
-                                    ';
-                                    
-                                    $bha = $this -> db -> query("SELECT * FROM ingredients") -> result_array();
-                                    $response .= '<option value="-1">None</option>';
-                                    foreach($bha as $b){
-                                        $response .= '<option value="'.$b['Ingredients_id'].'">'.$b['Name'].'</option>';
-                                    }
+              
+                                    $response .= '<a  data-remote="'.base_url().'index.php/Admin/addComment/'.$he.'" data-target="#addComment" data-toggle="modal" onclick="addC(\''.$he.'\')" class="btn btn-sm btn-success">Comment</a>';
+                                  
                                     
                               
                                    
@@ -174,14 +150,14 @@ where mir.addons=1 and mir.id=$id")->result_array();
                                         
                                         
                                            
-                                    //print_r($value);
+                                    
                                    
             
                                     
-                                    $xy  =(int)$base_price + (int) $addon_price;
+                                    $xy  =(int)$base_price;
                                     $response .=
-                                    '</select>
-                                    </td>
+                                    '
+                                </td>
                                     <td>
                                         '.$xy.'
                                     </td>
@@ -236,7 +212,23 @@ where mir.addons=1 and mir.id=$id")->result_array();
                } 
         }
     }
-	
+    
+    public function ajax_addC(){
+        $comment = $_POST['comment'];
+        $id = $_POST['id'];
+        $this->db->query('INSERT into batter(name) VALUES (\''.$comment.'\')');
+        $s=$this->db->query('SELECT max(id) FROM batter')->result_array();
+        $s = $s['0']['max(id)'];
+       // print_r($s);
+        if($this->db->query('UPDATE fake_order SET batter=\''.$s.'\' WHERE id=\''.$id.'\'')){
+            echo 'success';
+        }
+    }
+
+    public function addComment($id){
+       $data['id'] = $id;
+       $this->load->view('addComment',$data); 
+    }
 	public function deleteBatter($id){
 		
 		
@@ -1869,11 +1861,16 @@ if(!isset($_SESSION['admin_id']))
             $batter = $r['batter'];
             $res = $this->db->query("SELECT * FROM batter WHERE id='$batter'");
             $re = $res->result_array();
-            $batter = $re[0]['name'];
+            if(count($re)>0){
+                $batter = $re[0]['name'];
+            }else{
+                $batter = 'None';
+            }
+           
             if($batter != 'None'){
                 $table .="
             <tr style='text-align:center'>
-              <td colspan='4' align='center'>~~~~ Batter ~~~~</td>
+              <td colspan='4' align='center'>~~~~ Comment ~~~~</td>
             </tr>
             <tr style='text-align:center'>
               <td colspan='4' style='font-size:20px;' align='center'>".$batter."</td>
