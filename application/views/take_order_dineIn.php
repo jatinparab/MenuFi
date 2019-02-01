@@ -39,18 +39,39 @@ if(mysqli_num_rows($res)>0){
 	}
 	$card = 0;
 	$online = 0;
-	$cash = 0;
+    $cash = 0;
+    $tables = array();
 	// Pending Cash Order
 	$q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
     $pendingOrders = $q;
+    foreach ($pendingOrders as $value) {
+        //    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
+                                             
+                                $idr = $value['Order_id'];
+                                $sss = "SELECT * FROM orders WHERE Order_id='$idr'";
+                                $re1 = $conn ->query($sss);
+                                $rew = $re1 -> fetch_assoc();
+                                if($rew['Table_id'] == '-1'){
+                                    $table_no = 'Home Delivery';
+                                }else if($rew['Table_id'] == '99'){
+                                    $table_no = 'Take Away';
+                                }else{
+                                    $table_no = "Table No: ".$rew['Table_id'];
+                                }
+                                $sq3 = "SELECT * FROM customer_order WHERE Order_id='$idr'";
+                                $ress = $conn -> query($sq3);
+                                
+                                // print_r($ress);
+                                if(mysqli_num_rows($ress) == 0 ){
+                                    continue;
+                                }
+                                array_push($tables,$rew['Table_id']);
+                            
+                            }
+                                
+                    //        print_r($tables);
     
-    foreach($pendingOrders as $value){
-        $idr = $value['Order_id'];
-						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
-						$re1 = $conn ->query($sss);
-                        $rew = $re1 -> fetch_assoc();
-                    //    print_r($rew);
-    }
+    
 	
 	$sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card' AND added_date BETWEEN '$start_date' AND '$end_date'";
 	$res = $conn -> query($sql3);
@@ -234,9 +255,28 @@ if(mysqli_num_rows($res)>0){
                                             <h1 style="color:#fff">Ground Floor</h1>
                                             <?php
                                             for($i=0; $i<5; $i++){
-                                                
+                                                if(in_array($i+1,$tables)){
+                                                    $color = 'danger';
+                                                }else{
+                                                    $color = 'success';
+                                                }
                                                 ?>
-<button class="btn btn-warning btn-lg" onclick="order('<?=$i+1?>')" style="font-size:50px;padding:30px;margin:10px;"><?=$i+1?></button>
+<a class="btn btn-<?=$color?> btn-lg" 
+
+
+<?php if($color == 'success'){ ?>
+
+onclick="order('<?=$i+1?>')"  
+
+<?php }else{ ?>
+
+href="<?=base_url()?>index.php/Admin/Tickets?table=<?=$i+1?>"
+<?php
+}
+
+?>
+
+ style="font-size:50px;padding:30px;margin:10px;"><?=$i+1?></a>
 
                                                 <?php
 
@@ -246,13 +286,32 @@ if(mysqli_num_rows($res)>0){
                                             
                                             <h1 style="color:#fff">First Floor</h1>
                                              <?php
+                                             
                                             for($i=11; $i<21; $i++){
+                                                if(in_array($i,$tables)){
+                                                    $color = 'danger';
+                                                }else{
+                                                    $color = 'success';
+                                                }
                                                 if($i==13){
                                                     continue;
                                                 }
 
                                                 ?>
-<button class="btn btn-info btn-lg" onclick="order('<?=$i?>')"  style="font-size:50px;padding:30px;margin:10px;"><?=$i?></button>
+<a class="btn btn-<?=$color?> btn-lg" 
+
+<?php if($color == 'success'){ ?>
+
+onclick="order('<?=$i?>')"  
+
+<?php }else{ ?>
+
+href="<?=base_url()?>index.php/Admin/Tickets?table=<?=$i?>"
+<?php
+}
+
+?>
+style="font-size:50px;padding:30px;margin:10px;"><?=$i?></a>
 
                                                 <?php
 
@@ -300,165 +359,7 @@ if(mysqli_num_rows($res)>0){
             ?>
                         
           
-            <div class="row"  id="div_offlineOrders">
-            <?php if(!empty($pendingOrders)){
-					//print_r($pendingOrders);
-                                     foreach ($pendingOrders as $value) {
-//    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
-                                     
-						$idr = $value['Order_id'];
-						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
-						$re1 = $conn ->query($sss);
-						$rew = $re1 -> fetch_assoc();
-						if($rew['Table_id'] == '-1'){
-							$table_no = 'Home Delivery';
-						}else if($rew['Table_id'] == '99'){
-							$table_no = 'Take Away';
-						}else{
-							$table_no = "Table No: ".$rew['Table_id'];
-						}
-                        $sq3 = "SELECT * FROM customer_order WHERE Order_id='$idr'";
-						$ress = $conn -> query($sq3);
-						
-                        // print_r($ress);
-                        if(mysqli_num_rows($ress) == 0 ){
-                            continue;
-                        }
-                        $addons_price = 0;
-                        ?>
-                <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-12" >
-                                    <input type="hidden" name="id" value="<?php echo $value['Order_id'];?>">
-                                    <span id="printspan<?php echo $value['Order_id']; ?>">
-									<i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
-                                    <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
-									<p style="font-size:20px" class="text-center"><?php echo $table_no; ?></p>
-                                    <?php while($raw = $ress -> fetch_assoc()){
-                                        $pro_total = 0;
-										$cust_id = $raw['customer_id']; ?>
-                                            <p><strong ><?php 
-                                                //print_r($raw);
-                                                $q = $raw['Quantity'];
-                                                echo $raw['Quantity']." x "; ?>
-                                                
-                                            </strong>
-                                            <?php
-                                                    $mid = $raw['Menu_Id'];
-                                                    $sq4 = "SELECT * FROM menu WHERE Menu_Id='$mid'";
-                                                    $ra = $conn -> query($sq4);
-                                                    $rs = $ra -> fetch_assoc();    
-                        							echo $rs['Name'].": ".($q*$rs['Price']); 
-
-                        							if($table_no == 'Home Delivery'){
-                        								$cid = $raw['customer_id'];
-                                                    $sq5 = "SELECT * FROM customers WHERE customer_id='$cid'";
-                                                    $rr = $conn -> query($sq5);
-                                                    $rf = $rr -> fetch_assoc();
-                                                    $mob = $rf['mobile'];
-                                                    $sq6 = "SELECT * FROM addresses WHERE mobile='$mob'";
-                                                    $rg = $conn -> query($sq6);
-                                                    $rk = $rg -> fetch_assoc();
-                                                    $add = $rk['address'];
-                        							$name = $rk['name'];
-                        							$number = $mob;
-
-                        								
-                        							}
-                                                    $pro_total = $q*$rs['Price'];
-                        							$addons_name = '';
-                                                    if(!empty($raw['Addons']))
-                                                    {
-                                                        $addons = explode(',', $raw['Addons']);
-
-                                                        
-                                                        foreach ($addons as $key => $va)
-                                                        {
-                                                            $sql_addons = "SELECT * FROM ingredients WHERE Ingredients_id='".trim($va)."'";
-                                                            $ra = $conn -> query($sql_addons);
-                                                            $rs = $ra -> fetch_assoc();    
-                                                            $addons_name .= "<br>".$rs['Name'].": ".($rs['cost']); 
-                                                            $pro_total += $rs['cost']*$q;
-                                                        }
-                                                    }
-                                                    ?>
-                        								<i class="fa fa-times  fa-1x" style='color:red' onclick="deleteOrderItem(<?php echo $raw['id'].",".$value['Order_id'].",'".$pro_total."'"; ?>)" aria-hidden="true"></i>
-                                            <?php
-                                                echo $addons_name;
-                                            ?>
-                                        </p>
-
-                        <?php } ?>
-                        <p><strong>CGST: </strong><?php 
-                    
-                    $sq = "SELECT * FROM sales WHERE Order_id='$idr'";
-                    $r = $conn -> query($sq);
-                    $r2 = $r -> fetch_assoc();
-                    
-                    echo $r2['cgst']; ?></p>
-                    <p><strong>SGST: </strong><?php echo $r2['sgst']; ?></p>
-                                    <h4>Bill Amount :<?php echo $value['net_total'];
-                                        if($r2['coupon_apply']){
-                                            echo "<br><small> (coupon applied)</small>";
-                                        }
-                                    
-                                    ?>
-                    <a style="margin-left:20px;" href="<?php echo base_url(); ?>index.php/Admin/searchD?oid=<?php echo $idr."&"; ?>customer_id=<?php echo $cust_id; ?>"  class="btn btn-info">Add</a>
-
-                                        
-                                </h4>
-								<?php if($table_no == 'Home Delivery'){ ?>
-								<p><strong>Name:</strong> <?php if(isset($name)){echo $name;} ?><br><br>
-								<strong>Number:</strong> <?php if(isset($number)){echo $number;} ?>	<br><br>
-                	    <strong>Address:</strong> <?php if(isset($add)){echo $add;} ?>
-								<?php } ?>
-                    </p>
-
-                                    </span>
-                                    <?php
-                                        if(!$r2['coupon_apply']){
-                                    ?>
-                                    <input id="code" class="form-control" placeholder="Coupon Code" >
-                                    <br>
-                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
-                                    <br>
-                                    <?php 
-                                        }
-                                    ?>
-                                    <div>
-                                        <br>
-                                        <input type="submit" value="Pay" class="btn btn-success form-control" 
-										<?php if($table_no == 'Home Delivery'){ ?>
-											onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');print_home('<?php echo $idr; ?>','<?php if(isset($add)){echo $add;}?>','<?php if(isset($name)){echo $name;} ?>','<?php
-											if(isset($number)){echo $number;} ?>');"
-										<?php }else{ ?>
-										onclick="showModal('<?php echo $idr; ?>','<?php echo $table_no ?>');" 
-										
-										<?php } ?>
-										>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                            
-                        
-                    </div>
-                </div>
-                              
-
-                <?php
-                }
-                                  }
-                                  
-                                  else{
-                                      echo '<div class="col-lg-12">No Offline Orders.</div>';
-                                  }
-?>
-
-					</div>
+          
 						<br/><br/>
 										<?php }
                         else{ ?>

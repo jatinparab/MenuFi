@@ -1257,6 +1257,10 @@ public function changePassword(){
         }
 }
 
+public function Tickets(){
+    $this->load->view('tickets');
+}
+
     public function dashboard(){
 if(!isset($_SESSION['admin_id']))
 		{

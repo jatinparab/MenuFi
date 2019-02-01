@@ -28,6 +28,9 @@ and open the template in the editor.
                         <li>
                             <a href="<?php echo base_url(); ?>index.php/Admin/DineIn"><i class="fa fa-dashboard fa-fw"></i>Home Delivery/Take Away</a>
                         </li>
+                        <li>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/Tickets"><i class="fa fa-dashboard fa-fw"></i>Tickets</a>
+                        </li>
                          <?php }?>
                         <li>
                             <a href="<?php echo base_url(); ?>index.php/Admin/kitchen_dashboard"><i class="fa fa-dashboard fa-fw"></i> Kitchen Dashboard</a>
