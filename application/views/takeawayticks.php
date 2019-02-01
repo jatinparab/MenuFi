@@ -225,11 +225,11 @@ if(mysqli_num_rows($res)>0){
 						$ress = $conn -> query($sq3);
 						
                         // print_r($ress);
-                        if(mysqli_num_rows($ress) == 0 || $rew['Table_id'] == '99' || $rew['Table_id'] == '-1' ){
+                        if(mysqli_num_rows($ress) == 0 || $rew['Table_id'] != '99' ){
                             continue;
                         }
                         if(isset($tab)){
-                            if($rew['Table_id'] != $tab ){
+                            if($rew['Table_id'] != $tab){
                                 continue;
                             }
                         }

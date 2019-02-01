@@ -1261,6 +1261,12 @@ public function Tickets(){
     $this->load->view('tickets');
 }
 
+public function TakeAwayTicks(){
+    $this->load->view('takeawayticks');
+}
+public function HomeDeliveryTicks(){
+    $this->load->view('homedeliveryticks');
+}
     public function dashboard(){
 if(!isset($_SESSION['admin_id']))
 		{

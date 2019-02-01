@@ -26,10 +26,16 @@ and open the template in the editor.
                         </li> -->
 
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php/Admin/DineIn"><i class="fa fa-dashboard fa-fw"></i>Home Delivery/Take Away</a>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/DineIn"><i class="fa fa-dashboard fa-fw"></i>Dashboard</a>
                         </li>
                         <li>
-                            <a href="<?php echo base_url(); ?>index.php/Admin/Tickets"><i class="fa fa-dashboard fa-fw"></i>Tickets</a>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/Tickets"><i class="fa fa-dashboard fa-fw"></i>Dine In Tickets</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/TakeAwayTicks"><i class="fa fa-dashboard fa-fw"></i>Take Away Tickets</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo base_url(); ?>index.php/Admin/HomeDeliveryTicks"><i class="fa fa-dashboard fa-fw"></i>Home Delivery Tickets</a>
                         </li>
                          <?php }?>
                         <li>
