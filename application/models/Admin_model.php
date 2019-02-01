@@ -229,8 +229,17 @@ public function updateMenuToDB($d){
 		}
 		function get_search() {
 			$match = $this->input->post('search');
-			$query = $this->db->query('select * from menu where Menu_id like "%'.$match.'%" or Name like "%'.$match.'%" or Category like "%'.$match.'%" ')->result_array();
-			return $query;
+			$query2 = $this->db->query('select * from menu where Menu_id like "%'.$match.'%" or Name like "%'.$match.'%" or Category like "%'.$match.'%" ')->result_array();
+			
+			$data = $query2;
+			return $data;
+		}
+		function get_all() {
+			//$match = $this->input->post('search');
+			$query = $this->db->query('select * from menu')->result_array();
+	
+			$data = $query;
+			return $data;
 		}
 		public function get_fake(){
 			$query = $this->db->query('select M.Menu_id as Menu_id, M.Name as name,f.quantity as quantity,f.id as id from menu M,fake_order f where f.Menu_id = M.Menu_id');

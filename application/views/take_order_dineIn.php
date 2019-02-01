@@ -384,16 +384,27 @@ style="font-size:50px;padding:30px;margin:10px;"><?=$i?></a>
 												
 												<?php 
                                                 if(isset($query2) && !empty($query2)){
+                                                  //  print_r($query2);
                                                     foreach ($query2 as $value) {
                                                       
                                                 ?>
-												<button  onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?> col-sm-5" style="margin:5px;padding:20px;margin-left:20px;">
+												<button  onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?> col-sm-5 se" style="margin:5px;padding:20px;margin-left:20px;">
                                                 
                                                         <?php   echo $value['Name']; ?>
                                                         
                                                 </button>
 
-												<?php }
+                                                <?php }
+                                                foreach ($query1 as $value) {
+                                                      
+                                                    ?>
+                                                    <button  onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?> col-sm-5 hidden " style="margin:5px;padding:20px;margin-left:20px;">
+                                                    
+                                                            <?php   echo $value['Name']; ?>
+                                                            
+                                                    </button>
+    
+                                                    <?php }
                                                 
                                                 }
                                                 else{                
@@ -580,14 +591,20 @@ style="font-size:50px;padding:30px;margin:10px;"><?=$i?></a>
                             console.log(x);
                             $('#addonv' + idOfMenu).val(x);
                         }
+
+                        
+
                         function filter(category) {
+                        //  $('body').load('http://localhost/menufi/index.php/Admin/searchD');
                             if (category == '') {
                                 $(".menu-item").removeClass('hidden');
+                                $(".se").addClass('hidden');
                                 return;
                             }
                             category = category.replace(/\s/g, "");
                             $('.menu-item').addClass('hidden');
                             $('.' + category).removeClass('hidden');
+                            $(".se").addClass('hidden');
                         }
                         if(<?php echo $ye ?>){
             

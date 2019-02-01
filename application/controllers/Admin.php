@@ -1584,6 +1584,7 @@ if(!isset($_SESSION['admin_id']))
         }
         $this->load->model('Admin_model');
         $data['query2'] = $this->Admin_model->get_search();
+        $data['query1'] = $this->Admin_model->get_all();
         $data['orderid'] = $_SESSION['order_id'];
         $data['fake'] = $this->Admin_model->get_fake();
         $this->load->model('Admin_model');
