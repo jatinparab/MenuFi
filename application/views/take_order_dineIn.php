@@ -42,7 +42,15 @@ if(mysqli_num_rows($res)>0){
 	$cash = 0;
 	// Pending Cash Order
 	$q = $this->db->query("SELECT order_status.Order_id as Order_id,sales.net_total as net_total from order_status ,sales where day(order_status.TIMESTAMP)= day(curdate()) and (order_status.status=3 or order_status.status=1) and sales.Order_id = order_status.Order_id")->result_array();
-	$pendingOrders = $q;
+    $pendingOrders = $q;
+    
+    foreach($pendingOrders as $value){
+        $idr = $value['Order_id'];
+						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
+						$re1 = $conn ->query($sss);
+                        $rew = $re1 -> fetch_assoc();
+                        print_r($rew);
+    }
 	
 	$sql3 = "SELECT * FROM payment_details WHERE payment_type ='Card' AND added_date BETWEEN '$start_date' AND '$end_date'";
 	$res = $conn -> query($sql3);
