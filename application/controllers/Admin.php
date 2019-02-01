@@ -1814,6 +1814,8 @@ if(!isset($_SESSION['admin_id']))
                 $dc = ceil($dc + $value);
 
             }
+
+            
             $table .="
              
               <tr>
@@ -1823,6 +1825,7 @@ if(!isset($_SESSION['admin_id']))
           
     	 $ds= $this->db->query("SELECT * FROM payment_details WHERE Order_id='$Order_id'");
                 $res = $ds ->row_array();
+                $dc =floor((int)$res['total_amount']-((float)$printData['0']['cgst']*2));
                 //print_r($printData);
           $table .="
             <tr><tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
