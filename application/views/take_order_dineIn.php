@@ -463,8 +463,14 @@ if(mysqli_num_rows($res)>0){
 										<?php }
                         else{ ?>
 										<div class="col-md-12">
-										<div  class="col-lg-6">
-								<div style="max-height: 300px; overflow:auto;" class="panel panel-info">
+                                        <div class="col-sm-6"  style="padding:0px;margin-left:0px;margin-top:-10px;">
+															<input style="margin-top:5px;margin-right:5px; width:140px;height:50px;" type="button" value="Show All" onclick="filter('')" class="btn btn-primary">
+															<?php foreach($categories as $category){ ?>
+															<input style="margin-top:5px;margin-right:5px; width:140px;height:50px;" type="button" value="<?php echo $category; ?>" onclick="filter('<?php echo $category ?>')"
+															class="btn btn-primary">
+															<?php } ?>
+                                                            
+								<div style="max-height: 600px; overflow:auto;" class="panel panel-info">
 									<div class="panel-heading">
 										Menu
 									</div>
@@ -480,7 +486,7 @@ if(mysqli_num_rows($res)>0){
                                                     foreach ($query2 as $value) {
                                                       
                                                 ?>
-												<button onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?>" style="margin:5px;">
+												<button  onclick="addItem('<?php echo $value['Menu_Id'] ?>','<?php echo $_SESSION['customer_id'] ?>')" class="btn btn-success menu-item <?php echo $value['Category'] ?> col-sm-5" style="margin:5px;padding:20px;margin-left:20px;">
                                                 
                                                         <?php   echo $value['Name']; ?>
                                                         
@@ -501,7 +507,10 @@ if(mysqli_num_rows($res)>0){
                                 
 
 
-                            </div>
+                            
+													
+														</div>
+									
 							<div class="col-md-6">
 											
 												<div align="center">
@@ -522,29 +531,23 @@ if(mysqli_num_rows($res)>0){
 													</div>
 												</div>
 											</div>
-										</div>
-										
-                                           
-											<div class="col-lg-12">
-												<div>
-													
-													
+                                            
 													<form method="post" action="searchD">
-                                                    <div class="col-sm-7">
+                                                    <div class="col-sm-6">
                                                     <input name="search" placeholder="search menu item"  class="form-control" id="search">
 														<br>
 														<input type="submit" id="sch_btn" value="Search" class="form-control" />
                                                     </div>
 														
-														<div class="col-sm-5"  style="padding:0px;margin-left:0px;margin-top:-10px;">
-															<input style="margin-top:5px;margin-right:5px; width:140px;height:50px;" type="button" value="Show All" onclick="filter('')" class="btn btn-primary">
-															<?php foreach($categories as $category){ ?>
-															<input style="margin-top:5px;margin-right:5px; width:140px;height:50px;" type="button" value="<?php echo $category; ?>" onclick="filter('<?php echo $category ?>')"
-															class="btn btn-primary">
-															<?php } ?>
-														</div>
+														
 
 													</form>
+										</div>
+										
+                                           
+											<div class="col-lg-12">
+												<div>
+                                       
 												</div>
 												<br>
 												<hr>
@@ -559,11 +562,11 @@ if(mysqli_num_rows($res)>0){
 
 		
                             <?php }?>
-				<div class="row">
-					<div class="col-md-12" style="padding-top:20px;">
-                            
+				    
                                 
-                                
+
+
+                            </div>
                                 
                                 
     
