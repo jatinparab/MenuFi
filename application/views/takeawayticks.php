@@ -134,37 +134,11 @@ if(mysqli_num_rows($res)>0){
             <ul class="nav navbar-top-links navbar-right" >
                 
 
-                 <li class="dropdown" >
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" >
-                        <i class="fa fa-bell fa-fw"></i><i class="fa fa-caret-down"></i>
-
-                    </a>
-                    <ul class="dropdown-menu dropdown-user" id="order-notify">
-                       
-                         <li><h5 style="padding-left: 3px; background-color: white">You have <?php echo $countNotifications;   ?> notifications</h5></li>
-                         <hr style="padding: 0px; margin: 0px; color: #fff">
+               
                          
-                    <?php   foreach($todaysOrders as $order):   ?>
-                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">New Order:<?php echo $order['Order_id'];  ?></i></a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                        <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Table Assistance: <?php echo $order['Table_id'];  ?></i></a>
-                        </li>
-                    <?php   endforeach; ?>
-                    <?php   foreach($preparedList as $prepared):   ?>
-                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Preparation Timeout :<?php echo $prepared['Order_id']; ?> </i></a>
-                        </li>
+                    
                         
-                    <?php   endforeach; ?>
-
-                    <?php   foreach($servedOrders as $order):   ?>
-                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i>
-                         <i style="padding-left: 2px;font-size: 2;margin-left: 2px">Order Ready To Serve:<?php echo $order['Order_id']; ?> </i></a>
-                        </li>
-                        
-                    <?php   endforeach; ?>
+                  
                    
                     </ul>
                 </li>
@@ -209,7 +183,8 @@ if(mysqli_num_rows($res)>0){
                                      foreach ($pendingOrders as $value) {
 //    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
                             
-						$idr = $value['Order_id'];
+                        $idr = $value['Order_id'];
+                        $o_id = $value['Order_id'];
 						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
 						$re1 = $conn ->query($sss);
 						$rew = $re1 -> fetch_assoc();
@@ -330,13 +305,27 @@ if(mysqli_num_rows($res)>0){
                                     <?php
                                         if(!$r2['coupon_apply']){
                                     ?>
-                                    <input id="code" class="form-control" placeholder="Coupon Code" >
-                                    <br>
-                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
-                                    <br>
+                                            <h4>Select Coupon To Apply</h4>
+                                    <input  class="hidden" id="code<?=$o_id?>" class="form-control" placeholder="Coupon Code" >
+                                    
+                                    <input  id="cbtn<?=$o_id?>"  type="submit" value="Apply Coupon" class="btn btn-success form-control hidden" onclick="apply_code('<?php echo $idr; ?>')" >
+                                    
+
+<?php
+                                    foreach($coupons as $coupon){
+                                        ?>
+                                        <a class="btn btn-sm btn-warning" onclick="clickcoupon('<?=$coupon['c_code']?>','<?=$o_id?>')" style="margin-top:5px;" ><?=$coupon['c_code'];?></a>
+
+                                        <?php
+                                    }
+                                    
+                                    ?>
+
                                     <?php 
                                         }
                                     ?>
+
+                                    
                                     <div>
                                         <br>
                                         <input type="submit" value="Pay" class="btn btn-success form-control" 
@@ -503,6 +492,12 @@ if(mysqli_num_rows($res)>0){
 	<script>
 	/* When the user clicks on the button, 
 	toggle between hiding and showing the dropdown content */
+
+    function clickcoupon(code,id){
+        $('#code'+id).val(code);
+        console.log($('#cbtn'+id));
+        $('#cbtn'+id).click();
+    }
 	function myFunction() {
 	    document.getElementById("myDropdown").classList.toggle("show");
 	}
@@ -680,7 +675,8 @@ function get_fake_order(){
 
         function apply_code(id){
 			
-            let code = $('#code').val();
+             code = $('#code'+id).val();
+            //console.log(code);
             $.ajax({
                 type: 'GET',
                 url: 'ajax_applyCode',
@@ -964,30 +960,6 @@ function pay_it(id){
             });
         }
 
-        function apply_code(id){
-			
-            let code = $('#code').val();
-            $.ajax({
-                type: 'GET',
-                url: 'ajax_applyCode',
-                data:{
-                    'id':id,
-                    'code':code
-                },
-                cache:false,
-                
-                success: function(resp){
-                    if(resp=='success'){
-                        alert('Applied Coupon!');
-                        window.location = '';
-                    }else{
-                        alert(resp);
-                    }
-
-            }
-            });
-
-        }
 
         function print(id){
            // var divContents = $("#printspan"+id).html();

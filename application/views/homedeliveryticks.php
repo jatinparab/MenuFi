@@ -209,7 +209,8 @@ if(mysqli_num_rows($res)>0){
                                      foreach ($pendingOrders as $value) {
 //    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
                             
-						$idr = $value['Order_id'];
+                        $idr = $value['Order_id'];
+                        $o_id = $value['Order_id'];
 						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
 						$re1 = $conn ->query($sss);
 						$rew = $re1 -> fetch_assoc();
@@ -244,7 +245,9 @@ if(mysqli_num_rows($res)>0){
                                     <input type="hidden" name="id" value="<?php echo $value['Order_id'];?>">
                                     <span id="printspan<?php echo $value['Order_id']; ?>">
 									<i class="fa fa-times fa-2x pull-right" onclick="deleteOrderPayment(<?php echo $value['Order_id']; ?>)" aria-hidden="true"></i>
-                                    <h3 class="text-center">Order No.<?php echo $value['Order_id']; ?></h3>
+                                    <h3 class="text-center">Order No.<?php
+                                    $o_id =$value['Order_id'];
+                                    echo $value['Order_id']; ?></h3>
 									<p style="font-size:20px" class="text-center"><?php echo $table_no; ?></p>
                                     <?php while($raw = $ress -> fetch_assoc()){
                                         $pro_total = 0;
@@ -330,10 +333,20 @@ if(mysqli_num_rows($res)>0){
                                     <?php
                                         if(!$r2['coupon_apply']){
                                     ?>
-                                    <input id="code" class="form-control" placeholder="Coupon Code" >
-                                    <br>
-                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
-                                    <br>
+                                    <input id="code<?=$o_id?>" class="form-control hidden" placeholder="Coupon Code" >
+                                   
+                                    <input id="cbtn<?=$o_id?>" type="submit" value="Apply Coupon" class="btn btn-success form-control hidden" onclick="apply_code('<?php echo $idr; ?>')" >
+                                  
+
+                                     <?php
+                                    foreach($coupons as $coupon){
+                                        ?>
+                                        <a class="btn btn-sm btn-warning" onclick="clickcoupon('<?=$coupon['c_code']?>','<?=$o_id?>')" style="margin-top:5px;" ><?=$coupon['c_code'];?></a>
+
+                                        <?php
+                                    }
+                                    
+                                    ?>
                                     <?php 
                                         }
                                     ?>
@@ -445,6 +458,11 @@ if(mysqli_num_rows($res)>0){
 		setInterval(checkLiveOrder,(5*1000));
         setInterval(liveNotification,5000);
 	});
+
+     function clickcoupon(code,id){
+        $('#code'+id).val(code);
+        $('#cbtn'+id).click();
+    }
 	function checkLiveOrder(){
 		$.ajax({
 			url: "<?php echo base_url();?>index.php/Admin/check_live_order",
@@ -680,7 +698,7 @@ function get_fake_order(){
 
         function apply_code(id){
 			
-            let code = $('#code').val();
+            let code = $('#code'+id).val();
             $.ajax({
                 type: 'GET',
                 url: 'ajax_applyCode',
@@ -964,30 +982,7 @@ function pay_it(id){
             });
         }
 
-        function apply_code(id){
-			
-            let code = $('#code').val();
-            $.ajax({
-                type: 'GET',
-                url: 'ajax_applyCode',
-                data:{
-                    'id':id,
-                    'code':code
-                },
-                cache:false,
-                
-                success: function(resp){
-                    if(resp=='success'){
-                        alert('Applied Coupon!');
-                        window.location = '';
-                    }else{
-                        alert(resp);
-                    }
-
-            }
-            });
-
-        }
+ 
 
         function print(id){
            // var divContents = $("#printspan"+id).html();

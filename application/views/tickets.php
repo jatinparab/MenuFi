@@ -1,5 +1,6 @@
 <?php
-   // header("Location: ".base_url()."index.php/Admin/DineIn");
+//print_r($coupons);
+   // header("Loc;ation: ".base_url()."index.php/Admin/DineIn");
 	$conn = mysqli_connect("localhost","root", "", "menufi");
 	$start_date = date('Y-m-d');
 	$end_date = date('Y-m-d',strtotime(date('Y-m-d').'+1 day'));
@@ -15,6 +16,8 @@ if(mysqli_num_rows($res)>0){
 	$row = $res -> fetch_assoc();
 	$amt = $row['opening_amount'];
 }
+
+
 
 
 
@@ -209,7 +212,8 @@ if(mysqli_num_rows($res)>0){
                                      foreach ($pendingOrders as $value) {
 //    echo '<option value="'.$value["id"].'">'.$value['Order_id'].'</option>';
                             
-						$idr = $value['Order_id'];
+                        $idr = $value['Order_id'];
+                        $o_id = $value['Order_id'];
 						$sss = "SELECT * FROM orders WHERE Order_id='$idr'";
 						$re1 = $conn ->query($sss);
 						$rew = $re1 -> fetch_assoc();
@@ -330,10 +334,20 @@ if(mysqli_num_rows($res)>0){
                                     <?php
                                         if(!$r2['coupon_apply']){
                                     ?>
-                                    <input id="code" class="form-control" placeholder="Coupon Code" >
-                                    <br>
-                                    <input type="submit" value="Apply Coupon" class="btn btn-success form-control" onclick="apply_code('<?php echo $idr; ?>')" >
-                                    <br>
+                                    <h4>Select coupon to apply</h4>
+                                    <input id="code<?=$o_id?>" class="form-control hidden" placeholder="Coupon Code" >
+                                    
+                                    <input id="cbtn<?=$o_id?>" type="submit" value="Apply Coupon" class="btn btn-success form-control hidden" onclick="apply_code('<?php echo $idr; ?>')" >
+                                    <?php
+                                    foreach($coupons as $coupon){
+                                        ?>
+                                        <a class="btn btn-sm btn-warning" onclick="clickcoupon('<?=$coupon['c_code']?>','<?=$o_id?>')" style="margin-top:5px;" ><?=$coupon['c_code'];?></a>
+
+                                        <?php
+                                    }
+                                    
+                                    ?>
+
                                     <?php 
                                         }
                                     ?>
@@ -680,7 +694,8 @@ function get_fake_order(){
 
         function apply_code(id){
 			
-            let code = $('#code').val();
+            let code = $('#code'+id).val();
+            
             $.ajax({
                 type: 'GET',
                 url: 'ajax_applyCode',
@@ -964,30 +979,7 @@ function pay_it(id){
             });
         }
 
-        function apply_code(id){
-			
-            let code = $('#code').val();
-            $.ajax({
-                type: 'GET',
-                url: 'ajax_applyCode',
-                data:{
-                    'id':id,
-                    'code':code
-                },
-                cache:false,
-                
-                success: function(resp){
-                    if(resp=='success'){
-                        alert('Applied Coupon!');
-                        window.location = '';
-                    }else{
-                        alert(resp);
-                    }
-
-            }
-            });
-
-        }
+   
 
         function print(id){
            // var divContents = $("#printspan"+id).html();
@@ -1018,6 +1010,10 @@ function pay_it(id){
           
         }
 
+       function clickcoupon(code,id){
+        $('#code'+id).val(code);
+        $('#cbtn'+id).click();
+    }
     		function addOpeningAmt(){
 			var opening_amount = $('#opening_amount').val();
 			if(opening_amount !=""){

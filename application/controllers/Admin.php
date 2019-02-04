@@ -1258,14 +1258,20 @@ public function changePassword(){
 }
 
 public function Tickets(){
-    $this->load->view('tickets');
+    $s = $this->db->query('SELECT * FROM coupons WHERE c_status=\'ON\'')->result_array(); 
+       $data['coupons'] = $s;
+    $this->load->view('tickets',$data);
 }
 
 public function TakeAwayTicks(){
-    $this->load->view('takeawayticks');
+    $s = $this->db->query('SELECT * FROM coupons WHERE c_status=\'ON\'')->result_array();   
+     $data['coupons'] = $s;
+    $this->load->view('takeawayticks',$data);
 }
 public function HomeDeliveryTicks(){
-    $this->load->view('homedeliveryticks');
+    $s = $this->db->query('SELECT * FROM coupons WHERE c_status=\'ON\'')->result_array();
+    $data['coupons'] = $s;
+    $this->load->view('homedeliveryticks',$data);
 }
     public function dashboard(){
 if(!isset($_SESSION['admin_id']))
@@ -1612,6 +1618,8 @@ if(!isset($_SESSION['admin_id']))
         echo(json_encode($success));die;
       }
 
+    
+
 
     public function addfakeD(){
         $data['menu_id'] = $_POST['Menu_id'];
@@ -1882,6 +1890,7 @@ if(!isset($_SESSION['admin_id']))
       }
 
       public function printkot(){
+        date_default_timezone_set("Asia/Kolkata");
         $id = $_GET['id'];
         $res = $this->db->query("SELECT * FROM orders WHERE Order_id='$id'");
         $x = $res->result_array();
@@ -1896,7 +1905,7 @@ if(!isset($_SESSION['admin_id']))
         $table= "<table  class='' style='font-size: 16px;'><tr><td colspan='4' align='center' style='font-weight:bold;font-size: 24px;'></td></tr>
           
     
-          <tr ><td colspan='4' style='font-weight:bold;font-size: 21px;' align='center'>(TABLE NO : ".$table_id." )</td></tr>
+          <tr ><td colspan='4' style='font-weight:bold;font-size: 21px;' align='center'>(TABLE NO : ".$table_id." ) ".date('g:i A')."</td></tr>
           ";
           foreach($orders as $r){
               $addons = $r['addon'];
