@@ -1845,13 +1845,15 @@ if(!isset($_SESSION['admin_id']))
           $table .="
             <tr><tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
             <tr>
-              <td></td><td style='font-weight:bold;text-align:right'>Total</td><td style='text-align:right'>".$dc."</td>
-            </tr>";
+              <td></td><td style='font-weight:bold;text-align:right'>Total</td><td style='text-align:right'>".ceil($dc+$add)."</td>
+            </tr>
+            
+            ";
 
             if($printData['0']['coupon_apply']=='1'){
                 $table .="
             <tr>
-            <td> </td><td style='font-weight:bold;font-size:15px;text-align:right'>Discount </td><td style='text-align:right'>";  
+            <td> </td><td style='font-weight:bold;font-size:15px;text-align:right'>Discount </td><td style='text-align:right'> -";  
             
             if($per == 1){
                 $table .= $add." (".$value."%)";
@@ -1862,7 +1864,9 @@ if(!isset($_SESSION['admin_id']))
             }
 
             $table .= "</td>
-           </tr>";
+           </tr><tr>
+           <td></td><td style='font-weight:bold;text-align:right'>Sub Total</td><td style='text-align:right'> ".ceil($dc)."</td>
+         </tr>";
             }
 
             $table .="
@@ -1870,7 +1874,7 @@ if(!isset($_SESSION['admin_id']))
             <tr><td></td><td style='font-weight:bold;font-size:10px;text-align:right'>CGST (2.5%): </td><td style='text-align:right'>".$printData['0']['cgst']."</td></tr>
             <tr><td></td><td style='font-weight:bold;font-size:10px;text-align:right'>SGST (2.5%): </td><td style='text-align:right'>".$printData['0']['sgst']."</td></tr>
             <tr>
-              <td></td><td style='font-weight:bold;text-align:right'>Total</td><td style='text-align:right'>".$res['total_amount']."</td>
+              <td></td><td style='font-weight:bold;text-align:right'>Total Payable</td><td style='text-align:right'>".$res['total_amount']."</td>
             </tr>
             <tr><td colspan='4' style='border-bottom-style: dotted;border-width: 1px;'></td></tr>
             <tr>";

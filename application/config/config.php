@@ -24,7 +24,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //Changes done by Bansilal on 02.05.18 for localhost Path
-$config['base_url'] = 'http://192.168.0.112/menufi/';
+$sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+socket_connect($sock, "8.8.8.8", 53);
+socket_getsockname($sock, $name); // $name passed by reference
+
+$localAddr = $name;
+$config['base_url'] = 'http://'.$localAddr.'/menufi/';
 //$config['base_url'] = 'http://192.168.43.118/menufi/';
 
 /*

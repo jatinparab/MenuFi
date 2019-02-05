@@ -1,6 +1,8 @@
 <?php
 	$conn = mysqli_connect("localhost","root", "", "menufi");
-	$start_date = date('Y-m-d');
+    $start_date = date('Y-m-d');
+   
+
 	$end_date = date('Y-m-d',strtotime(date('Y-m-d').'+1 day'));
 	//echo $start_date;
 	$s1 = "SELECT * 
