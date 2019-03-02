@@ -112,7 +112,7 @@ and open the template in the editor.
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_execReport"><i class="fa fa-edit fa-fw"></i> Sales Execution Report</a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_daily_reports"><i class="fa fa-edit fa-fw"></i> Daily Sales Report</a>
+                                    <a href="<?php echo base_url(); ?>index.php/Admin/sales_daily_reports?date=<?=date('d-m-Y')?>"><i class="fa fa-edit fa-fw"></i> Daily Sales Report</a>
                                 </li>
                                 <li>
                                     <a href="<?php echo base_url(); ?>index.php/Admin/sales_guestBehaviour"><i class="fa fa-edit fa-fw"></i> Weekly Sales Reports</a>

@@ -1,4 +1,9 @@
-
+<?php
+  //$this->load->model('Admin_model');
+   
+  $orders = $this->Admin_model->get_today_orders($_GET['date']);
+  print_r($orders);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -88,10 +93,10 @@
                 <div class="panel panel-info">
                   <div class="panel-heading">Search</div>
                   <div class="panel-body"> 
-                    <form action = "<?=base_url()?>index.php/Admin/sales_daily_reports" method = "post">
+                    <form action = "<?=base_url()?>index.php/Admin/sales_daily_reports" method = "get">
                       <div class="row">
                         <div class="col-md-3">
-                          <input type = "text" class = "form-control datepicker"  id = "date_dt" name = "date_dt" value = "<?php echo $date; ?>" placeholder="Select date">
+                          <input type = "text" class = "form-control datepicker"  id = "date_dt" name = "date" value = "<?php if(isset($_GET['date'])){echo date('d-m-Y',strtotime($_GET['date']));}else{echo $date;} ?>" placeholder="Select date">
                         </div>
                         <div class="col=md-2">
                           <input type = "submit" class = "btn btn-success" value = "Search">
@@ -99,45 +104,20 @@
                       </div>    
                     </form>
                   </div>
-                </div>
-              </div>
-         		  <div class="col-lg-12"> 
-       		 		  <div class="panel panel-info">
-                  <div class="panel-heading">Daily Sales Report</div>
-                  <div class="panel-body"> 
-     		 		        <table class="table table-striped table-dark">
-                      <thead class="thead-light">
-                        <tr>
-                          <th>Hour</th>
-                          <th>Number of customers</th>   
-                          <th>Sales of the hour</th>
-                          <th>Avg bill of the hour</th>
-                          <th>Total bill</th>
-                        </tr>  
-                      </thead>
-                      <tbody>
-                      <?php foreach($report_data as $data){ ?>
-                        <tr>
-                          <td><?php echo $data['hour'];?></td>
-                          <td><?php echo $data['total_customer'];?></td>
-                          <td><?php echo $data['sales_hour'];?></td>
-                          <td><?php echo $data['avg_sales_hour'];?></td>
-                          <td><?php echo $data['total_sales'];?></td>
-                        </tr>
-                      <?php } ?>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td><b>Total</b></td>
-                          <td><?php echo $final_avg_sales_total;?></td>
-                          <td><?php echo $final_total;?></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-         		 	</div>
+               </div>
+              
+         		  <div class="col-sm-12" style="background-color:white">
+              
+                <?php foreach($orders as $order){ 
+                  echo $this->Admin_model->printOrderDetails($order['Order_id']);
+
+                
+              
+                } ?>
+                
+               </div>
             </div>
+            
             <!-- /.row -->
          </div>
     <!-- /#wrapper -->
